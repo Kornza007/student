@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจัดการและบันทึกการฝึกงาน</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container header-content d-flex justify-content-between align-items-center py-2">
+            <h1><i class="bi bi-journal-bookmark-fill me-2 text-primary"></i>ระบบจัดการการฝึกงาน</h1>
+            
+            <!-- ส่วนโปรไฟล์แบบ Dropdown Menu ที่ปรับปรุงใหม่ -->
+            <div class="user-info">
+                <div class="dropdown">
+                    <button class="btn profile-dropdown-btn dropdown-toggle d-flex align-items-center gap-2" type="button" id="userProfileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle fs-5"></i>
+                        <span id="userInfo" class="fw-bold">กำลังโหลด...</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end profile-dropdown-menu shadow-sm" aria-labelledby="userProfileDropdown">
+                        <li>
+                            <button onclick="openChangePasswordModal()" class="dropdown-item d-flex align-items-center text-warning-emphasis">
+                                <i class="bi bi-key-fill me-2 text-warning"></i>เปลี่ยนรหัสผ่าน
+                            </button>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <button onclick="logout()" class="dropdown-item d-flex align-items-center text-danger">
+                                <i class="bi bi-box-arrow-right me-2 text-danger"></i>ออกจากระบบ
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container main-content mt-4">
+        <div id="studentProgressCard" class="card p-3 mb-4 student-only" style="display: none;">
+            <h5 class="fw-bold"><i class="bi bi-graph-up-arrow me-2 text-success"></i>ความก้าวหน้าการฝึกงานของคุณ</h5>
+            <div class="d-flex justify-content-between mb-1">
+                <span id="progressTextDays">0 / 90 วัน</span>
+                <span id="progressTextPercent" class="fw-bold">0%</span>
+            </div>
+            <div class="progress" style="height: 22px;">
+                <div id="progressBarFill" class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;">0%</div>
+            </div>
+        </div>
+
+        <nav class="nav-tabs mb-4">
+            <button class="tab-btn active" onclick="switchTab('logs', event)"><i class="bi bi-journal-text me-1"></i>บันทึกการฝึกงาน</button>
+            <button class="tab-btn admin-only mentor-only" onclick="switchTab('students', event)"><i class="bi bi-people-fill me-1"></i>จัดการนักศึกษา</button>
+            <button class="tab-btn admin-only" onclick="switchTab('mentors', event)"><i class="bi bi-person-workspace me-1"></i>จัดการพี่เลี้ยง</button>
+        </nav>
+
+        <!-- 1. บันทึกการฝึกงาน -->
+        <section id="tab-logs" class="tab-content active">
+            <h2><i class="bi bi-list-task me-2"></i>รายการบันทึกการฝึกงาน</h2>
+            <form id="filterForm" onsubmit="handleFilter(event)" class="row g-2 mb-4 align-items-center">
+                <div class="col-md-6">
+                    <input type="text" id="searchKeyword" class="form-control" placeholder="🔍 ค้นหาชื่อนักศึกษา หรือ รายละเอียดงาน...">
+                </div>
+                <div class="col-md-4">
+                    <select id="statusFilter" class="form-select">
+                        <option value="">-- ทุกสถานะ --</option>
+                        <option value="pending">⏳ รออนุมัติ (Pending)</option>
+                        <option value="approved">✅ อนุมัติแล้ว (Approved)</option>
+                        <option value="revision">✏️ ส่งกลับแก้ไข (Revision)</option>
+                        <option value="rejected">❌ ปฏิเสธ (Rejected)</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-primary" data-bs-toggle="tooltip" title="กดเพื่อค้นหาข้อมูลตามเงื่อนไข"><i class="bi bi-search me-1"></i>ค้นหา</button>
+                </div>
+            </form>
+
+            <div id="addLogSection" class="card student-only mb-4 p-3">
+                <h3><i class="bi bi-plus-circle me-2 text-primary"></i>เพิ่มบันทึกประจำวัน</h3>
+                <form id="logForm" onsubmit="saveLog(event)">
+                    <div class="mb-3">
+                        <label class="form-label">วันที่ปฏิบัติงาน:</label>
+                        <input type="date" id="log_work_date" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">รายละเอียดงานที่ทำ:</label>
+                        <textarea id="log_work_description" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>บันทึกข้อมูล </button>
+                </form>
+            </div>
+
+            <div class="table-scroll-container">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>วันที่</th>
+                            <th>นักศึกษา</th>
+                            <th>รายละเอียดงาน</th>
+                            <th>ความคิดเห็นพี่เลี้ยง</th>
+                            <th>สถานะ</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 2. จัดการนักศึกษา -->
+        <section id="tab-students" class="tab-content" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2><i class="bi bi-mortarboard-fill me-2"></i>จัดการข้อมูลนักศึกษา</h2>
+                <button class="btn btn-success admin-only" onclick="openStudentModal()" data-bs-toggle="tooltip" title="คลิกเพื่อเพิ่มข้อมูลนักศึกษาฝึกงานใหม่"><i class="bi bi-person-plus-fill me-1"></i>+ เพิ่มนักศึกษา</button>
+            </div>
+
+            <div class="card p-3 mb-3 bg-light">
+                <div class="row g-2">
+                    <div class="col-md-4">
+                        <input type="text" id="studentSearchInput" class="form-control" placeholder="🔍 ค้นหานักศึกษา..." onkeyup="filterAndRenderStudents()">
+                    </div>
+                    <div class="col-md-4">
+                        <select id="studentStatusFilter" class="form-select" onchange="filterAndRenderStudents()">
+                            <option value="ALL">-- แสดงสถานะการฝึกทั้งหมด --</option>
+                            <option value="active">🔷 ฝึกอยู่</option>
+                            <option value="ending">⚠️ ใกล้จบ (เหลือ <= 7 วัน)</option>
+                            <option value="completed">✅ จบการฝึกงานแล้ว</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <select id="studentSortOrder" class="form-select" onchange="filterAndRenderStudents()">
+                            <option value="newest">เรียงตามวันที่เริ่มฝึก (ล่าสุดขึ้นก่อน)</option>
+                            <option value="expiring">เรียงตามวันหมดอายุฝึก (ใกล้หมดก่อน)</option>
+                            <option value="name">เรียงตามชื่อ-นามสกุล</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-scroll-container">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>รหัส / ชื่อ-นามสกุล</th>
+                            <th>มหาวิทยาลัย / คณะ / สาขา</th>
+                            <th>เบอร์โทรศัพท์</th>
+                            <th>วันที่เริ่ม - วันหมดอายุ</th>
+                            <th>อายุการฝึกงาน</th>
+                            <th>สถานะฝึกงาน</th>
+                            <th>พี่เลี้ยง</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 3. จัดการพี่เลี้ยง -->
+        <section id="tab-mentors" class="tab-content" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2><i class="bi bi-person-badge-fill me-2"></i>จัดการข้อมูลพี่เลี้ยง</h2>
+                <button class="btn btn-primary admin-only" onclick="openMentorModal()" data-bs-toggle="tooltip" title="คลิกเพื่อเพิ่มข้อมูลพี่เลี้ยงควบคุม"><i class="bi bi-person-plus-fill me-1"></i>+ เพิ่มพี่เลี้ยง</button>
+            </div>
+
+            <div class="table-scroll-container">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ชื่อ-นามสกุล</th>
+                            <th>แผนก</th>
+                            <th>อีเมล</th>
+                            <th class="admin-only">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mentorsTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- MODALS -->
+    <!-- MODAL 1: เพิ่ม/แก้ไขนักศึกษา -->
+    <div class="modal fade" id="studentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="studentModalTitle">เพิ่มข้อมูลนักศึกษา</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="studentModalForm" onsubmit="saveStudentFromModal(event)">
+                    <div class="modal-body row g-3">
+                        <input type="hidden" id="modal_student_id">
+                        <div class="col-md-6"><label>username:</label><input type="text" id="modal_student_code" class="form-control" required></div>
+                        <div class="col-md-6"><label>ชื่อ-นามสกุล:</label><input type="text" id="modal_student_name" class="form-control" required></div>
+                        <div class="col-md-6"><label>มหาวิทยาลัย:</label><input type="text" id="modal_student_university" class="form-control" required></div>
+                        <div class="col-md-6"><label>คณะ / สาขา:</label><input type="text" id="modal_student_faculty" class="form-control mb-1" placeholder="คณะ"><input type="text" id="modal_student_major" class="form-control" placeholder="สาขา"></div>
+                        <div class="col-md-6"><label>วันที่เริ่มฝึกงาน:</label><input type="date" id="modal_student_start_date" class="form-control" required></div>
+                        <div class="col-md-6"><label>จำนวนวันฝึกทั้งหมด (วัน):</label><input type="number" id="modal_student_duration" class="form-control" value="90" required></div>
+                        <div class="col-md-6"><label>เบอร์โทรศัพท์:</label><input type="tel" id="modal_student_phone" class="form-control"></div>
+                        <div class="col-md-6"><label>พี่เลี้ยงควบคุม:</label><select id="modal_student_mentor_id" class="form-select"><option value="">-- ไม่ระบุ --</option></select></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                        <button type="submit" class="btn btn-primary">บันทึกข้อมูล </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: เพิ่ม/แก้ไขพี่เลี้ยง -->
+    <div class="modal fade" id="mentorModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mentorModalTitle">เพิ่มข้อมูลพี่เลี้ยง</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="mentorModalForm" onsubmit="saveMentorFromModal(event)">
+                    <div class="modal-body">
+                        <input type="hidden" id="modal_mentor_id">
+                        <div class="mb-3"><label>ชื่อ-นามสกุล:</label><input type="text" id="modal_mentor_name" class="form-control" required></div>
+                        <div class="mb-3"><label>แผนก:</label><input type="text" id="modal_mentor_department" class="form-control" required></div>
+                        <div class="mb-3"><label>อีเมล:</label><input type="email" id="modal_mentor_email" class="form-control" required></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                        <button type="submit" class="btn btn-primary">บันทึกข้อมูล </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: ยืนยันการลบ -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill me-2"></i>ยืนยันการลบข้อมูล</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center fs-5" id="deleteModalText">คุณแน่ใจหรือไม่ที่จะลบข้อมูลนี้?</div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                    <button type="button" id="confirmDeleteBtn" class="btn btn-danger">ยืนยันลบข้อมูล </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: ฟอร์มประเมินผลนักศึกษาสำหรับพี่เลี้ยง -->
+    <div class="modal fade" id="evalModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">ประเมินผลนักศึกษาฝึกงาน</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form onsubmit="saveEvaluation(event)">
+                    <div class="modal-body">
+                        <input type="hidden" id="eval_student_id">
+                        <div class="mb-3"><label class="form-label">คะแนนทักษะงาน (0-10):</label><input type="number" id="score_work" class="form-control" min="0" max="10" value="0" required></div>
+                        <div class="mb-3"><label class="form-label">คะแนนการตรงต่อเวลา (0-10):</label><input type="number" id="score_time" class="form-control" min="0" max="10" value="0" required></div>
+                        <div class="mb-3"><label class="form-label">คะแนนพฤติกรรม (0-10):</label><input type="number" id="score_behavior" class="form-control" min="0" max="10" value="0" required></div>
+                        <div class="mb-3"><label class="form-label">ข้อคิดเห็นสรุป / คำแนะนำเพิ่มเติม:</label><textarea id="final_feedback" class="form-control" rows="3" placeholder="ระบุคำแนะนำเพิ่มเติมแก่นักศึกษา..."></textarea></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                        <button type="submit" class="btn btn-primary">บันทึกการประเมิน </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 5: นักศึกษาแก้ไขคำผิดบันทึกการฝึกงาน -->
+    <div class="modal fade" id="studentEditLogModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title text-dark">นักศึกษาแก้ไขบันทึกงาน</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form onsubmit="submitStudentEditLog(event)">
+                    <div class="modal-body">
+                        <input type="hidden" id="student_edit_log_id">
+                        <div class="mb-3">
+                            <label class="form-label">รายละเอียดงานที่ต้องการแก้ไข:</label>
+                            <textarea id="student_edit_work_description" class="form-control" rows="4" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                        <button type="submit" class="btn btn-primary">บันทึกการแก้ไข</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 6: พี่เลี้ยงแก้ไขความคิดเห็น -->
+    <div class="modal fade" id="mentorEditCommentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">พี่เลี้ยงแก้ไขความคิดเห็น / ข้อเสนอแนะ</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form onsubmit="submitMentorEditComment(event)">
+                    <div class="modal-body">
+                        <input type="hidden" id="mentor_edit_log_id">
+                        <div class="mb-3">
+                            <label class="form-label">ความคิดเห็น / ข้อเสนอแนะพี่เลี้ยง:</label>
+                            <textarea id="mentor_edit_comment" class="form-control" rows="4" placeholder="พิมพ์ข้อความเสนอแนะ..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                        <button type="submit" class="btn btn-primary">บันทึกความเห็น</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 7: ป๊อปอัพให้เหตุผลเมื่อส่งกลับแก้ไข หรือ ปฏิเสธ -->
+    <div class="modal fade" id="statusCommentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" id="statusCommentHeader">
+                    <h5 class="modal-title" id="statusCommentTitle">ระบุเหตุผล</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form onsubmit="submitStatusWithComment(event)">
+                    <div class="modal-body">
+                        <input type="hidden" id="status_comment_log_id">
+                        <input type="hidden" id="status_comment_action">
+                        <div class="mb-3">
+                            <label class="form-label" id="statusCommentLabel">กรุณาใส่ข้อความหรือเหตุผล:</label>
+                            <textarea id="status_comment_text" class="form-control" rows="3" required placeholder="ระบุรายละเอียดเพิ่มเติม..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                        <button type="submit" class="btn btn-primary" id="statusCommentSubmitBtn">บันทึก</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 8: POP-UP สรุปแจ้งเตือน -->
+    <div class="modal fade" id="actionSuccessModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center p-3">
+                <div class="modal-body">
+                    <div class="text-success mb-3" style="font-size: 50px;">✓</div>
+                    <h4 class="fw-bold text-success mb-2" id="actionSuccessTitle">ดำเนินการสำเร็จ!</h4>
+                    <p class="fs-5 text-dark mb-0" id="actionSuccessMessage">แก้ไขข้อความเสร็จสิ้น</p>
+                </div>
+                <div class="modal-footer justify-content-center border-0">
+                    <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal">ตกลง</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 9: เปลี่ยนรหัสผ่าน -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">เปลี่ยนรหัสผ่าน</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form onsubmit="submitChangePassword(event)">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">รหัสผ่านปัจจุบัน:</label>
+                            <input type="password" id="old_password" class="form-control" required autocomplete="current-password">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">รหัสผ่านใหม่ (อย่างน้อย 6 ตัวอักษร):</label>
+                            <input type="password" id="new_password" class="form-control" minlength="6" required autocomplete="new-password">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">ยืนยันรหัสผ่านใหม่:</label>
+                            <input type="password" id="confirm_new_password" class="form-control" minlength="6" required autocomplete="new-password">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                        <button type="submit" class="btn btn-primary">บันทึกรหัสผ่านใหม่</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 10: Admin รีเซ็ตรหัสผ่าน -->
+    <div class="modal fade" id="adminResetModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title">ตั้งรหัสผ่านใหม่ให้ผู้ใช้งาน</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form onsubmit="submitAdminResetPassword(event)">
+                    <div class="modal-body">
+                        <input type="hidden" id="admin_reset_role">
+                        <input type="hidden" id="admin_reset_ref_id">
+                        <div class="mb-3">
+                            <label class="form-label">กำหนดรหัสผ่านใหม่ให้สมาชิก:</label>
+                            <input type="password" id="admin_new_password" class="form-control" minlength="6" required autocomplete="new-password">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                        <button type="submit" class="btn btn-warning">บันทึกรหัสผ่าน</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    let currentUser = null;
+    let mentorMap = {};
+    let rawStudentsData = [];
+    let studentModalObj, mentorModalObj, deleteConfirmModalObj, evalModalObj, studentEditLogModalObj, mentorEditCommentModalObj, statusCommentModalObj, actionSuccessModalObj, changePasswordModalObj, adminResetModalObj;
+    let deleteTarget = { table: '', id: null };
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+
+        studentModalObj = new bootstrap.Modal(document.getElementById('studentModal'));
+        mentorModalObj = new bootstrap.Modal(document.getElementById('mentorModal'));
+        deleteConfirmModalObj = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+        evalModalObj = new bootstrap.Modal(document.getElementById('evalModal'));
+        studentEditLogModalObj = new bootstrap.Modal(document.getElementById('studentEditLogModal'));
+        mentorEditCommentModalObj = new bootstrap.Modal(document.getElementById('mentorEditCommentModal'));
+        statusCommentModalObj = new bootstrap.Modal(document.getElementById('statusCommentModal'));
+        actionSuccessModalObj = new bootstrap.Modal(document.getElementById('actionSuccessModal'));
+        
+        changePasswordModalObj = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+        adminResetModalObj = new bootstrap.Modal(document.getElementById('adminResetModal'));
+
+        await checkAuth();
+
+        document.getElementById('log_work_date').valueAsDate = new Date();
+        loadLogs();
+
+        if (currentUser.role === 'admin' || currentUser.role === 'mentor') {
+            await loadMentors();
+            loadStudents();
+        } else if (currentUser.role === 'student') {
+            loadStudentProgressBar();
+        }
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', executeDelete);
+        
+        document.getElementById('deleteConfirmModal').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                executeDelete();
+            }
+        });
+
+        const modals = ['studentModal', 'mentorModal', 'evalModal', 'studentEditLogModal', 'mentorEditCommentModal', 'statusCommentModal', 'changePasswordModal', 'adminResetModal'];
+        modals.forEach(modalId => {
+            document.getElementById(modalId).addEventListener('shown.bs.modal', function () {
+                const firstInput = this.querySelector('input:not([type="hidden"]), textarea, select');
+                if (firstInput) firstInput.focus();
+            });
+        });
+        
+        document.getElementById('deleteConfirmModal').addEventListener('shown.bs.modal', function () {
+            document.getElementById('confirmDeleteBtn').focus();
+        });
+    });
+
+    async function fetchJson(url, options = {}) {
+        try {
+            const res = await fetch(url, options);
+            if (res.status === 401) { window.location.href = 'login.html'; return null; }
+            return await res.json();
+        } catch (err) { console.error("Fetch Error:", err); return null; }
+    }
+
+    async function checkAuth() {
+        currentUser = await fetchJson('api.php?action=get_current_user');
+        if (!currentUser) { window.location.href = 'login.html'; return; }
+
+        const nameToShow = currentUser.display_name || currentUser.username;
+        document.getElementById('userInfo').innerText = `${nameToShow} (${currentUser.role})`;
+        
+        if (currentUser.role === 'student') {
+            document.querySelectorAll('.admin-only, .mentor-only').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.student-only').forEach(el => el.style.display = 'block');
+        } else if (currentUser.role === 'mentor') {
+            document.querySelectorAll('.admin-only, .student-only').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.mentor-only').forEach(el => el.style.display = 'block');
+        } else if (currentUser.role === 'admin') {
+            document.querySelectorAll('.student-only').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.admin-only, .mentor-only').forEach(el => el.style.display = 'block');
+        }
+    }
+
+    function showSuccessModal(message, title = 'สำเร็จ') {
+        document.getElementById('actionSuccessTitle').innerText = title;
+        document.getElementById('actionSuccessMessage').innerText = message;
+        actionSuccessModalObj.show();
+    }
+
+    function openChangePasswordModal() {
+        document.getElementById('old_password').value = '';
+        document.getElementById('new_password').value = '';
+        document.getElementById('confirm_new_password').value = '';
+        changePasswordModalObj.show();
+    }
+
+    async function submitChangePassword(e) {
+        e.preventDefault();
+        const oldPassword = document.getElementById('old_password').value;
+        const newPassword = document.getElementById('new_password').value;
+        const confirmPassword = document.getElementById('confirm_new_password').value;
+
+        if (newPassword !== confirmPassword) {
+            alert('รหัสผ่านใหม่และรหัสผ่านยืนยันไม่ตรงกัน');
+            return;
+        }
+
+        const res = await fetchJson('api.php?action=change_password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ old_password: oldPassword, new_password: newPassword })
+        });
+
+        if (res && res.success) {
+            changePasswordModalObj.hide();
+            showSuccessModal('แก้ไขรหัสผ่านเสร็จสิ้น');
+        } else if (res) {
+            alert('เกิดข้อผิดพลาด: ' + res.error);
+        }
+    }
+
+    function openAdminResetModal(role, refId) {
+        document.getElementById('admin_reset_role').value = role;
+        document.getElementById('admin_reset_ref_id').value = refId;
+        document.getElementById('admin_new_password').value = '';
+        adminResetModalObj.show();
+    }
+
+    async function submitAdminResetPassword(e) {
+        e.preventDefault();
+        const role = document.getElementById('admin_reset_role').value;
+        const refId = Number(document.getElementById('admin_reset_ref_id').value);
+        const newPassword = document.getElementById('admin_new_password').value;
+
+        const res = await fetchJson('api.php?action=admin_reset_password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ role: role, ref_id: refId, new_password: newPassword })
+        });
+
+        if (res && res.success) {
+            adminResetModalObj.hide();
+            showSuccessModal('แก้ไขรหัสผ่านเสร็จสิ้น');
+        } else if (res) {
+            alert('เกิดข้อผิดพลาด: ' + res.error);
+        }
+    }
+
+    function switchTab(tabName, evt) {
+        document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(`tab-${tabName}`).style.display = 'block';
+        if (evt) evt.currentTarget.classList.add('active');
+
+        if (tabName === 'logs') loadLogs();
+        if (tabName === 'students') loadStudents();
+        if (tabName === 'mentors') loadMentors();
+    }
+
+    async function loadStudentProgressBar() {
+        const students = await fetchJson('api.php?action=get_students');
+        if (students && students.length > 0) {
+            const std = students[0];
+            const stats = calculateInternshipStats(std.start_date, std.duration_days);
+            
+            document.getElementById('studentProgressCard').style.display = 'block';
+            document.getElementById('progressTextDays').innerText = `${stats.daysTrained} / ${std.duration_days || 90} วัน`;
+            document.getElementById('progressTextPercent').innerText = `${stats.percentage}%`;
+            
+            const fill = document.getElementById('progressBarFill');
+            fill.style.width = `${stats.percentage}%`;
+            fill.innerText = `${stats.percentage}%`;
+        }
+    }
+
+    function calculateInternshipStats(startDateStr, durationDays) {
+        const today = new Date(); today.setHours(0,0,0,0);
+        const start = new Date(startDateStr || new Date()); start.setHours(0,0,0,0);
+        const duration = parseInt(durationDays) || 90;
+        
+        const expireDate = new Date(start); expireDate.setDate(expireDate.getDate() + duration);
+        const diffTime = today - start;
+        let daysTrained = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+        
+        if (daysTrained < 0) daysTrained = 0;
+        if (daysTrained > duration) daysTrained = duration;
+
+        const percentage = Math.round((daysTrained / duration) * 100);
+        const daysRemaining = Math.ceil((expireDate - today) / (1000 * 60 * 60 * 24));
+
+        let statusKey = 'active', statusLabel = 'ฝึกอยู่', badgeClass = 'badge-active';
+        if (daysRemaining <= 0) { statusKey = 'completed'; statusLabel = 'จบการฝึกงานแล้ว'; badgeClass = 'badge-completed'; }
+        else if (daysRemaining <= 7) { statusKey = 'ending'; statusLabel = `ใกล้จบ (เหลือ ${daysRemaining} วัน)`; badgeClass = 'badge-warning-ending'; }
+
+        return { daysTrained, percentage, expireDateStr: expireDate.toISOString().split('T')[0], statusKey, statusLabel, badgeClass, expireTimestamp: expireDate.getTime(), startTimestamp: start.getTime() };
+    }
+
+    async function loadStudents() {
+        const students = await fetchJson('api.php?action=get_students');
+        if (!students) return;
+        rawStudentsData = students;
+        filterAndRenderStudents();
+    }
+
+    function filterAndRenderStudents() {
+        const keyword = document.getElementById('studentSearchInput').value.toLowerCase().trim();
+        const statusFilter = document.getElementById('studentStatusFilter').value;
+        const sortOrder = document.getElementById('studentSortOrder').value;
+
+        let processed = rawStudentsData.map(std => ({ ...std, stats: calculateInternshipStats(std.start_date, std.duration_days) }));
+
+        if (keyword) {
+            processed = processed.filter(s => 
+                (s.name && s.name.toLowerCase().includes(keyword)) || 
+                (s.student_code && s.student_code.toLowerCase().includes(keyword)) ||
+                (s.university && s.university.toLowerCase().includes(keyword)) ||
+                (s.faculty && s.faculty.toLowerCase().includes(keyword)) ||
+                (s.major && s.major.toLowerCase().includes(keyword)) ||
+                (s.phone && s.phone.includes(keyword))
+            );
+        }
+
+        if (statusFilter !== 'ALL') processed = processed.filter(s => s.stats.statusKey === statusFilter);
+
+        processed.sort((a, b) => {
+            if (sortOrder === 'newest') return b.stats.startTimestamp - a.stats.startTimestamp;
+            if (sortOrder === 'expiring') return a.stats.expireTimestamp - b.stats.expireTimestamp;
+            if (sortOrder === 'name') return a.name.localeCompare(b.name, 'th');
+            return 0;
+        });
+
+        const tbody = document.getElementById('studentsTableBody');
+        tbody.innerHTML = '';
+
+        processed.forEach(std => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${std.name}</strong><br><small class="text-muted">${std.student_code}</small></td>
+                <td>${std.university || '-'}<br><small class="text-muted">${std.faculty || ''} ${std.major || ''}</small></td>
+                <td>${std.phone || '-'}</td>
+                <td>${std.start_date || 'N/A'}<br><small class="text-danger">หมดอายุ: ${std.stats.expireDateStr}</small></td>
+                <td>ฝึกแล้ว ${std.stats.daysTrained} วัน (${std.stats.percentage}%)</td>
+                <td><span class="badge ${std.stats.badgeClass}">${std.stats.statusLabel}</span></td>
+                <td>${mentorMap[std.mentor_id] || std.mentor_name || 'ไม่ระบุ'}</td>
+                <td>
+                    ${currentUser.role === 'admin' ? `
+                        <button onclick='editStudentModal(${JSON.stringify(std)})' class="btn btn-warning btn-sm btn-icon-only" data-bs-toggle="tooltip" title="แก้ไขข้อมูลนักศึกษา"><i class="bi bi-pencil-square"></i></button> 
+                        <button onclick="openAdminResetModal('student', ${std.id})" class="btn btn-secondary btn-sm btn-icon-only" data-bs-toggle="tooltip" title="ตั้งรหัสผ่านใหม่ให้นักศึกษา"><i class="bi bi-key"></i></button> 
+                        <button onclick="askDelete('students', ${std.id})" class="btn btn-danger btn-sm btn-icon-only" data-bs-toggle="tooltip" title="ลบข้อมูลนักศึกษา"><i class="bi bi-trash"></i></button>
+                    ` : ''}
+                    ${currentUser.role === 'mentor' ? `
+                        <button onclick="openEvalModal(${std.id})" class="btn btn-info btn-sm text-white" data-bs-toggle="tooltip" title="ประเมินผลการฝึกงานนักศึกษา"><i class="bi bi-clipboard-check"></i> ประเมินผล</button>
+                    ` : ''}
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        const tooltips = tbody.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltips.forEach(t => new bootstrap.Tooltip(t));
+    }
+
+    async function handleFilter(e) {
+        e.preventDefault();
+        loadLogs();
+    }
+
+    async function loadLogs() {
+        const search = encodeURIComponent(document.getElementById('searchKeyword').value.trim());
+        const status = encodeURIComponent(document.getElementById('statusFilter').value);
+        const logs = await fetchJson(`api.php?action=get_logs&search=${search}&status=${status}`);
+        if (!logs) return;
+        
+        const tbody = document.getElementById('logsTableBody');
+        tbody.innerHTML = '';
+
+        logs.forEach(log => {
+            let actionBtn = '';
+            
+            if (currentUser.role === 'mentor' || currentUser.role === 'admin') {
+                const statusBtns = [];
+                if (log.status !== 'approved') statusBtns.push(`<button onclick="approveLog(${log.id}, 'approved')" class="btn btn-success btn-sm btn-icon-only me-1" data-bs-toggle="tooltip" title="อนุมัติบันทึกงานนี้"><i class="bi bi-check-lg"></i></button>`);
+                if (log.status !== 'revision') statusBtns.push(`<button onclick="openStatusCommentModal(${log.id}, 'revision')" class="btn btn-warning btn-sm btn-icon-only me-1" data-bs-toggle="tooltip" title="ส่งกลับให้นักศึกษาแก้ไข"><i class="bi bi-pencil"></i></button>`);
+                if (log.status !== 'rejected') statusBtns.push(`<button onclick="openStatusCommentModal(${log.id}, 'rejected')" class="btn btn-danger btn-sm btn-icon-only me-1" data-bs-toggle="tooltip" title="ปฏิเสธบันทึกงานนี้"><i class="bi bi-x-lg"></i></button>`);
+                
+                actionBtn += `<div class="btn-group btn-group-sm mb-1">${statusBtns.join('')}</div><br>`;
+                
+                const safeComment = (log.mentor_comment || '').replace(/`/g, '\\`').replace(/'/g, "\\'");
+                actionBtn += `<button onclick="openMentorEditCommentModal(${log.id}, \`${safeComment}\`)" class="btn btn-outline-info btn-sm btn-icon-only" data-bs-toggle="tooltip" title="แก้ไขความคิดเห็นพี่เลี้ยง"><i class="bi bi-chat-text"></i></button> `;
+            }
+
+            if (currentUser.role === 'student' && log.student_id == currentUser.ref_id) {
+                const safeDesc = log.work_description.replace(/`/g, '\\`').replace(/'/g, "\\'");
+                actionBtn += `<button onclick="openStudentEditLogModal(${log.id}, \`${safeDesc}\`)" class="btn btn-warning btn-sm btn-icon-only" data-bs-toggle="tooltip" title="นักศึกษาแก้ไขคำผิดในบันทึก"><i class="bi bi-pencil-square"></i></button> `;
+            }
+
+            if (currentUser.role === 'admin' || (currentUser.role === 'student' && log.student_id == currentUser.ref_id)) {
+                actionBtn += `<button onclick="askDelete('logs', ${log.id})" class="btn btn-danger btn-sm btn-icon-only" data-bs-toggle="tooltip" title="ลบบันทึกงานนี้"><i class="bi bi-trash"></i></button>`;
+            }
+
+            let badgeBg = 'bg-secondary';
+            if (log.status === 'approved') badgeBg = 'bg-success';
+            else if (log.status === 'revision') badgeBg = 'bg-warning text-dark';
+            else if (log.status === 'rejected') badgeBg = 'bg-danger';
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${log.log_date}</td>
+                <td>${log.student_name || 'N/A'}</td>
+                <td>${log.work_description}</td>
+                <td><small class="text-muted">${log.mentor_comment || '-'}</small></td>
+                <td><span class="badge ${badgeBg}">${log.status}</span></td>
+                <td>${actionBtn}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        const tooltips = tbody.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltips.forEach(t => new bootstrap.Tooltip(t));
+    }
+
+    function openStudentEditLogModal(logId, currentDescription) {
+        document.getElementById('student_edit_log_id').value = logId;
+        document.getElementById('student_edit_work_description').value = currentDescription;
+        studentEditLogModalObj.show();
+    }
+
+    async function submitStudentEditLog(e) {
+        e.preventDefault();
+        const logId = Number(document.getElementById('student_edit_log_id').value);
+        const newDescription = document.getElementById('student_edit_work_description').value.trim();
+
+        if (!newDescription) return alert('กรุณากรอกข้อมูลบันทึก');
+
+        const res = await fetchJson('api.php?action=update_log', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: logId, work_description: newDescription })
+        });
+
+        if (res && res.success) {
+            studentEditLogModalObj.hide();
+            showSuccessModal('แก้ไขบันทึกงานเรียบร้อยแล้ว');
+            loadLogs();
+        } else if (res) {
+            alert('เกิดข้อผิดพลาด: ' + res.error);
+        }
+    }
+
+    function openMentorEditCommentModal(logId, currentComment) {
+        document.getElementById('mentor_edit_log_id').value = logId;
+        document.getElementById('mentor_edit_comment').value = currentComment;
+        mentorEditCommentModalObj.show();
+    }
+
+    async function submitMentorEditComment(e) {
+        e.preventDefault();
+        const logId = Number(document.getElementById('mentor_edit_log_id').value);
+        const newComment = document.getElementById('mentor_edit_comment').value.trim();
+
+        const res = await fetchJson('api.php?action=update_mentor_comment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: logId, mentor_comment: newComment })
+        });
+
+        if (res && res.success) {
+            mentorEditCommentModalObj.hide();
+            showSuccessModal('แก้ไขข้อความเสร็จสิ้น');
+            loadLogs();
+        } else if (res) {
+            alert('เกิดข้อผิดพลาด: ' + res.error);
+        }
+    }
+
+    async function saveLog(e) {
+        e.preventDefault();
+        const payload = { log_date: document.getElementById('log_work_date').value, work_description: document.getElementById('log_work_description').value };
+        const res = await fetchJson('api.php?action=add_log', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        if (res && res.success) { document.getElementById('log_work_description').value = ''; loadLogs(); }
+    }
+
+    async function approveLog(logId, status) {
+        await fetchJson('api.php?action=approve_log', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ log_id: logId, status }) });
+        loadLogs();
+    }
+
+    function openStatusCommentModal(logId, actionStatus) {
+        document.getElementById('status_comment_log_id').value = logId;
+        document.getElementById('status_comment_action').value = actionStatus;
+        document.getElementById('status_comment_text').value = '';
+
+        const headerEl = document.getElementById('statusCommentHeader');
+        const titleEl = document.getElementById('statusCommentTitle');
+        const labelEl = document.getElementById('statusCommentLabel');
+        const btnEl = document.getElementById('statusCommentSubmitBtn');
+
+        if (actionStatus === 'revision') {
+            headerEl.className = 'modal-header bg-warning text-dark';
+            titleEl.innerText = 'ส่งกลับแก้ไขบันทึกงาน';
+            labelEl.innerText = 'กรุณาระบุสิ่งที่ต้องการให้นักศึกษาแก้ไข:';
+            btnEl.className = 'btn btn-warning text-dark';
+        } else if (actionStatus === 'rejected') {
+            headerEl.className = 'modal-header bg-danger text-white';
+            titleEl.innerText = 'ปฏิเสธบันทึกงาน';
+            labelEl.innerText = 'กรุณาระบุเหตุผลการปฏิเสธ:';
+            btnEl.className = 'btn btn-danger';
+        }
+
+        statusCommentModalObj.show();
+    }
+
+    async function submitStatusWithComment(e) {
+        e.preventDefault();
+        const logId = Number(document.getElementById('status_comment_log_id').value);
+        const status = document.getElementById('status_comment_action').value;
+        const comment = document.getElementById('status_comment_text').value.trim();
+
+        if (!comment) return alert('กรุณากรอกข้อความเหตุผล');
+
+        const res = await fetchJson('api.php?action=approve_log', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ log_id: logId, status: status, mentor_comment: comment })
+        });
+
+        if (res && res.success) {
+            statusCommentModalObj.hide();
+            loadLogs();
+        } else if (res) {
+            alert('เกิดข้อผิดพลาด: ' + res.error);
+        }
+    }
+
+    async function openEvalModal(studentId) {
+        document.getElementById('eval_student_id').value = studentId;
+        
+        document.getElementById('score_work').value = 0;
+        document.getElementById('score_time').value = 0;
+        document.getElementById('score_behavior').value = 0;
+        document.getElementById('final_feedback').value = '';
+
+        const evalData = await fetchJson(`api.php?action=get_evaluation&student_id=${studentId}`);
+        if (evalData) {
+            document.getElementById('score_work').value = evalData.score_work ?? 0;
+            document.getElementById('score_time').value = evalData.score_time ?? 0;
+            document.getElementById('score_behavior').value = evalData.score_behavior ?? 0;
+            document.getElementById('final_feedback').value = evalData.final_feedback || '';
+        }
+
+        evalModalObj.show();
+    }
+
+    async function saveEvaluation(e) {
+        e.preventDefault();
+        const payload = {
+            student_id: Number(document.getElementById('eval_student_id').value),
+            score_work: Number(document.getElementById('score_work').value),
+            score_time: Number(document.getElementById('score_time').value),
+            score_behavior: Number(document.getElementById('score_behavior').value),
+            final_feedback: document.getElementById('final_feedback').value.trim()
+        };
+        const res = await fetchJson('api.php?action=save_evaluation', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        if (res && res.success) { 
+            evalModalObj.hide(); 
+            showSuccessModal(res.message || 'บันทึกคะแนนและคำแนะนำเรียบร้อยแล้ว', 'ประเมินผลสำเร็จ!');
+        } else if (res) {
+            alert('เกิดข้อผิดพลาด: ' + res.error);
+        }
+    }
+
+    async function loadMentors() {
+        const mentors = await fetchJson('api.php?action=get_mentors');
+        if (!mentors) return;
+        const tbody = document.getElementById('mentorsTableBody');
+        const select = document.getElementById('modal_student_mentor_id');
+        tbody.innerHTML = ''; select.innerHTML = '<option value="">-- ไม่ระบุ --</option>'; mentorMap = {};
+
+        mentors.forEach(m => {
+            mentorMap[m.id] = m.name;
+            select.appendChild(new Option(m.name, m.id));
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${m.name}</td><td>${m.department}</td><td>${m.email}</td>${currentUser.role === 'admin' ? `<td><button onclick='editMentorModal(${JSON.stringify(m)})' class="btn btn-warning btn-sm btn-icon-only" data-bs-toggle="tooltip" title="แก้ไขข้อมูลพี่เลี้ยง"><i class="bi bi-pencil-square"></i></button> <button onclick="openAdminResetModal('mentor', ${m.id})" class="btn btn-secondary btn-sm btn-icon-only" data-bs-toggle="tooltip" title="ตั้งรหัสผ่านใหม่ให้พี่เลี้ยง"><i class="bi bi-key"></i></button> <button onclick="askDelete('mentors', ${m.id})" class="btn btn-danger btn-sm btn-icon-only" data-bs-toggle="tooltip" title="ลบข้อมูลพี่เลี้ยง"><i class="bi bi-trash"></i></button></td>` : '<td>-</td>'}`;
+            tbody.appendChild(tr);
+        });
+
+        const tooltips = tbody.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltips.forEach(t => new bootstrap.Tooltip(t));
+    }
+
+    function openStudentModal() { document.getElementById('studentModalForm').reset(); document.getElementById('modal_student_id').value = ''; studentModalObj.show(); }
+    function editStudentModal(std) {
+        document.getElementById('modal_student_id').value = std.id;
+        document.getElementById('modal_student_code').value = std.student_code;
+        document.getElementById('modal_student_name').value = std.name;
+        document.getElementById('modal_student_university').value = std.university || '';
+        document.getElementById('modal_student_faculty').value = std.faculty || '';
+        document.getElementById('modal_student_major').value = std.major || '';
+        document.getElementById('modal_student_start_date').value = std.start_date || '';
+        document.getElementById('modal_student_duration').value = std.duration_days || 90;
+        document.getElementById('modal_student_phone').value = std.phone || '';
+        document.getElementById('modal_student_mentor_id').value = std.mentor_id || '';
+        studentModalObj.show();
+    }
+
+    async function saveStudentFromModal(e) {
+        e.preventDefault();
+        const id = document.getElementById('modal_student_id').value;
+        const payload = {
+            id: id ? Number(id) : null,
+            student_code: document.getElementById('modal_student_code').value,
+            name: document.getElementById('modal_student_name').value,
+            university: document.getElementById('modal_student_university').value,
+            faculty: document.getElementById('modal_student_faculty').value,
+            major: document.getElementById('modal_student_major').value,
+            start_date: document.getElementById('modal_student_start_date').value,
+            duration_days: document.getElementById('modal_student_duration').value,
+            phone: document.getElementById('modal_student_phone').value,
+            mentor_id: document.getElementById('modal_student_mentor_id').value ? Number(document.getElementById('modal_student_mentor_id').value) : null
+        };
+        const res = await fetchJson(`api.php?action=${id ? 'update_student' : 'add_student'}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        if (res && res.success) { studentModalObj.hide(); loadStudents(); }
+    }
+
+    function openMentorModal() { document.getElementById('mentorModalForm').reset(); document.getElementById('modal_mentor_id').value = ''; mentorModalObj.show(); }
+    function editMentorModal(m) {
+        document.getElementById('modal_mentor_id').value = m.id;
+        document.getElementById('modal_mentor_name').value = m.name;
+        document.getElementById('modal_mentor_department').value = m.department;
+        document.getElementById('modal_mentor_email').value = m.email;
+        mentorModalObj.show();
+    }
+
+    async function saveMentorFromModal(e) {
+        e.preventDefault();
+        const id = document.getElementById('modal_mentor_id').value;
+        const payload = { id: id ? Number(id) : null, name: document.getElementById('modal_mentor_name').value, department: document.getElementById('modal_mentor_department').value, email: document.getElementById('modal_mentor_email').value };
+        const res = await fetchJson(`api.php?action=${id ? 'update_mentor' : 'add_mentor'}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        if (res && res.success) { mentorModalObj.hide(); await loadMentors(); loadStudents(); }
+    }
+
+    function askDelete(table, id) {
+        if (table === 'mentors' && currentUser.role !== 'admin') return alert('เฉพาะ Admin เท่านั้นที่ลบได้');
+        deleteTarget = { table, id };
+        document.getElementById('deleteModalText').innerText = `คุณแน่ใจหรือไม่ที่จะลบข้อมูลนี้?`;
+        deleteConfirmModalObj.show();
+    }
+
+    async function executeDelete() {
+        if (!deleteTarget.table || !deleteTarget.id) return;
+        const res = await fetchJson(`api.php?action=delete&type=${encodeURIComponent(deleteTarget.table)}&id=${Number(deleteTarget.id)}`);
+        deleteConfirmModalObj.hide();
+        if (res && res.success) {
+            if (deleteTarget.table === 'students') loadStudents();
+            if (deleteTarget.table === 'mentors') { await loadMentors(); loadStudents(); }
+            if (deleteTarget.table === 'logs') loadLogs();
+        }
+    }
+
+    async function logout() {
+        try { await fetch('api.php?action=logout'); } catch(e){}
+        window.location.href = 'login.html';
+    }
+</script>
+</body>
+</html>

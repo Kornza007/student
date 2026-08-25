@@ -1,0 +1,82 @@
+/* =========================================================
+   LOGIN THEME - COLOR.CSS (ธีมสีไข่นวล สบายตา)
+   ========================================================= */
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap');
+
+:root {
+    --login-bg: #fefae0;          /* สีพื้นหลังไข่นวลนุ่มนวล */
+    --card-bg: #ffffff;           /* สีพื้นหลังการ์ดขาวสะอาด */
+    --accent-warm: #dda15e;       /* สีส้มอมน้ำตาลนวล */
+    --btn-primary: #bc6c25;       /* สีปุ่มหลักโทนอุ่น */
+    --btn-hover: #9b5116;         /* สีปุ่มเมื่อนำเมาส์ไปวาง */
+    --text-dark: #2b2d42;         /* สีข้อความอ่านง่าย */
+    --border-soft: #e9edc9;       /* สีเส้นขอบนุ่มนวล */
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--login-bg);
+    margin: 0;
+    font-family: "Kanit", sans-serif;
+    color: var(--text-dark);
+}
+
+.login-card {
+    background: var(--card-bg);
+    padding: 40px 35px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(188, 108, 37, 0.12);
+    width: 100%;
+    max-width: 420px;
+    border: 2px solid var(--border-soft);
+}
+
+.login-card h2 {
+    color: var(--btn-primary);
+    font-weight: 600;
+}
+
+.form-label {
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.form-control-custom {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 15px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.form-control-custom:focus {
+    outline: none;
+    border-color: var(--accent-warm);
+    box-shadow: 0 0 0 4px rgba(221, 161, 94, 0.2);
+}
+
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--btn-primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(188, 108, 37, 0.2);
+}
+
+.btn-login:hover {
+    background-color: var(--btn-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(188, 108, 37, 0.3);
+}
