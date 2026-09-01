@@ -10,32 +10,82 @@
 </head>
 <body>
     <div class="login-card">
-        <h2 style="text-align: center; margin-bottom: 25px;">
-            <i class="bi bi-shield-lock-fill me-2"></i>เข้าสู่ระบบ
-        </h2>
-        <div id="error-msg" style="color: #d90429; background-color: #ffe5ec; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center; display: none; font-size: 14px;"></div>
+        <div class="login-brand">
+            <div class="login-logo-icon">
+                <i class="bi bi-journal-bookmark-fill"></i>
+            </div>
+            <h2>ระบบจัดการการฝึกงาน</h2>
+            <p class="subtitle">กรุณาลงชื่อเข้าใช้เพื่อเข้าสู่ระบบ</p>
+        </div>
+
+        <div id="error-msg" style="color: #991b1b; background-color: #fef2f2; border: 1px solid #fecaca; padding: 12px; border-radius: 10px; margin-bottom: 18px; text-align: center; display: none; font-size: 13.5px; font-weight: 500;"></div>
         
         <form id="loginForm">
             <div style="margin-bottom: 18px;">
-                <label class="form-label"><i class="bi bi-person-circle me-1"></i> ชื่อผู้ใช้งาน (Username):</label>
-                <input type="text" id="username" class="form-control-custom" required style="margin-top: 6px;" placeholder="กรอกชื่อผู้ใช้งาน">
+                <label class="form-label" for="username"><i class="bi bi-person me-1"></i> ชื่อผู้ใช้งาน (Username):</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-person-fill input-icon"></i>
+                    <input type="text" id="username" class="form-control-custom" required placeholder="กรอกชื่อผู้ใช้งาน หรือ รหัสนักศึกษา" autocomplete="username">
+                </div>
             </div>
-            <div style="margin-bottom: 25px;">
-                <label class="form-label"><i class="bi bi-key-fill me-1"></i> รหัสผ่าน (Password):</label>
-                <input type="password" id="password" class="form-control-custom" required style="margin-top: 6px;" placeholder="กรอกรหัสผ่าน">
+
+            <div style="margin-bottom: 24px;">
+                <label class="form-label" for="password"><i class="bi bi-key me-1"></i> รหัสผ่าน (Password):</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-lock-fill input-icon"></i>
+                    <input type="password" id="password" class="form-control-custom" required placeholder="กรอกรหัสผ่าน" autocomplete="current-password">
+                    <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility()" title="แสดง/ซ่อนรหัสผ่าน">
+                        <i class="bi bi-eye-slash" id="togglePasswordIcon"></i>
+                    </button>
+                </div>
             </div>
-            <button type="submit" class="btn-login"><i class="bi bi-box-arrow-in-right me-1"></i> เข้าสู่ระบบ</button>
+
+            <button type="submit" class="btn-login" id="submitBtn">
+                <i class="bi bi-box-arrow-in-right"></i>
+                <span>เข้าสู่ระบบ</span>
+            </button>
         </form>
+
+        <!-- บัญชีทดสอบสำหรับความสะดวก (Demo Helper) -->
+        <div class="demo-box">
+            <div style="font-weight: 600; margin-bottom: 6px; color: #0f172a;">💡 ทดสอบเข้าใช้งานด่วน (คลิกเพื่อกรอก):</div>
+            <div>
+                <span class="demo-chip" onclick="fillDemo('admin', 'Admin01')">👑 Admin (admin)</span>
+                <span class="demo-chip" onclick="fillDemo('kan@jm.th', '020252')">🧑‍🏫 Mentor (kan@jm.th)</span>
+                <span class="demo-chip" onclick="fillDemo('9745', '081207')">🎓 Student (9745)</span>
+            </div>
+        </div>
     </div>
 
     <script>
+        function togglePasswordVisibility() {
+            const pwdInput = document.getElementById('password');
+            const pwdIcon = document.getElementById('togglePasswordIcon');
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                pwdIcon.className = 'bi bi-eye';
+            } else {
+                pwdInput.type = 'password';
+                pwdIcon.className = 'bi bi-eye-slash';
+            }
+        }
+
+        function fillDemo(username, password) {
+            document.getElementById('username').value = username;
+            document.getElementById('password').value = password;
+            document.getElementById('error-msg').style.display = 'none';
+        }
+
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
             const errorMsg = document.getElementById('error-msg');
+            const submitBtn = document.getElementById('submitBtn');
 
             errorMsg.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>กำลังเข้าสู่ระบบ...';
 
             try {
                 const response = await fetch('api.php?action=login', {
@@ -51,10 +101,14 @@
                 } else {
                     errorMsg.innerText = data.error || 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
                     errorMsg.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i><span>เข้าสู่ระบบ</span>';
                 }
             } catch (err) {
                 errorMsg.innerText = 'เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์';
                 errorMsg.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i><span>เข้าสู่ระบบ</span>';
             }
         });
     </script>

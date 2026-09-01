@@ -3,6 +3,7 @@
 session_start();
 header('Content-Type: application/json; charset=utf-8');
 require_once 'db.php';
+require_once 'audit_helper.php';
 
 $input = json_decode(file_get_contents('php://input'), true);
 $username = trim($input['username'] ?? '');
@@ -21,13 +22,26 @@ $result = $stmt->get_result();
 
 if ($user = $result->fetch_assoc()) {
     if (password_verify($password, $user['password'])) {
-        // แก้ไขให้เก็บ session แบบ Array เพื่อให้ตรงกับ api.php
+        session_regenerate_id(true);
         $_SESSION['user'] = [
             'id'       => $user['id'],
             'username' => $user['username'],
             'role'     => $user['role'],
             'ref_id'   => $user['ref_id']
         ];
+
+        // บันทึก Audit Log เมื่อ Login สำเร็จ
+        writeAuditLog(
+            $user['id'],
+            $user['username'],
+            $user['role'],
+            'LOGIN',
+            'users',
+            $user['id'],
+            null,
+            ['role' => $user['role']],
+            "ผู้ใช้ {$user['username']} ({$user['role']}) เข้าสู่ระบบสำเร็จ"
+        );
 
         echo json_encode(['success' => true], JSON_UNESCAPED_UNICODE);
         exit;
