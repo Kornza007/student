@@ -17,9 +17,13 @@
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <!-- Custom Style -->
     <link rel="stylesheet" href="style.css">
+    <!-- i18n Multi-Language Scripts -->
+    <script src="lang/th.js"></script>
+    <script src="lang/en.js"></script>
+    <script src="lang/i18n.js"></script>
 </head>
 
-<body>
+<body data-i18n-page-title="main_system_title">
 
     <!-- Backdrop สำหรับปิดเมนูเมื่อคลิกด้านนอก Sidebar บนมือถือ -->
     <div class="sidebar-backdrop" onclick="closeSidebar()"></div>
@@ -31,7 +35,7 @@
             <div class="d-flex">
                 <div class="toast-body d-flex align-items-center gap-2" id="toastMessage">
                     <i class="bi bi-check-circle-fill text-success fs-5"></i>
-                    <span>ดำเนินการสำเร็จ</span>
+                    <span data-i18n="toast_success">ดำเนินการสำเร็จ</span>
                 </div>
                 <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
@@ -47,31 +51,38 @@
             <div class="sidebar-brand">
                 <div class="sidebar-brand-mark"><i class="bi bi-journal-bookmark-fill"></i></div>
                 <div class="sidebar-brand-text">
-                    <strong>ระบบฝึกงาน</strong>
-                    <small>Internship Hub</small>
+                    <strong data-i18n="app_title">ระบบฝึกงาน</strong>
+                    <small data-i18n="app_subtitle">Internship Hub</small>
                 </div>
+            </div>
+            <!-- จุดที่ 2: ปุ่มเปลี่ยนภาษา (Language Switcher) ส่วนบนหัวแถบเมนู Sidebar -->
+            <div class="lang-switch-toggle sidebar-lang-switcher" onclick="toggleLanguage()" role="button" tabindex="0" title="สลับภาษา / Switch Language (TH | EN)" aria-label="Switch Language">
+                <span class="lang-globe-icon"><i class="bi bi-globe2"></i></span>
+                <span class="lang-opt th-opt active" onclick="event.stopPropagation(); setLanguage('th');" data-lang="th" title="ภาษาไทย">TH</span>
+                <span class="lang-divider">|</span>
+                <span class="lang-opt en-opt" onclick="event.stopPropagation(); setLanguage('en');" data-lang="en" title="English">EN</span>
             </div>
         </div>
 
         <!-- ปุ่ม Quick Action สำหรับเพิ่มข้อมูลด่วน -->
         <button type="button" class="gemini-new-btn admin-only" onclick="openStudentModal()" style="display: none;">
             <i class="bi bi-plus-circle-fill"></i>
-            <span>เพิ่มนักศึกษาใหม่</span>
+            <span data-i18n="btn_add_new_student">เพิ่มนักศึกษาใหม่</span>
         </button>
 
         <button type="button" class="gemini-new-btn admin-only" onclick="openBatchImportModal()"
             style="display: none; margin-top: -8px;">
             <i class="bi bi-file-earmark-spreadsheet-fill text-success"></i>
-            <span>นำเข้าข้อมูล (Excel/CSV)</span>
+            <span data-i18n="btn_batch_import">นำเข้าข้อมูล (Excel/CSV)</span>
         </button>
 
         <button type="button" class="gemini-new-btn student-only" onclick="focusAddLog()" style="display: none;">
             <i class="bi bi-pencil-square"></i>
-            <span>เขียนบันทึกประจำวัน</span>
+            <span data-i18n="btn_write_daily_log">เขียนบันทึกประจำวัน</span>
         </button>
 
         <div class="sidebar-heading">
-            <span>หมวดหมู่ระบบ</span>
+            <span data-i18n="sidebar_heading_categories">หมวดหมู่ระบบ</span>
         </div>
 
         <!-- รายการเมนูหลัก -->
@@ -81,7 +92,7 @@
                 <button type="button" class="sidebar-nav-item" id="nav-dashboard"
                     onclick="navigateToCategory('dashboard')">
                     <i class="bi bi-speedometer2 text-danger"></i>
-                    <span>แดชบอร์ด & สถิติภาพรวม</span>
+                    <span data-i18n="nav_dashboard">แดชบอร์ด & สถิติภาพรวม</span>
                     <span class="badge bg-danger-subtle text-danger border rounded-pill sidebar-nav-badge"
                         id="badge-dashboard">LIVE</span>
                 </button>
@@ -92,7 +103,7 @@
                 <button type="button" class="sidebar-nav-item" id="nav-active-students"
                     onclick="navigateToCategory('active_students')">
                     <i class="bi bi-person-workspace text-primary"></i>
-                    <span>นักศึกษาที่ฝึกงานอยู่</span>
+                    <span data-i18n="nav_active_students">นักศึกษาที่ฝึกงานอยู่</span>
                     <span class="badge bg-primary-subtle text-primary border rounded-pill sidebar-nav-badge"
                         id="badge-active-students">0</span>
                 </button>
@@ -103,7 +114,7 @@
                 <button type="button" class="sidebar-nav-item" id="nav-completed-students"
                     onclick="navigateToCategory('completed_students')">
                     <i class="bi bi-mortarboard-fill text-success"></i>
-                    <span>นักศึกษาที่จบแล้ว</span>
+                    <span data-i18n="nav_completed_students">นักศึกษาที่จบแล้ว</span>
                     <span class="badge bg-success-subtle text-success border rounded-pill sidebar-nav-badge"
                         id="badge-completed-students">0</span>
                 </button>
@@ -114,7 +125,7 @@
                 <button type="button" class="sidebar-nav-item" id="nav-all-students"
                     onclick="navigateToCategory('all_students')">
                     <i class="bi bi-people-fill" style="color: #6366f1;"></i>
-                    <span>นักศึกษาทั้งหมดในระบบ</span>
+                    <span data-i18n="nav_all_students">นักศึกษาทั้งหมดในระบบ</span>
                     <span class="badge bg-secondary-subtle text-dark border rounded-pill sidebar-nav-badge"
                         id="badge-all-students">0</span>
                 </button>
@@ -124,7 +135,7 @@
             <li class="admin-only">
                 <button type="button" class="sidebar-nav-item" id="nav-mentors" onclick="navigateToCategory('mentors')">
                     <i class="bi bi-person-badge-fill text-info"></i>
-                    <span>พี่เลี้ยง</span>
+                    <span data-i18n="nav_mentors">พี่เลี้ยง</span>
                     <span class="badge bg-info-subtle text-info border rounded-pill sidebar-nav-badge"
                         id="badge-mentors">0</span>
                 </button>
@@ -135,7 +146,7 @@
                 <button type="button" class="sidebar-nav-item active" id="nav-logs"
                     onclick="navigateToCategory('logs')">
                     <i class="bi bi-journal-text text-warning"></i>
-                    <span>การบันทึกงานของนักศึกษา</span>
+                    <span data-i18n="nav_logs">การบันทึกงานของนักศึกษา</span>
                     <span class="badge bg-warning-subtle text-warning border rounded-pill sidebar-nav-badge"
                         id="badge-logs">0</span>
                 </button>
@@ -146,7 +157,7 @@
              ADMIN TOOLS SECTION (เฉพาะ Admin)
              ========================================================= -->
         <div class="sidebar-heading admin-only" style="display: none; margin-top: 8px;">
-            <span>เครื่องมือผู้ดูแลระบบ</span>
+            <span data-i18n="sidebar_heading_admin_tools">เครื่องมือผู้ดูแลระบบ</span>
         </div>
 
         <ul class="sidebar-nav admin-only" style="display: none;">
@@ -155,7 +166,7 @@
                 <a href="admin_audit_logs.php" class="sidebar-nav-item" id="nav-audit-logs"
                     style="text-decoration: none;">
                     <i class="bi bi-shield-check" style="color: #7c3aed;"></i>
-                    <span>ตรวจสอบประวัติระบบ</span>
+                    <span data-i18n="nav_audit_logs">ตรวจสอบประวัติระบบ</span>
                     <span class="badge rounded-pill sidebar-nav-badge"
                         style="background:#f3f0ff; color:#7c3aed; border:1px solid #ddd6fe; font-size:10px;">AUDIT</span>
                 </a>
@@ -166,7 +177,7 @@
                 <a href="admin_recycle_bin.php" class="sidebar-nav-item" id="nav-recycle-bin"
                     style="text-decoration: none;">
                     <i class="bi bi-trash3-fill text-danger"></i>
-                    <span>ถังขยะ</span>
+                    <span data-i18n="nav_recycle_bin">ถังขยะ</span>
                     <span class="badge rounded-pill sidebar-nav-badge" id="badge-recycle-bin"
                         style="background:#fef2f2; color:#ef4444; border:1px solid #fecaca; font-size:10px; display:none;">0</span>
                 </a>
@@ -187,12 +198,12 @@
                 </button>
                 <ul class="dropdown-menu profile-dropdown-menu">
                     <li><button onclick="openChangePasswordModal()" class="dropdown-item"><i
-                                class="bi bi-key-fill me-2 text-warning"></i>เปลี่ยนรหัสผ่าน</button></li>
+                                class="bi bi-key-fill me-2 text-warning"></i><span data-i18n="menu_change_password">เปลี่ยนรหัสผ่าน</span></button></li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
                     <li><button onclick="promptLogout()" class="dropdown-item text-danger"><i
-                                class="bi bi-box-arrow-right me-2"></i>ออกจากระบบ</button></li>
+                                class="bi bi-box-arrow-right me-2"></i><span data-i18n="menu_logout">ออกจากระบบ</span></button></li>
                 </ul>
             </div>
         </div>
@@ -262,7 +273,7 @@
                 <div class="progress-header">
                     <div>
                         <h5 class="fw-bold mb-1 text-success d-flex align-items-center">
-                            <i class="bi bi-graph-up-arrow me-2"></i>ความก้าวหน้าการฝึกงานของคุณ
+                            <i class="bi bi-graph-up-arrow me-2"></i><span data-i18n="student_progress_title">ความก้าวหน้าการฝึกงานของคุณ</span>
                         </h5>
                         <small class="text-muted" id="progressDateRange">ช่วงเวลาฝึกงาน</small>
                     </div>
@@ -278,7 +289,7 @@
                 </div>
                 <div class="d-flex justify-content-between text-muted" style="font-size: 13px;">
                     <span id="progressTextDays">0 / 90 วัน</span>
-                    <span>ครบกำหนดตามหลักสูตร</span>
+                    <span data-i18n="progress_curriculum_complete">ครบกำหนดตามหลักสูตร</span>
                 </div>
             </div>
 
@@ -295,31 +306,31 @@
                             <button type="button" class="dashboard-sub-btn active" id="subnav-charts"
                                 onclick="switchDashboardSubTab('charts')">
                                 <i class="bi bi-pie-chart-fill text-primary"></i>
-                                <span>กราฟจำนวนนักศึกษา/แผนก</span>
+                                <span data-i18n="chart_tab_label">กราฟจำนวนนักศึกษา/แผนก</span>
                             </button>
                             <button type="button" class="dashboard-sub-btn" id="subnav-tables"
                                 onclick="switchDashboardSubTab('tables')">
                                 <i class="bi bi-table text-success"></i>
-                                <span>ตารางสรุป</span>
+                                <span data-i18n="table_tab_label">ตารางสรุป</span>
                             </button>
                         </div>
 
                         <!-- Real-time Live Indicator -->
-                        <div class="live-pulse-badge" id="liveSyncBadge" title="ระบบกำลังอัปเดตข้อมูลแบบ Real-time">
+                        <div class="live-pulse-badge" id="liveSyncBadge" title="Real-time Live Sync">
                             <span class="live-dot"></span>
-                            <span id="liveSyncText">Real-time Live (15s)</span>
+                            <span id="liveSyncText">Real-time Live</span>
                         </div>
 
                         <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill"
-                            onclick="refreshDashboardNow()" title="รีเฟรชข้อมูลแดชบอร์ดทันที">
-                            <i class="bi bi-arrow-clockwise" id="refreshIcon"></i> รีเฟรช
+                            onclick="refreshDashboardNow()" title="รีเฟรชข้อมูล">
+                            <i class="bi bi-arrow-clockwise" id="refreshIcon"></i> <span data-i18n="btn_refresh_data">รีเฟรช</span>
                         </button>
                     </div>
 
                     <!-- ฝั่งขวา: กล่องเครื่องมือ Export & การพิมพ์ -->
                     <div class="export-toolbar">
                         <span class="text-muted small fw-semibold d-none d-md-inline me-1"><i
-                                class="bi bi-download me-1"></i>ส่งออก:</span>
+                                class="bi bi-download me-1"></i><span data-i18n="export_label">ส่งออก:</span></span>
 
                         <div class="dropdown">
                             <button class="export-btn export-btn-csv dropdown-toggle" type="button"
@@ -328,27 +339,25 @@
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                                 <li><a class="dropdown-item" href="api.php?action=export_students_csv"><i
-                                            class="bi bi-person-lines-fill me-2 text-success"></i>รายชื่อนักศึกษาทั้งหมด
-                                        (.csv)</a></li>
+                                            class="bi bi-person-lines-fill me-2 text-success"></i><span data-i18n="btn_export_roster_csv">รายชื่อนักศึกษาทั้งหมด (.csv)</span></a></li>
                                 <li><a class="dropdown-item" href="api.php?action=export_summary_csv"><i
-                                            class="bi bi-diagram-3-fill me-2 text-primary"></i>สรุปสถิติรายแผนก
-                                        (.csv)</a></li>
+                                            class="bi bi-diagram-3-fill me-2 text-primary"></i><span data-i18n="btn_export_dept_csv">สรุปสถิติรายแผนก (.csv)</span></a></li>
                             </ul>
                         </div>
 
                         <button type="button" class="export-btn export-btn-print" onclick="openPrintReportModal()"
-                            title="เปิดตัวอย่างพิมพ์รายงานทางการ">
-                            <i class="bi bi-printer-fill"></i> พิมพ์รายงาน
+                            title="พิมพ์รายงาน">
+                            <i class="bi bi-printer-fill"></i> <span data-i18n="btn_print_report">พิมพ์รายงาน</span>
                         </button>
 
                         <button type="button" class="export-btn export-btn-pdf" onclick="exportReportPDF()"
-                            title="บันทึกรายงานเป็นเอกสาร PDF">
-                            <i class="bi bi-file-earmark-pdf-fill"></i> Export PDF
+                            title="Export PDF">
+                            <i class="bi bi-file-earmark-pdf-fill"></i> <span data-i18n="btn_export_pdf">Export PDF</span>
                         </button>
 
                         <button type="button" class="export-btn export-btn-jpg" onclick="exportDashboardJPG()"
-                            title="บันทึกภาพแดชบอร์ด/ชาร์ตเป็นไฟล์รูปภาพ JPG">
-                            <i class="bi bi-file-earmark-image-fill"></i> Export JPG
+                            title="Export JPG">
+                            <i class="bi bi-file-earmark-image-fill"></i> <span data-i18n="btn_export_jpg">Export JPG</span>
                         </button>
                     </div>
                 </div>
@@ -362,7 +371,7 @@
                             <div class="stat-icon-wrapper stat-icon-primary"><i class="bi bi-people-fill"></i></div>
                             <div class="stat-info">
                                 <div class="stat-value" id="kpi-dash-total-students">0</div>
-                                <div class="stat-label">นักศึกษาทั้งหมด</div>
+                                <div class="stat-label" data-i18n="kpi_total_students">นักศึกษาทั้งหมด</div>
                             </div>
                         </div>
 
@@ -372,7 +381,7 @@
                             </div>
                             <div class="stat-info">
                                 <div class="stat-value text-primary" id="kpi-dash-active-students">0</div>
-                                <div class="stat-label">🔷 กำลังฝึกงานอยู่</div>
+                                <div class="stat-label" data-i18n="kpi_active_students">กำลังฝึกงานอยู่</div>
                             </div>
                         </div>
 
@@ -382,7 +391,7 @@
                             </div>
                             <div class="stat-info">
                                 <div class="stat-value text-success" id="kpi-dash-completed-students">0</div>
-                                <div class="stat-label">✅ จบการฝึกงานแล้ว</div>
+                                <div class="stat-label" data-i18n="kpi_completed_students">จบการฝึกงานแล้ว</div>
                             </div>
                         </div>
 
@@ -391,7 +400,7 @@
                             <div class="stat-icon-wrapper stat-icon-info"><i class="bi bi-person-badge-fill"></i></div>
                             <div class="stat-info">
                                 <div class="stat-value text-info" id="kpi-dash-mentors">0</div>
-                                <div class="stat-label">พี่เลี้ยงในระบบ</div>
+                                <div class="stat-label" data-i18n="kpi_total_mentors">พี่เลี้ยงในระบบ</div>
                             </div>
                         </div>
 
@@ -399,7 +408,7 @@
                             <div class="stat-icon-wrapper stat-icon-warning"><i class="bi bi-journal-check"></i></div>
                             <div class="stat-info">
                                 <div class="stat-value" id="kpi-dash-logs-total">0</div>
-                                <div class="stat-label">บันทึกงานทั้งหมด</div>
+                                <div class="stat-label" data-i18n="kpi_total_logs">บันทึกงานทั้งหมด</div>
                             </div>
                         </div>
 
@@ -407,7 +416,7 @@
                             <div class="stat-icon-wrapper stat-icon-success"><i class="bi bi-award-fill"></i></div>
                             <div class="stat-info">
                                 <div class="stat-value text-success" id="kpi-dash-approval-rate">0%</div>
-                                <div class="stat-label">อัตราอนุมัติงาน</div>
+                                <div class="stat-label" data-i18n="kpi_approval_rate">อัตราอนุมัติงาน</div>
                             </div>
                         </div>
                     </div>
@@ -418,7 +427,7 @@
                             <div class="chart-card-header">
                                 <h3 class="chart-card-title">
                                     <i class="bi bi-bar-chart-fill text-primary"></i>
-                                    <span>จำนวนนักศึกษาแยกตามแผนกงาน</span>
+                                    <span data-i18n="chart_dept_title">จำนวนนักศึกษาแยกตามแผนกงาน</span>
                                 </h3>
                                 <span class="badge bg-primary-subtle text-primary border rounded-pill"
                                     id="dashTotalDeptsBadge">0 แผนก</span>
@@ -432,10 +441,10 @@
                             <div class="chart-card-header">
                                 <h3 class="chart-card-title">
                                     <i class="bi bi-pie-chart-fill text-success"></i>
-                                    <span>สัดส่วนสถานะการฝึกงาน</span>
+                                    <span data-i18n="chart_status_title">สัดส่วนสถานะการฝึกงาน</span>
                                 </h3>
                                 <span
-                                    class="badge bg-success-subtle text-success border rounded-pill">สถานะปัจจุบัน</span>
+                                    class="badge bg-success-subtle text-success border rounded-pill" data-i18n="chart_current_status">สถานะปัจจุบัน</span>
                             </div>
                             <div class="chart-wrapper">
                                 <canvas id="canvasStatusChart"></canvas>
@@ -449,7 +458,7 @@
                             <div class="chart-card-header">
                                 <h3 class="chart-card-title">
                                     <i class="bi bi-check2-circle text-warning"></i>
-                                    <span>สถานะการตรวจสอบบันทึกงานประจำวัน</span>
+                                    <span data-i18n="chart_logs_title">สถานะการตรวจสอบบันทึกงานประจำวัน</span>
                                 </h3>
                                 <span class="badge bg-warning-subtle text-warning border rounded-pill"
                                     id="dashLogsCountBadge">0 บันทึก</span>
@@ -463,9 +472,9 @@
                             <div class="chart-card-header">
                                 <h3 class="chart-card-title">
                                     <i class="bi bi-building-fill text-info"></i>
-                                    <span>สถิตินักศึกษาตามสถาบันการศึกษา</span>
+                                    <span data-i18n="chart_uni_title">สถิตินักศึกษาตามสถาบันการศึกษา</span>
                                 </h3>
-                                <span class="badge bg-info-subtle text-info border rounded-pill">Top Universities</span>
+                                <span class="badge bg-info-subtle text-info border rounded-pill" data-i18n="chart_top_uni">Top Universities</span>
                             </div>
                             <div class="chart-wrapper">
                                 <canvas id="canvasUniChart"></canvas>
@@ -481,8 +490,8 @@
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
                                 <h4 class="fw-bold mb-0 text-primary"><i
-                                        class="bi bi-diagram-3-fill me-2"></i>ตารางสรุปภาพรวมแยกตามแผนกงาน</h4>
-                                <small class="text-muted">จำนวนนักศึกษา สถานะการฝึกงาน
+                                        class="bi bi-diagram-3-fill me-2"></i><span data-i18n="table_dept_summary_title">ตารางสรุปภาพรวมแยกตามแผนกงาน</span></h4>
+                                <small class="text-muted" data-i18n="table_dept_summary_subtitle">จำนวนนักศึกษา สถานะการฝึกงาน
                                     และประสิทธิภาพการส่งบันทึกงาน</small>
                             </div>
                             <button class="btn btn-outline-success btn-sm rounded-pill"
@@ -494,14 +503,14 @@
                             <table class="table table-hover align-middle">
                                 <thead>
                                     <tr>
-                                        <th>แผนกงาน</th>
-                                        <th class="text-center">จำนวนนักศึกษา</th>
-                                        <th class="text-center">กำลังฝึกงาน</th>
-                                        <th class="text-center">จบการฝึกงาน</th>
-                                        <th>พี่เลี้ยงในแผนก</th>
-                                        <th class="text-center">บันทึกที่ส่ง</th>
-                                        <th class="text-center">อนุมัติแล้ว</th>
-                                        <th class="text-center">อัตราผ่าน (%)</th>
+                                        <th data-i18n="col_department">แผนกงาน</th>
+                                        <th class="text-center" data-i18n="col_total_interns">จำนวนนักศึกษา</th>
+                                        <th class="text-center" data-i18n="col_active_interns">กำลังฝึกงาน</th>
+                                        <th class="text-center" data-i18n="col_completed_interns">จบการฝึกงาน</th>
+                                        <th data-i18n="col_dept_mentors">พี่เลี้ยงในแผนก</th>
+                                        <th class="text-center" data-i18n="col_dept_logs">บันทึกที่ส่ง</th>
+                                        <th class="text-center" data-i18n="col_dept_approved">อนุมัติแล้ว</th>
+                                        <th class="text-center" data-i18n="col_pass_rate">อัตราผ่าน (%)</th>
                                     </tr>
                                 </thead>
                                 <tbody id="dashDeptTableBody"></tbody>
@@ -514,21 +523,21 @@
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
                                 <h4 class="fw-bold mb-0 text-info"><i
-                                        class="bi bi-person-check-fill me-2"></i>ตารางสรุปภาระงานและคะแนนประเมินของพี่เลี้ยง
+                                        class="bi bi-person-check-fill me-2"></i><span data-i18n="table_mentors_performance_title">ตารางสรุปภาระงานและคะแนนประเมินของพี่เลี้ยง</span>
                                 </h4>
-                                <small class="text-muted">การดูแลนักศึกษา การตรวจบันทึกงาน และคะแนนประเมินเฉลี่ย</small>
+                                <small class="text-muted" data-i18n="table_mentors_performance_subtitle">การดูแลนักศึกษา การตรวจบันทึกงาน และคะแนนประเมินเฉลี่ย</small>
                             </div>
                         </div>
                         <div class="table-scroll-container">
                             <table class="table table-hover align-middle">
                                 <thead>
                                     <tr>
-                                        <th>ชื่อพี่เลี้ยง</th>
-                                        <th>แผนก</th>
-                                        <th class="text-center">นักศึกษาในดูแล</th>
-                                        <th class="text-center">บันทึกที่ตรวจแล้ว</th>
-                                        <th class="text-center">บันทึกค้างตรวจ</th>
-                                        <th class="text-center">คะแนนประเมินเฉลี่ย</th>
+                                        <th data-i18n="col_mentor_name">ชื่อพี่เลี้ยง</th>
+                                        <th data-i18n="col_mentor_dept">แผนก</th>
+                                        <th class="text-center" data-i18n="col_mentor_students_count">นักศึกษาในดูแล</th>
+                                        <th class="text-center" data-i18n="col_mentor_reviewed">บันทึกที่ตรวจแล้ว</th>
+                                        <th class="text-center" data-i18n="col_mentor_pending">บันทึกค้างตรวจ</th>
+                                        <th class="text-center" data-i18n="col_mentor_avg_score">คะแนนประเมินเฉลี่ย</th>
                                     </tr>
                                 </thead>
                                 <tbody id="dashMentorTableBody"></tbody>
@@ -541,9 +550,9 @@
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
                                 <h4 class="fw-bold mb-0 text-success"><i
-                                        class="bi bi-mortarboard-fill me-2"></i>ตารางสรุปผลงานและความก้าวหน้านักศึกษาทั้งหมด
+                                        class="bi bi-mortarboard-fill me-2"></i><span data-i18n="table_student_summary_title">ตารางสรุปผลงานและความก้าวหน้านักศึกษาทั้งหมด</span>
                                 </h4>
-                                <small class="text-muted">ความก้าวหน้าการฝึกงาน บันทึกประจำวัน และคะแนนประเมิน</small>
+                                <small class="text-muted" data-i18n="table_student_summary_subtitle">ความก้าวหน้าการฝึกงาน บันทึกประจำวัน และคะแนนประเมิน</small>
                             </div>
                             <button class="btn btn-outline-success btn-sm rounded-pill"
                                 onclick="window.location.href='api.php?action=export_students_csv'">
@@ -554,14 +563,14 @@
                             <table class="table table-hover align-middle">
                                 <thead>
                                     <tr>
-                                        <th>รหัส / ชื่อนักศึกษา</th>
-                                        <th>มหาวิทยาลัย / คณะ</th>
-                                        <th>แผนก / พี่เลี้ยง</th>
-                                        <th>ความก้าวหน้าวันฝึก</th>
-                                        <th class="text-center">สถานะฝึกงาน</th>
-                                        <th class="text-center">บันทึกที่ส่ง</th>
-                                        <th class="text-center">คะแนนประเมิน (งาน/เวลา/พฤติกรรม)</th>
-                                        <th class="text-center">จัดการ</th>
+                                        <th data-i18n="col_student_name_code">รหัส / ชื่อนักศึกษา</th>
+                                        <th data-i18n="col_student_uni_faculty">มหาวิทยาลัย / คณะ</th>
+                                        <th data-i18n="col_student_dept_mentor">แผนก / พี่เลี้ยง</th>
+                                        <th data-i18n="col_student_progress">ความก้าวหน้าวันฝึก</th>
+                                        <th class="text-center" data-i18n="col_student_status">สถานะฝึกงาน</th>
+                                        <th class="text-center" data-i18n="col_dept_logs">บันทึกที่ส่ง</th>
+                                        <th class="text-center" data-i18n="col_student_eval_scores">คะแนนประเมิน (งาน/เวลา/พฤติกรรม)</th>
+                                        <th class="text-center" data-i18n="col_manage">จัดการ</th>
                                     </tr>
                                 </thead>
                                 <tbody id="dashStudentTableBody"></tbody>
@@ -583,14 +592,14 @@
                         <div class="stat-icon-wrapper stat-icon-primary"><i class="bi bi-journal-check"></i></div>
                         <div class="stat-info">
                             <div class="stat-value" id="kpi-logs-total">0</div>
-                            <div class="stat-label">บันทึกทั้งหมด</div>
+                            <div class="stat-label" data-i18n="kpi_total_logs">บันทึกทั้งหมด</div>
                         </div>
                     </div>
                     <div class="stat-card" onclick="filterLogsByStatus('pending')" title="คลิกเพื่อกรองเฉพาะรออนุมัติ">
                         <div class="stat-icon-wrapper stat-icon-warning"><i class="bi bi-clock-history"></i></div>
                         <div class="stat-info">
                             <div class="stat-value text-warning" id="kpi-logs-pending">0</div>
-                            <div class="stat-label">⏳ รออนุมัติ (Pending)</div>
+                            <div class="stat-label" data-i18n="filter_status_pending">⏳ รออนุมัติ (Pending)</div>
                         </div>
                     </div>
                     <div class="stat-card" onclick="filterLogsByStatus('approved')"
@@ -598,7 +607,7 @@
                         <div class="stat-icon-wrapper stat-icon-success"><i class="bi bi-check2-circle"></i></div>
                         <div class="stat-info">
                             <div class="stat-value text-success" id="kpi-logs-approved">0</div>
-                            <div class="stat-label">✅ อนุมัติแล้ว (Approved)</div>
+                            <div class="stat-label" data-i18n="filter_status_approved">✅ อนุมัติแล้ว (Approved)</div>
                         </div>
                     </div>
                     <div class="stat-card" onclick="filterLogsByStatus('revision')"
@@ -606,7 +615,7 @@
                         <div class="stat-icon-wrapper stat-icon-danger"><i class="bi bi-exclamation-circle"></i></div>
                         <div class="stat-info">
                             <div class="stat-value text-danger" id="kpi-logs-needaction">0</div>
-                            <div class="stat-label">✏️ แก้ไข / ❌ ปฏิเสธ</div>
+                            <div class="stat-label" data-i18n="badge_revision_review">✏️ แก้ไข / ❌ ปฏิเสธ</div>
                         </div>
                     </div>
                 </div>
@@ -618,23 +627,24 @@
                             <div class="search-input-group">
                                 <i class="bi bi-search"></i>
                                 <input type="text" id="searchKeyword" class="form-control"
+                                    data-i18n-placeholder="search_placeholder_logs"
                                     placeholder="ค้นหาชื่อนักศึกษา หรือ รายละเอียดงาน...">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <select id="statusFilter" class="form-select" onchange="loadLogs()">
-                                <option value="">-- แสดงทุกสถานะ --</option>
-                                <option value="pending">⏳ รออนุมัติ (Pending)</option>
-                                <option value="approved">✅ อนุมัติแล้ว (Approved)</option>
-                                <option value="revision">✏️ ส่งกลับแก้ไข (Revision)</option>
-                                <option value="rejected">❌ ปฏิเสธ (Rejected)</option>
+                                <option value="" data-i18n="filter_all_status">-- แสดงทุกสถานะ --</option>
+                                <option value="pending" data-i18n="filter_status_pending">⏳ รออนุมัติ (Pending)</option>
+                                <option value="approved" data-i18n="filter_status_approved">✅ อนุมัติแล้ว (Approved)</option>
+                                <option value="revision" data-i18n="filter_status_revision">✏️ ส่งกลับแก้ไข (Revision)</option>
+                                <option value="rejected" data-i18n="filter_status_rejected">❌ ปฏิเสธ (Rejected)</option>
                             </select>
                         </div>
                         <div class="col-md-3 d-flex gap-2">
                             <button type="submit" class="btn btn-primary flex-grow-1"><i
-                                    class="bi bi-search"></i>ค้นหา</button>
+                                    class="bi bi-search me-1"></i><span data-i18n="btn_search">ค้นหา</span></button>
                             <button type="button" class="btn btn-outline-secondary" onclick="resetLogFilter()"
-                                title="ล้างตัวกรอง"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                data-i18n-title="btn_clear_filter" title="ล้างตัวกรอง"><i class="bi bi-arrow-counterclockwise"></i></button>
                         </div>
                     </form>
                 </div>
@@ -643,33 +653,34 @@
                 <div id="addLogSection" class="card student-only mb-4 p-4" style="display: none;">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h4 class="fw-bold mb-0 text-primary"><i
-                                class="bi bi-plus-circle-fill me-2"></i>บันทึกการปฏิบัติงานประจำวัน</h4>
+                                class="bi bi-plus-circle-fill me-2"></i><span data-i18n="add_log_title">บันทึกการปฏิบัติงานประจำวัน</span></h4>
                         <span class="text-muted" style="font-size: 13px;"><i
-                                class="bi bi-info-circle me-1"></i>บันทึกสรุปงานที่ทำในแต่ละวัน</span>
+                                class="bi bi-info-circle me-1"></i><span data-i18n="add_log_subtitle">บันทึกสรุปงานที่ทำในแต่ละวัน</span></span>
                     </div>
                     <form id="logForm" onsubmit="saveLog(event)">
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <label class="form-label" for="log_work_date">วันที่ปฏิบัติงาน:</label>
+                                <label class="form-label" for="log_work_date" data-i18n="label_log_work_date">วันที่ปฏิบัติงาน:</label>
                                 <input type="date" id="log_work_date" class="form-control" required>
                                 <div class="mt-2 d-flex gap-1">
-                                    <span class="quick-chip" onclick="setLogDate('today')">วันนี้</span>
-                                    <span class="quick-chip" onclick="setLogDate('yesterday')">เมื่อวาน</span>
+                                    <span class="quick-chip" onclick="setLogDate('today')" data-i18n="quick_chip_today">วันนี้</span>
+                                    <span class="quick-chip" onclick="setLogDate('yesterday')" data-i18n="quick_chip_yesterday">เมื่อวาน</span>
                                 </div>
                             </div>
                             <div class="col-md-8">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <label class="form-label"
-                                        for="log_work_description">รายละเอียดงานที่ปฏิบัติ:</label>
+                                        for="log_work_description" data-i18n="label_log_work_description">รายละเอียดงานที่ปฏิบัติ:</label>
                                     <small class="text-muted" id="descCharCount">0 ตัวอักษร</small>
                                 </div>
                                 <textarea id="log_work_description" class="form-control" rows="3" required
+                                    data-i18n-placeholder="placeholder_log_desc"
                                     placeholder="พิมพ์สรุปงาน ผลลัพธ์ หรือสิ่งที่ได้เรียนรู้ในวันนี้..."
                                     oninput="updateCharCount(this)"></textarea>
                             </div>
                             <div class="col-12 text-end">
                                 <button type="submit" class="btn btn-primary px-4"><i
-                                        class="bi bi-cloud-arrow-up-fill me-1"></i>บันทึกข้อมูลประจำวัน</button>
+                                        class="bi bi-cloud-arrow-up-fill me-1"></i><span data-i18n="btn_submit_daily_log">บันทึกข้อมูลประจำวัน</span></button>
                             </div>
                         </div>
                     </form>
@@ -680,12 +691,12 @@
                     <table class="table table-hover align-middle">
                         <thead>
                             <tr>
-                                <th style="width: 130px;"><i class="bi bi-calendar-event me-1"></i>วันที่</th>
-                                <th style="width: 200px;"><i class="bi bi-person me-1"></i>นักศึกษา</th>
-                                <th><i class="bi bi-card-text me-1"></i>รายละเอียดงาน</th>
-                                <th style="width: 220px;"><i class="bi bi-chat-quote me-1"></i>ความเห็นพี่เลี้ยง</th>
-                                <th style="width: 140px;"><i class="bi bi-flag me-1"></i>สถานะ</th>
-                                <th style="width: 150px; text-align: center;"><i class="bi bi-gear me-1"></i>จัดการ</th>
+                                <th style="width: 130px;"><i class="bi bi-calendar-event me-1"></i><span data-i18n="col_date">วันที่</span></th>
+                                <th style="width: 200px;"><i class="bi bi-person me-1"></i><span data-i18n="col_student">นักศึกษา</span></th>
+                                <th><i class="bi bi-card-text me-1"></i><span data-i18n="col_work_desc">รายละเอียดงาน</span></th>
+                                <th style="width: 220px;"><i class="bi bi-chat-quote me-1"></i><span data-i18n="col_mentor_comment">ความเห็นพี่เลี้ยง</span></th>
+                                <th style="width: 140px;"><i class="bi bi-flag me-1"></i><span data-i18n="col_status">สถานะ</span></th>
+                                <th style="width: 150px; text-align: center;"><i class="bi bi-gear me-1"></i><span data-i18n="col_manage">จัดการ</span></th>
                             </tr>
                         </thead>
                         <tbody id="logsTableBody"></tbody>
@@ -705,7 +716,7 @@
                         <div class="stat-icon-wrapper stat-icon-primary"><i class="bi bi-person-workspace"></i></div>
                         <div class="stat-info">
                             <div class="stat-value text-primary" id="kpi-students-active">0</div>
-                            <div class="stat-label">🔷 นักศึกษาที่ฝึกงานอยู่</div>
+                            <div class="stat-label" data-i18n="kpi_active_students">🔷 นักศึกษาที่ฝึกงานอยู่</div>
                         </div>
                     </div>
                     <div class="stat-card" onclick="filterStudentsByStatus('ending')"
@@ -713,87 +724,88 @@
                         <div class="stat-icon-wrapper stat-icon-warning"><i class="bi bi-hourglass-split"></i></div>
                         <div class="stat-info">
                             <div class="stat-value text-warning" id="kpi-students-ending">0</div>
-                            <div class="stat-label">⚠️ ใกล้จบ (<= 7 วัน)</div>
-                            </div>
-                        </div>
-                        <div class="stat-card" onclick="filterStudentsByStatus('completed')"
-                            title="คลิกเพื่อดูนักศึกษาที่จบฝึกงานแล้ว">
-                            <div class="stat-icon-wrapper stat-icon-success"><i class="bi bi-mortarboard-fill"></i>
-                            </div>
-                            <div class="stat-info">
-                                <div class="stat-value text-success" id="kpi-students-completed">0</div>
-                                <div class="stat-label">✅ นักศึกษาที่จบแล้ว</div>
-                            </div>
-                        </div>
-                        <div class="stat-card" onclick="filterStudentsByStatus('ALL')"
-                            title="คลิกเพื่อดูนักศึกษาทั้งหมด">
-                            <div class="stat-icon-wrapper stat-icon-info"><i class="bi bi-people-fill"></i></div>
-                            <div class="stat-info">
-                                <div class="stat-value" id="kpi-students-total">0</div>
-                                <div class="stat-label">👥 นักศึกษาทั้งหมด</div>
-                            </div>
+                            <div class="stat-label" data-i18n="kpi_ending_students">⚠️ ใกล้จบ (<= 7 วัน)</div>
                         </div>
                     </div>
+                    <div class="stat-card" onclick="filterStudentsByStatus('completed')"
+                        title="คลิกเพื่อดูนักศึกษาที่จบฝึกงานแล้ว">
+                        <div class="stat-icon-wrapper stat-icon-success"><i class="bi bi-mortarboard-fill"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value text-success" id="kpi-students-completed">0</div>
+                            <div class="stat-label" data-i18n="kpi_completed_students">✅ นักศึกษาที่จบแล้ว</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" onclick="filterStudentsByStatus('ALL')"
+                        title="คลิกเพื่อดูนักศึกษาทั้งหมด">
+                        <div class="stat-icon-wrapper stat-icon-info"><i class="bi bi-people-fill"></i></div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="kpi-students-total">0</div>
+                            <div class="stat-label" data-i18n="kpi_total_students">👥 นักศึกษาทั้งหมด</div>
+                        </div>
+                    </div>
+                </div>
 
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div>
-                            <h2 class="mb-0" id="studentsSectionTitle"><i
-                                    class="bi bi-person-workspace me-2 text-primary"></i>นักศึกษาที่ฝึกงานอยู่</h2>
-                            <small class="text-muted"
-                                id="studentsSectionSubtitle">แสดงข้อมูลระยะเวลาการฝึกงานและจำนวนวันที่คงเหลือ</small>
-                        </div>
-                        <button class="btn btn-success admin-only" onclick="openStudentModal()" data-bs-toggle="tooltip"
-                            title="คลิกเพื่อเพิ่มข้อมูลนักศึกษาฝึกงานใหม่">
-                            <i class="bi bi-person-plus-fill"></i>+ เพิ่มนักศึกษา
-                        </button>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h2 class="mb-0" id="studentsSectionTitle"><i
+                                class="bi bi-person-workspace me-2 text-primary"></i><span data-i18n="section_title_active_students">นักศึกษาที่ฝึกงานอยู่</span></h2>
+                        <small class="text-muted"
+                            id="studentsSectionSubtitle" data-i18n="section_subtitle_active_students">แสดงข้อมูลระยะเวลาการฝึกงานและจำนวนวันที่คงเหลือ</small>
                     </div>
+                    <button class="btn btn-success admin-only" onclick="openStudentModal()" data-bs-toggle="tooltip"
+                        title="เพิ่มข้อมูลนักศึกษาฝึกงานใหม่">
+                        <i class="bi bi-person-plus-fill me-1"></i><span data-i18n="btn_add_new_student">+ เพิ่มนักศึกษา</span>
+                    </button>
+                </div>
 
-                    <div class="filter-card">
-                        <div class="row g-2">
-                            <div class="col-md-4">
-                                <div class="search-input-group">
-                                    <i class="bi bi-search"></i>
-                                    <input type="text" id="studentSearchInput" class="form-control"
-                                        placeholder="ค้นหาชื่อ, รหัสนักศึกษา, มหาวิทยาลัย..."
-                                        onkeyup="filterAndRenderStudents()">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <select id="studentStatusFilter" class="form-select"
-                                    onchange="onStudentStatusFilterChange()">
-                                    <option value="active">🔷 แสดงเฉพาะ: นักศึกษาที่ฝึกงานอยู่</option>
-                                    <option value="ending">⚠️ แสดงเฉพาะ: ใกล้จบ (เหลือ <= 7 วัน)</option>
-                                    <option value="completed">✅ แสดงเฉพาะ: นักศึกษาที่จบแล้ว</option>
-                                    <option value="ALL">-- แสดงนักศึกษาทั้งหมด --</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <select id="studentSortOrder" class="form-select" onchange="filterAndRenderStudents()">
-                                    <option value="expiring">เรียงตามวันหมดอายุฝึก (ใกล้หมดก่อน)</option>
-                                    <option value="newest">เรียงตามวันที่เริ่มฝึก (ล่าสุดขึ้นก่อน)</option>
-                                    <option value="name">เรียงตามชื่อ-นามสกุล</option>
-                                </select>
+                <div class="filter-card">
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <div class="search-input-group">
+                                <i class="bi bi-search"></i>
+                                <input type="text" id="studentSearchInput" class="form-control"
+                                    data-i18n-placeholder="search_placeholder_students"
+                                    placeholder="ค้นหาชื่อ, รหัสนักศึกษา, มหาวิทยาลัย..."
+                                    onkeyup="filterAndRenderStudents()">
                             </div>
                         </div>
+                        <div class="col-md-4">
+                            <select id="studentStatusFilter" class="form-select"
+                                onchange="onStudentStatusFilterChange()">
+                                <option value="active" data-i18n="nav_active_students">🔷 แสดงเฉพาะ: นักศึกษาที่ฝึกงานอยู่</option>
+                                <option value="ending" data-i18n="kpi_ending_students">⚠️ แสดงเฉพาะ: ใกล้จบ (เหลือ <= 7 วัน)</option>
+                                <option value="completed" data-i18n="nav_completed_students">✅ แสดงเฉพาะ: นักศึกษาที่จบแล้ว</option>
+                                <option value="ALL" data-i18n="nav_all_students">-- แสดงนักศึกษาทั้งหมด --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select id="studentSortOrder" class="form-select" onchange="filterAndRenderStudents()">
+                                <option value="expiring" data-i18n="sort_expiring">เรียงตามวันหมดอายุฝึก (ใกล้หมดก่อน)</option>
+                                <option value="newest" data-i18n="sort_newest">เรียงตามวันที่เริ่มฝึก (ล่าสุดขึ้นก่อน)</option>
+                                <option value="name" data-i18n="sort_name">เรียงตามชื่อ-นามสกุล</option>
+                            </select>
+                        </div>
                     </div>
+                </div>
 
-                    <div class="table-scroll-container">
-                        <table class="table table-hover align-middle">
-                            <thead>
-                                <tr>
-                                    <th><i class="bi bi-person-badge me-1"></i>รหัส / ชื่อ-นามสกุล</th>
-                                    <th><i class="bi bi-building me-1"></i>มหาวิทยาลัย / คณะ / สาขา</th>
-                                    <th><i class="bi bi-telephone me-1"></i>เบอร์โทรศัพท์</th>
-                                    <th><i class="bi bi-calendar-range me-1"></i>วันที่เริ่ม - วันสิ้นสุด</th>
-                                    <th><i class="bi bi-hourglass-split me-1"></i>ความก้าวหน้า / วันคงเหลือ</th>
-                                    <th><i class="bi bi-flag me-1"></i>สถานะฝึกงาน</th>
-                                    <th><i class="bi bi-person-workspace me-1"></i>พี่เลี้ยง</th>
-                                    <th style="text-align: center;"><i class="bi bi-gear me-1"></i>จัดการ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="studentsTableBody"></tbody>
-                        </table>
-                    </div>
+                <div class="table-scroll-container">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th><i class="bi bi-person-badge me-1"></i><span data-i18n="col_student_name_code">รหัส / ชื่อ-นามสกุล</span></th>
+                                <th><i class="bi bi-building me-1"></i><span data-i18n="col_student_uni_faculty">มหาวิทยาลัย / คณะ / สาขา</span></th>
+                                <th><i class="bi bi-telephone me-1"></i><span data-i18n="col_phone">เบอร์โทรศัพท์</span></th>
+                                <th><i class="bi bi-calendar-range me-1"></i><span data-i18n="col_internship_period">วันที่เริ่ม - วันสิ้นสุด</span></th>
+                                <th><i class="bi bi-hourglass-split me-1"></i><span data-i18n="col_progress">ความก้าวหน้า / วันคงเหลือ</span></th>
+                                <th><i class="bi bi-flag me-1"></i><span data-i18n="col_status">สถานะฝึกงาน</span></th>
+                                <th><i class="bi bi-person-workspace me-1"></i><span data-i18n="col_mentor">พี่เลี้ยง</span></th>
+                                <th style="text-align: center;"><i class="bi bi-gear me-1"></i><span data-i18n="col_manage">จัดการ</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody"></tbody>
+                    </table>
+                </div>
             </section>
 
             <!-- =========================================================
@@ -807,26 +819,26 @@
                         <div class="stat-icon-wrapper stat-icon-primary"><i class="bi bi-person-badge-fill"></i></div>
                         <div class="stat-info">
                             <div class="stat-value" id="kpi-mentors-total">0</div>
-                            <div class="stat-label">พี่เลี้ยงทั้งหมด</div>
+                            <div class="stat-label" data-i18n="kpi_total_mentors">พี่เลี้ยงทั้งหมด</div>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon-wrapper stat-icon-info"><i class="bi bi-diagram-3-fill"></i></div>
                         <div class="stat-info">
                             <div class="stat-value text-info" id="kpi-mentors-depts">0</div>
-                            <div class="stat-label">แผนกงานที่สังกัด</div>
+                            <div class="stat-label" data-i18n="col_mentor_dept">แผนกงานที่สังกัด</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
-                        <h2 class="mb-0"><i class="bi bi-person-badge-fill me-2 text-info"></i>ข้อมูลพี่เลี้ยง</h2>
-                        <small class="text-muted">รายชื่อพี่เลี้ยงควบคุมและแผนกงานในระบบ</small>
+                        <h2 class="mb-0"><i class="bi bi-person-badge-fill me-2 text-info"></i><span data-i18n="section_title_mentors">ข้อมูลพี่เลี้ยง</span></h2>
+                        <small class="text-muted" data-i18n="section_subtitle_mentors">รายชื่อพี่เลี้ยงควบคุมและแผนกงานในระบบ</small>
                     </div>
                     <button class="btn btn-primary admin-only" onclick="openMentorModal()" data-bs-toggle="tooltip"
-                        title="คลิกเพื่อเพิ่มข้อมูลพี่เลี้ยงควบคุม">
-                        <i class="bi bi-person-plus-fill"></i>+ เพิ่มพี่เลี้ยง
+                        title="เพิ่มข้อมูลพี่เลี้ยงควบคุม">
+                        <i class="bi bi-person-plus-fill me-1"></i><span data-i18n="btn_add_new_student">+ เพิ่มพี่เลี้ยง</span>
                     </button>
                 </div>
 
@@ -834,10 +846,10 @@
                     <table class="table table-hover align-middle">
                         <thead>
                             <tr>
-                                <th><i class="bi bi-person me-1"></i>ชื่อ-นามสกุล</th>
-                                <th><i class="bi bi-diagram-3 me-1"></i>แผนก</th>
-                                <th><i class="bi bi-envelope me-1"></i>อีเมล (ใช้เป็น Username)</th>
-                                <th class="admin-only" style="text-align: center;"><i class="bi bi-gear me-1"></i>จัดการ
+                                <th><i class="bi bi-person me-1"></i><span data-i18n="col_mentor_name">ชื่อ-นามสกุล</span></th>
+                                <th><i class="bi bi-diagram-3 me-1"></i><span data-i18n="col_mentor_dept">แผนก</span></th>
+                                <th><i class="bi bi-envelope me-1"></i><span data-i18n="col_email">อีเมล (ใช้เป็น Username)</span></th>
+                                <th class="admin-only" style="text-align: center;"><i class="bi bi-gear me-1"></i><span data-i18n="col_manage">จัดการ</span>
                                 </th>
                             </tr>
                         </thead>
@@ -860,7 +872,7 @@
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title fw-bold d-flex align-items-center gap-2">
                         <i class="bi bi-person-bounding-box"></i>
-                        <span>ตรวจสอบข้อมูลนักศึกษาฝึกงาน (Admin Inspection)</span>
+                        <span data-i18n="inspector_title">ตรวจสอบข้อมูลนักศึกษาฝึกงาน (Admin Inspection)</span>
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
@@ -872,7 +884,7 @@
                 </div>
                 <div class="modal-footer bg-light">
                     <button type="button" class="btn btn-secondary px-4 rounded-pill"
-                        data-bs-dismiss="modal">ปิดหน้าต่าง</button>
+                        data-bs-dismiss="modal" data-i18n="btn_close">ปิดหน้าต่าง</button>
                 </div>
             </div>
         </div>
@@ -888,14 +900,14 @@
                     </div>
                 </div>
                 <div class="modal-body py-3">
-                    <h4 class="fw-bold text-dark mb-2">ยืนยันที่จะออกจากระบบหรือไม่?</h4>
-                    <p class="text-muted mb-0">คุณจะต้องกรอกชื่อผู้ใช้และรหัสผ่านใหม่อีกครั้งในการเข้าใช้งานรอบถัดไป</p>
+                    <h4 class="fw-bold text-dark mb-2" data-i18n="logout_confirm_title">ยืนยันที่จะออกจากระบบหรือไม่?</h4>
+                    <p class="text-muted mb-0" data-i18n="logout_confirm_desc">คุณต้องการออกจากระบบหรือไม่?</p>
                 </div>
                 <div class="modal-footer border-0 justify-content-center gap-2 pt-0">
                     <button type="button" class="btn btn-light border px-4 rounded-pill"
-                        data-bs-dismiss="modal">ยกเลิก</button>
+                        data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
                     <button type="button" class="btn btn-danger px-4 rounded-pill" onclick="confirmLogout()">
-                        <i class="bi bi-box-arrow-right me-1"></i>ยืนยันออกจากระบบ
+                        <i class="bi bi-box-arrow-right me-1"></i><span data-i18n="btn_confirm_logout">ยืนยันออกจากระบบ</span>
                     </button>
                 </div>
             </div>
@@ -908,41 +920,47 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold" id="studentModalTitle"><i
-                            class="bi bi-person-plus-fill me-2 text-primary"></i>เพิ่มข้อมูลนักศึกษา</h5>
+                            class="bi bi-person-plus-fill me-2 text-primary"></i><span data-i18n="modal_student_add_title">เพิ่มข้อมูลนักศึกษา</span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form id="studentModalForm" onsubmit="saveStudentFromModal(event)">
                     <div class="modal-body row g-3">
                         <input type="hidden" id="modal_student_id">
-                        <div class="col-md-6"><label class="form-label">Username (รหัสนักศึกษา):</label><input
+                        <div class="col-md-6"><label class="form-label" data-i18n="form_student_code">Username (รหัสนักศึกษา):</label><input
                                 type="text" id="modal_student_code" class="form-control" required
-                                placeholder="เช่น STU001"></div>
-                        <div class="col-md-6"><label class="form-label">ชื่อ-นามสกุล:</label><input type="text"
-                                id="modal_student_name" class="form-control" required placeholder="เช่น นายสมชาย ใจดี">
+                                placeholder="STU001"></div>
+                        <div class="col-md-6"><label class="form-label" data-i18n="form_student_name">ชื่อ-นามสกุล:</label><input type="text"
+                                id="modal_student_name" class="form-control" required placeholder="Full Name">
                         </div>
-                        <div class="col-md-6"><label class="form-label">มหาวิทยาลัย:</label><input type="text"
+                        <div class="col-md-6"><label class="form-label" data-i18n="form_university">มหาวิทยาลัย:</label><input type="text"
                                 id="modal_student_university" class="form-control" required
-                                placeholder="เช่น มหาวิทยาลัยเชียงใหม่"></div>
-                        <div class="col-md-6"><label class="form-label">คณะ / สาขา:</label><input type="text"
-                                id="modal_student_faculty" class="form-control mb-2" placeholder="คณะ"><input
-                                type="text" id="modal_student_major" class="form-control" placeholder="สาขา"></div>
-                        <div class="col-md-6"><label class="form-label">วันที่เริ่มฝึกงาน:</label><input type="date"
-                                id="modal_student_start_date" class="form-control" required></div>
-                        <div class="col-md-6"><label class="form-label">จำนวนวันฝึกทั้งหมด (วัน):</label><input
-                                type="number" id="modal_student_duration" class="form-control" value="90" required>
+                                placeholder="University"></div>
+                        <div class="col-md-6"><label class="form-label" data-i18n="form_faculty">คณะ / สาขา:</label><input type="text"
+                                id="modal_student_faculty" class="form-control mb-2" placeholder="Faculty"><input
+                                type="text" id="modal_student_major" class="form-control" placeholder="Major"></div>
+                        <div class="col-md-6"><label class="form-label" data-i18n="form_start_date">วันที่เริ่มฝึกงาน:</label><input type="date"
+                                id="modal_student_start_date" class="form-control" required
+                                onchange="calcStudentDuration()"></div>
+                        <div class="col-md-6">
+                            <label class="form-label" data-i18n="form_end_date">วันที่สิ้นสุดการฝึกงาน:</label>
+                            <input type="date" id="modal_student_end_date" class="form-control" required
+                                onchange="calcStudentDuration()">
+                            <div class="form-text text-primary fw-semibold mt-1" id="duration_preview" style="font-size:12px;"></div>
+                            <input type="hidden" id="modal_student_duration">
                         </div>
-                        <div class="col-md-6"><label class="form-label">เบอร์โทรศัพท์:</label><input type="tel"
-                                id="modal_student_phone" class="form-control" placeholder="เช่น 0812345678"></div>
-                        <div class="col-md-6"><label class="form-label">พี่เลี้ยงควบคุม:</label><select
+                        <div class="col-md-6"><label class="form-label" data-i18n="form_phone">เบอร์โทรศัพท์:</label><input type="tel"
+                                id="modal_student_phone" class="form-control" placeholder="0812345678"
+                                maxlength="10" pattern="[0-9]{10}" title="กรุณากรอกเบอร์โทรศัพท์ 10 หลัก"></div>
+                        <div class="col-md-6"><label class="form-label" data-i18n="form_mentor_assign">พี่เลี้ยงควบคุม:</label><select
                                 id="modal_student_mentor_id" class="form-select">
-                                <option value="">-- ไม่ระบุ --</option>
+                                <option value="">-- ไม่ระบุ / Unassigned --</option>
                             </select></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light border rounded-pill"
-                            data-bs-dismiss="modal">ยกเลิก</button>
+                            data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
                         <button type="submit" class="btn btn-primary px-4 rounded-pill"><i
-                                class="bi bi-save me-1"></i>บันทึกข้อมูล</button>
+                                class="bi bi-save me-1"></i><span data-i18n="btn_save_changes">บันทึกข้อมูล</span></button>
                     </div>
                 </form>
             </div>
@@ -955,27 +973,27 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold" id="mentorModalTitle"><i
-                            class="bi bi-person-badge-fill me-2 text-primary"></i>เพิ่มข้อมูลพี่เลี้ยง</h5>
+                            class="bi bi-person-badge-fill me-2 text-primary"></i><span data-i18n="modal_mentor_add_title">เพิ่มข้อมูลพี่เลี้ยง</span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form id="mentorModalForm" onsubmit="saveMentorFromModal(event)">
                     <div class="modal-body">
                         <input type="hidden" id="modal_mentor_id">
-                        <div class="mb-3"><label class="form-label">ชื่อ-นามสกุล:</label><input type="text"
-                                id="modal_mentor_name" class="form-control" required placeholder="เช่น นายสมพร พัฒนากร">
+                        <div class="mb-3"><label class="form-label" data-i18n="form_mentor_name">ชื่อ-นามสกุล:</label><input type="text"
+                                id="modal_mentor_name" class="form-control" required placeholder="Mentor Name">
                         </div>
-                        <div class="mb-3"><label class="form-label">แผนก:</label><input type="text"
+                        <div class="mb-3"><label class="form-label" data-i18n="form_mentor_department">แผนก:</label><input type="text"
                                 id="modal_mentor_department" class="form-control" required
-                                placeholder="เช่น IT / พัฒนาระบบ"></div>
-                        <div class="mb-3"><label class="form-label">อีเมล (ใช้เป็น Username ในการล็อกอิน):</label><input
+                                placeholder="Department"></div>
+                        <div class="mb-3"><label class="form-label" data-i18n="form_mentor_email">อีเมล (ใช้เป็น Username ในการล็อกอิน):</label><input
                                 type="email" id="modal_mentor_email" class="form-control" required
-                                placeholder="เช่น somporn@company.com"></div>
+                                placeholder="email@company.com"></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light border rounded-pill"
-                            data-bs-dismiss="modal">ยกเลิก</button>
+                            data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
                         <button type="submit" class="btn btn-primary px-4 rounded-pill"><i
-                                class="bi bi-save me-1"></i>บันทึกข้อมูล</button>
+                                class="bi bi-save me-1"></i><span data-i18n="btn_save_changes">บันทึกข้อมูล</span></button>
                     </div>
                 </form>
             </div>
@@ -988,16 +1006,16 @@
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title fw-bold"><i
-                            class="bi bi-exclamation-triangle-fill me-2"></i>ยืนยันการลบข้อมูล</h5>
+                            class="bi bi-exclamation-triangle-fill me-2"></i><span data-i18n="modal_delete_confirm_title">ยืนยันการลบข้อมูล</span></h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body text-center py-4 fs-5 text-dark" id="deleteModalText">
+                <div class="modal-body text-center py-4 fs-5 text-dark" id="deleteModalText" data-i18n="modal_delete_confirm_text">
                     คุณแน่ใจหรือไม่ที่จะลบข้อมูลนี้?</div>
                 <div class="modal-footer justify-content-center">
                     <button type="button" class="btn btn-light border rounded-pill"
-                        data-bs-dismiss="modal">ยกเลิก</button>
+                        data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
                     <button type="button" id="confirmDeleteBtn" class="btn btn-danger px-4 rounded-pill"><i
-                            class="bi bi-trash me-1"></i>ยืนยันลบข้อมูล</button>
+                            class="bi bi-trash me-1"></i><span data-i18n="tooltip_delete">ยืนยันลบข้อมูล</span></button>
                 </div>
             </div>
         </div>
@@ -1005,47 +1023,98 @@
 
     <!-- MODAL 4: ฟอร์มประเมินผลนักศึกษาสำหรับพี่เลี้ยง -->
     <div class="modal fade" id="evalModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-clipboard-check me-2"></i>ประเมินผลนักศึกษาฝึกงาน
-                    </h5>
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border-radius: 20px; overflow: hidden;">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg,#6366f1,#8b5cf6);">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-clipboard-check me-2"></i><span data-i18n="modal_eval_title">ประเมินผลนักศึกษาฝึกงาน</span></h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form onsubmit="saveEvaluation(event)">
-                    <div class="modal-body">
+                    <div class="modal-body p-4">
                         <input type="hidden" id="eval_student_id">
-                        <div class="mb-3">
-                            <label class="form-label">คะแนนทักษะงาน (0-10):</label>
-                            <input type="number" id="score_work" class="form-control" min="0" max="10" value="0"
-                                required>
+                        <input type="hidden" id="score_work" value="0">
+                        <input type="hidden" id="score_time" value="0">
+                        <input type="hidden" id="score_behavior" value="0">
+
+                        <p class="text-muted small mb-4"><i class="bi bi-info-circle me-1 text-primary"></i><span data-i18n="eval_instruction">กรุณาให้คะแนนนักศึกษาในแต่ละด้านโดยเลือกระดับดาว</span></p>
+
+                        <!-- ด้านที่ 1: คุณภาพงาน -->
+                        <div class="eval-category-card mb-4">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <div class="eval-cat-icon" style="background: #ede9fe;"><i class="bi bi-briefcase-fill text-primary"></i></div>
+                                <div>
+                                    <div class="fw-bold" data-i18n="form_score_work">1. ด้านคุณภาพงานและความรู้ความสามารถ</div>
+                                    <small class="text-muted eval-score-label" id="label_score_work">— ยังไม่ได้เลือก —</small>
+                                </div>
+                            </div>
+                            <div class="star-rating-row" id="stars_score_work" data-target="score_work">
+                                <button type="button" class="star-btn" data-val="1" title="ไม่ชอบ"><i class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="2" title="เฉยๆ"><i class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="3" title="ปานกลาง"><i class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="4" title="ชอบ"><i class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="5" title="ชอบมาก"><i class="bi bi-star-fill"></i></button>
+                            </div>
+                            <div class="star-labels-row">
+                                <span>ไม่ชอบ</span><span>เฉยๆ</span><span>ปานกลาง</span><span>ชอบ</span><span>ชอบมาก</span>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">คะแนนการตรงต่อเวลา (0-10):</label>
-                            <input type="number" id="score_time" class="form-control" min="0" max="10" value="0"
-                                required>
+
+                        <!-- ด้านที่ 2: ความตรงต่อเวลา -->
+                        <div class="eval-category-card mb-4">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <div class="eval-cat-icon" style="background: #dcfce7;"><i class="bi bi-clock-fill text-success"></i></div>
+                                <div>
+                                    <div class="fw-bold" data-i18n="form_score_time">2. ด้านความตรงต่อเวลาและการเข้างาน</div>
+                                    <small class="text-muted eval-score-label" id="label_score_time">— ยังไม่ได้เลือก —</small>
+                                </div>
+                            </div>
+                            <div class="star-rating-row" id="stars_score_time" data-target="score_time">
+                                <button type="button" class="star-btn" data-val="1" title="ไม่ชอบ"><i class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="2" title="เฉยๆ"><i class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="3" title="ปานกลาง"><i class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="4" title="ชอบ"><i class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="5" title="ชอบมาก"><i class="bi bi-star-fill"></i></button>
+                            </div>
+                            <div class="star-labels-row">
+                                <span>ไม่ชอบ</span><span>เฉยๆ</span><span>ปานกลาง</span><span>ชอบ</span><span>ชอบมาก</span>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">คะแนนพฤติกรรมและความตั้งใจ (0-10):</label>
-                            <input type="number" id="score_behavior" class="form-control" min="0" max="10" value="0"
-                                required>
+
+                        <!-- ด้านที่ 3: พฤติกรรม -->
+                        <div class="eval-category-card mb-3">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <div class="eval-cat-icon" style="background: #fef3c7;"><i class="bi bi-emoji-smile-fill text-warning"></i></div>
+                                <div>
+                                    <div class="fw-bold" data-i18n="form_score_behavior">3. ด้านพฤติกรรม มนุษยสัมพันธ์ และวินัย</div>
+                                    <small class="text-muted eval-score-label" id="label_score_behavior">— ยังไม่ได้เลือก —</small>
+                                </div>
+                            </div>
+                            <div class="star-rating-row" id="stars_score_behavior" data-target="score_behavior">
+                                <button type="button" class="star-btn" data-val="1" title="ไม่ชอบ"><i class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="2" title="เฉยๆ"><i class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="3" title="ปานกลาง"><i class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="4" title="ชอบ"><i class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="5" title="ชอบมาก"><i class="bi bi-star-fill"></i></button>
+                            </div>
+                            <div class="star-labels-row">
+                                <span>ไม่ชอบ</span><span>เฉยๆ</span><span>ปานกลาง</span><span>ชอบ</span><span>ชอบมาก</span>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">ข้อคิดเห็นสรุป / คำแนะนำเพิ่มเติม:</label>
-                            <textarea id="final_feedback" class="form-control" rows="3"
-                                placeholder="ระบุจุดเด่นหรือข้อควรพัฒนาแก่นักศึกษา..."></textarea>
+
+                        <div class="mb-1">
+                            <label class="form-label fw-semibold" data-i18n="form_final_feedback"><i class="bi bi-chat-left-text me-1 text-primary"></i>ความคิดเห็นและข้อเสนอแนะภาพรวม:</label>
+                            <textarea id="final_feedback" class="form-control" rows="3" placeholder="Feedback..."></textarea>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-light border rounded-pill"
-                            data-bs-dismiss="modal">ยกเลิก</button>
-                        <button type="submit" class="btn btn-primary px-4 rounded-pill"><i
-                                class="bi bi-check2-circle me-1"></i>บันทึกการประเมิน</button>
+                    <div class="modal-footer" style="background: #f8fafc;">
+                        <button type="button" class="btn btn-light border rounded-pill" data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
+                        <button type="submit" class="btn px-4 rounded-pill text-white fw-bold" style="background: linear-gradient(135deg,#6366f1,#8b5cf6);"><i class="bi bi-check2-circle me-1"></i><span data-i18n="btn_save_changes">บันทึกการประเมิน</span></button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
 
     <!-- MODAL 5: นักศึกษาแก้ไขคำผิดบันทึกการฝึกงาน -->
     <div class="modal fade" id="studentEditLogModal" tabindex="-1">
@@ -1053,23 +1122,23 @@
             <div class="modal-content">
                 <div class="modal-header bg-warning">
                     <h5 class="modal-title fw-bold text-dark"><i
-                            class="bi bi-pencil-square me-2"></i>นักศึกษาแก้ไขบันทึกงาน</h5>
+                            class="bi bi-pencil-square me-2"></i><span data-i18n="modal_log_edit_title">นักศึกษาแก้ไขบันทึกงาน</span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form onsubmit="submitStudentEditLog(event)">
                     <div class="modal-body">
                         <input type="hidden" id="student_edit_log_id">
                         <div class="mb-3">
-                            <label class="form-label">รายละเอียดงานที่ต้องการแก้ไข:</label>
+                            <label class="form-label" data-i18n="col_work_desc">รายละเอียดงานที่ต้องการแก้ไข:</label>
                             <textarea id="student_edit_work_description" class="form-control" rows="4" required
-                                placeholder="แก้ไขคำผิดหรือเพิ่มเติมเนื้อหาบันทึก..."></textarea>
+                                placeholder="Description..."></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light border rounded-pill"
-                            data-bs-dismiss="modal">ยกเลิก</button>
+                            data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
                         <button type="submit" class="btn btn-primary px-4 rounded-pill"><i
-                                class="bi bi-save me-1"></i>บันทึกการแก้ไข</button>
+                                class="bi bi-save me-1"></i><span data-i18n="btn_save_changes">บันทึกการแก้ไข</span></button>
                     </div>
                 </form>
             </div>
@@ -1081,24 +1150,23 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-info text-white">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-chat-dots-fill me-2"></i>พี่เลี้ยงแก้ไขความคิดเห็น /
-                        ข้อเสนอแนะ</h5>
+                    <h5 class="modal-title fw-bold"><i class="bi bi-chat-dots-fill me-2"></i><span data-i18n="modal_comment_edit_title">พี่เลี้ยงแก้ไขความคิดเห็น / ข้อเสนอแนะ</span></h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form onsubmit="submitMentorEditComment(event)">
                     <div class="modal-body">
                         <input type="hidden" id="mentor_edit_log_id">
                         <div class="mb-3">
-                            <label class="form-label">ความคิดเห็น / ข้อเสนอแนะพี่เลี้ยง:</label>
+                            <label class="form-label" data-i18n="col_mentor_comment">ความคิดเห็น / ข้อเสนอแนะพี่เลี้ยง:</label>
                             <textarea id="mentor_edit_comment" class="form-control" rows="4"
-                                placeholder="พิมพ์ข้อความเสนอแนะแก่นักศึกษา..."></textarea>
+                                placeholder="Feedback..."></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light border rounded-pill"
-                            data-bs-dismiss="modal">ยกเลิก</button>
+                            data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
                         <button type="submit" class="btn btn-primary px-4 rounded-pill"><i
-                                class="bi bi-save me-1"></i>บันทึกความเห็น</button>
+                                class="bi bi-save me-1"></i><span data-i18n="btn_save_changes">บันทึกความเห็น</span></button>
                     </div>
                 </form>
             </div>
@@ -1110,7 +1178,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header" id="statusCommentHeader">
-                    <h5 class="modal-title fw-bold" id="statusCommentTitle">ระบุเหตุผล</h5>
+                    <h5 class="modal-title fw-bold" id="statusCommentTitle" data-i18n="modal_status_comment_title">ระบุเหตุผล</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form onsubmit="submitStatusWithComment(event)">
@@ -1118,16 +1186,16 @@
                         <input type="hidden" id="status_comment_log_id">
                         <input type="hidden" id="status_comment_action">
                         <div class="mb-3">
-                            <label class="form-label" id="statusCommentLabel">กรุณาใส่ข้อความหรือเหตุผล:</label>
+                            <label class="form-label" id="statusCommentLabel" data-i18n="modal_status_comment_title">กรุณาใส่ข้อความหรือเหตุผล:</label>
                             <textarea id="status_comment_text" class="form-control" rows="3" required
-                                placeholder="ระบุสิ่งที่ต้องการให้นักศึกษาแก้ไขหรือเหตุผล..."></textarea>
+                                placeholder="Reason..."></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light border rounded-pill"
-                            data-bs-dismiss="modal">ยกเลิก</button>
+                            data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
                         <button type="submit" class="btn btn-primary px-4 rounded-pill"
-                            id="statusCommentSubmitBtn">บันทึก</button>
+                            id="statusCommentSubmitBtn" data-i18n="btn_save_changes">บันทึก</button>
                     </div>
                 </form>
             </div>
@@ -1141,12 +1209,12 @@
                 <div class="modal-body">
                     <div class="text-success mb-3" style="font-size: 56px;"><i class="bi bi-check-circle-fill"></i>
                     </div>
-                    <h4 class="fw-bold text-success mb-2" id="actionSuccessTitle">ดำเนินการสำเร็จ!</h4>
+                    <h4 class="fw-bold text-success mb-2" id="actionSuccessTitle" data-i18n="toast_success">ดำเนินการสำเร็จ!</h4>
                     <p class="fs-5 text-dark mb-0" id="actionSuccessMessage">แก้ไขข้อความเสร็จสิ้น</p>
                 </div>
                 <div class="modal-footer justify-content-center border-0 pt-0">
                     <button type="button" class="btn btn-success px-4 rounded-pill"
-                        data-bs-dismiss="modal">ตกลง</button>
+                        data-bs-dismiss="modal" data-i18n="btn_close">ตกลง</button>
                 </div>
             </div>
         </div>
@@ -1157,32 +1225,32 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-key-fill me-2"></i>เปลี่ยนรหัสผ่าน</h5>
+                    <h5 class="modal-title fw-bold"><i class="bi bi-key-fill me-2"></i><span data-i18n="modal_change_pwd_title">เปลี่ยนรหัสผ่าน</span></h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form onsubmit="submitChangePassword(event)">
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label">รหัสผ่านปัจจุบัน:</label>
+                            <label class="form-label" data-i18n="form_old_pwd">รหัสผ่านปัจจุบัน:</label>
                             <input type="password" id="old_password" class="form-control" required
-                                autocomplete="current-password" placeholder="กรอกรหัสผ่านเดิม">
+                                autocomplete="current-password" placeholder="Old Password">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">รหัสผ่านใหม่ (อย่างน้อย 6 ตัวอักษร):</label>
+                            <label class="form-label" data-i18n="form_new_pwd">รหัสผ่านใหม่ (อย่างน้อย 6 ตัวอักษร):</label>
                             <input type="password" id="new_password" class="form-control" minlength="6" required
-                                autocomplete="new-password" placeholder="กรอกรหัสผ่านใหม่">
+                                autocomplete="new-password" placeholder="New Password">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">ยืนยันรหัสผ่านใหม่:</label>
+                            <label class="form-label" data-i18n="form_confirm_pwd">ยืนยันรหัสผ่านใหม่:</label>
                             <input type="password" id="confirm_new_password" class="form-control" minlength="6" required
-                                autocomplete="new-password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง">
+                                autocomplete="new-password" placeholder="Confirm Password">
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light border rounded-pill"
-                            data-bs-dismiss="modal">ยกเลิก</button>
+                            data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
                         <button type="submit" class="btn btn-primary px-4 rounded-pill"><i
-                                class="bi bi-shield-check me-1"></i>บันทึกรหัสผ่านใหม่</button>
+                                class="bi bi-shield-check me-1"></i><span data-i18n="btn_save_changes">บันทึกรหัสผ่านใหม่</span></button>
                     </div>
                 </form>
             </div>
@@ -1195,7 +1263,7 @@
             <div class="modal-content">
                 <div class="modal-header bg-warning text-dark">
                     <h5 class="modal-title fw-bold"><i
-                            class="bi bi-shield-lock-fill me-2"></i>ตั้งรหัสผ่านใหม่ให้ผู้ใช้งาน</h5>
+                            class="bi bi-shield-lock-fill me-2"></i><span data-i18n="modal_admin_reset_pwd_title">ตั้งรหัสผ่านใหม่ให้ผู้ใช้งาน</span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form onsubmit="submitAdminResetPassword(event)">
@@ -1203,16 +1271,16 @@
                         <input type="hidden" id="admin_reset_role">
                         <input type="hidden" id="admin_reset_ref_id">
                         <div class="mb-3">
-                            <label class="form-label">กำหนดรหัสผ่านใหม่ให้สมาชิก (อย่างน้อย 6 ตัวอักษร):</label>
+                            <label class="form-label" data-i18n="form_new_pwd_member">กำหนดรหัสผ่านใหม่ให้สมาชิก (อย่างน้อย 6 ตัวอักษร):</label>
                             <input type="password" id="admin_new_password" class="form-control" minlength="6" required
-                                autocomplete="new-password" placeholder="กรอกรหัสผ่านใหม่">
+                                autocomplete="new-password" placeholder="New Password">
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light border rounded-pill"
-                            data-bs-dismiss="modal">ยกเลิก</button>
+                            data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
                         <button type="submit" class="btn btn-warning px-4 rounded-pill"><i
-                                class="bi bi-key-fill me-1"></i>บันทึกรหัสผ่าน</button>
+                                class="bi bi-key-fill me-1"></i><span data-i18n="btn_save_changes">บันทึกรหัสผ่าน</span></button>
                     </div>
                 </form>
             </div>
@@ -1657,8 +1725,8 @@
             document.getElementById('kpi-dash-logs-total').innerText = k.total_logs || 0;
             document.getElementById('kpi-dash-approval-rate').innerText = `${k.approval_rate || 0}%`;
 
-            document.getElementById('dashTotalDeptsBadge').innerText = `${k.total_departments || 0} แผนก`;
-            document.getElementById('dashLogsCountBadge').innerText = `${k.total_logs || 0} บันทึก`;
+            document.getElementById('dashTotalDeptsBadge').innerText = `${k.total_departments || 0} ${t('unit_dept', 'แผนก')}`;
+            document.getElementById('dashLogsCountBadge').innerText = `${k.total_logs || 0} ${t('unit_logs', 'บันทึก')}`;
 
             // อัปเดตชาร์ตและตารางสรุป
             renderDashboardCharts(res);
@@ -1679,22 +1747,22 @@
                 deptChartInstance = new Chart(ctxDept, {
                     type: 'bar',
                     data: {
-                        labels: deptLabels.length ? deptLabels : ['ยังไม่มีข้อมูล'],
+                        labels: deptLabels.length ? deptLabels : [t('empty_dept', 'ยังไม่มีข้อมูล')],
                         datasets: [
                             {
-                                label: 'นักศึกษาทั้งหมด',
+                                label: t('kpi_total_students', 'นักศึกษาทั้งหมด'),
                                 data: deptTotals.length ? deptTotals : [0],
                                 backgroundColor: '#2563eb',
                                 borderRadius: 6
                             },
                             {
-                                label: 'กำลังฝึกงาน',
+                                label: t('kpi_active_students', 'กำลังฝึกงาน'),
                                 data: deptActives.length ? deptActives : [0],
                                 backgroundColor: '#38bdf8',
                                 borderRadius: 6
                             },
                             {
-                                label: 'จบแล้ว',
+                                label: t('kpi_completed_students', 'จบแล้ว'),
                                 data: deptCompleted.length ? deptCompleted : [0],
                                 backgroundColor: '#10b981',
                                 borderRadius: 6
@@ -1705,8 +1773,8 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: { position: 'top', labels: { boxWidth: 12, font: { family: 'Prompt', size: 12 } } },
-                            tooltip: { bodyFont: { family: 'Prompt' }, titleFont: { family: 'Prompt' } }
+                            legend: { position: 'top', labels: { boxWidth: 12, font: { family: 'Prompt, Inter, sans-serif', size: 12 } } },
+                            tooltip: { bodyFont: { family: 'Prompt, Inter, sans-serif' }, titleFont: { family: 'Prompt, Inter, sans-serif' } }
                         },
                         scales: {
                             y: { beginAtZero: true, ticks: { stepSize: 1 } }
@@ -1723,7 +1791,12 @@
                 statusChartInstance = new Chart(ctxStatus, {
                     type: 'doughnut',
                     data: {
-                        labels: statusDist.map(s => s.label),
+                        labels: statusDist.map(s => {
+                            if (s.label && s.label.includes('กำลังฝึกงาน')) return t('kpi_active_students', s.label);
+                            if (s.label && s.label.includes('ใกล้จบ')) return t('kpi_ending_students', s.label);
+                            if (s.label && s.label.includes('จบการฝึกงาน')) return t('kpi_completed_students', s.label);
+                            return s.label;
+                        }),
                         datasets: [{
                             data: statusDist.map(s => s.count),
                             backgroundColor: statusDist.map(s => s.color),
@@ -1736,8 +1809,8 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Prompt', size: 12 } } },
-                            tooltip: { bodyFont: { family: 'Prompt' } }
+                            legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Prompt, Inter, sans-serif', size: 12 } } },
+                            tooltip: { bodyFont: { family: 'Prompt, Inter, sans-serif' } }
                         },
                         cutout: '60%'
                     }
@@ -1752,7 +1825,12 @@
                 logsChartInstance = new Chart(ctxLogs, {
                     type: 'doughnut',
                     data: {
-                        labels: logsStatus.map(l => l.label),
+                        labels: logsStatus.map(l => {
+                            if (l.label && l.label.includes('อนุมัติแล้ว')) return t('badge_approved_review', l.label);
+                            if (l.label && l.label.includes('รออนุมัติ')) return t('badge_pending_review', l.label);
+                            if (l.label && (l.label.includes('แก้ไข') || l.label.includes('ปฏิเสธ'))) return t('badge_revision_review', l.label);
+                            return l.label;
+                        }),
                         datasets: [{
                             data: logsStatus.map(l => l.count),
                             backgroundColor: logsStatus.map(l => l.color),
@@ -1764,7 +1842,7 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Prompt', size: 12 } } }
+                            legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Prompt, Inter, sans-serif', size: 12 } } }
                         },
                         cutout: '55%'
                     }
@@ -1781,7 +1859,7 @@
                     data: {
                         labels: topUni.map(u => u.university),
                         datasets: [{
-                            label: 'จำนวนนักศึกษา (คน)',
+                            label: t('col_total_interns', 'จำนวนนักศึกษา'),
                             data: topUni.map(u => u.count),
                             backgroundColor: '#6366f1',
                             borderRadius: 6
@@ -1807,7 +1885,7 @@
         // =========================================================
         async function openStudentInspectModal(studentId) {
             if (!currentUser || currentUser.role !== 'admin') {
-                alert('เฉพาะผู้ดูแลระบบ (Admin) เท่านั้นที่สามารถตรวจสอบข้อมูลได้');
+                alert(t('alert_admin_only', 'เฉพาะผู้ดูแลระบบ (Admin) เท่านั้นที่สามารถตรวจสอบข้อมูลได้'));
                 return;
             }
 
@@ -1815,14 +1893,14 @@
             modalBody.innerHTML = `
             <div class="text-center py-5">
                 <div class="spinner-border text-primary" role="status"></div>
-                <div class="mt-2 text-muted">กำลังดึงข้อมูลการตรวจสอบนักศึกษา...</div>
+                <div class="mt-2 text-muted">${t('loading_inspect_data', 'กำลังดึงข้อมูลการตรวจสอบนักศึกษา...')}</div>
             </div>
         `;
             studentInspectModalObj.show();
 
             const data = await fetchJson(`api.php?action=get_student_inspect&student_id=${studentId}`);
             if (!data || !data.success) {
-                modalBody.innerHTML = `<div class="alert alert-danger">ไม่สามารถโหลดข้อมูลได้ หรือไม่พบข้อมูลนักศึกษา</div>`;
+                modalBody.innerHTML = `<div class="alert alert-danger">${t('error_loading_data', 'ไม่สามารถโหลดข้อมูลได้ หรือไม่พบข้อมูลนักศึกษา')}</div>`;
                 return;
             }
 
@@ -1843,13 +1921,13 @@
 
             let logsHtml = '';
             if (logs.length === 0) {
-                logsHtml = `<div class="text-center text-muted py-4"><i class="bi bi-journal-x fs-2 d-block text-secondary mb-2"></i>ยังไม่มีประวัติการส่งบันทึกงานประจำวัน</div>`;
+                logsHtml = `<div class="text-center text-muted py-4"><i class="bi bi-journal-x fs-2 d-block text-secondary mb-2"></i>${t('empty_student_logs', 'ยังไม่มีประวัติการส่งบันทึกงานประจำวัน')}</div>`;
             } else {
                 logsHtml = logs.map(l => {
-                    let badgeClass = 'badge-status-pending', badgeText = '⏳ รออนุมัติ';
-                    if (l.status === 'approved') { badgeClass = 'badge-status-approved'; badgeText = '✅ อนุมัติแล้ว'; }
-                    else if (l.status === 'revision') { badgeClass = 'badge-status-revision'; badgeText = '✏️ ส่งกลับแก้ไข'; }
-                    else if (l.status === 'rejected') { badgeClass = 'badge-status-rejected'; badgeText = '❌ ปฏิเสธ'; }
+                    let badgeClass = 'badge-status-pending', badgeText = t('badge_pending_review', '⏳ รออนุมัติ');
+                    if (l.status === 'approved') { badgeClass = 'badge-status-approved'; badgeText = t('badge_approved_review', '✅ อนุมัติแล้ว'); }
+                    else if (l.status === 'revision') { badgeClass = 'badge-status-revision'; badgeText = t('badge_revision_review', '✏️ ส่งกลับแก้ไข'); }
+                    else if (l.status === 'rejected') { badgeClass = 'badge-status-rejected'; badgeText = t('badge_rejected_review', '❌ ปฏิเสธ'); }
 
                     return `
                     <div class="inspect-log-item">
@@ -1858,7 +1936,7 @@
                             <span class="badge-status ${badgeClass}">${badgeText}</span>
                         </div>
                         <div class="text-secondary small mb-2" style="white-space: pre-wrap;">${l.work_description}</div>
-                        ${l.mentor_comment ? `<div class="p-2 bg-white border rounded text-info small"><i class="bi bi-chat-quote me-1"></i>ความเห็นพี่เลี้ยง: ${l.mentor_comment}</div>` : ''}
+                        ${l.mentor_comment ? `<div class="p-2 bg-white border rounded text-info small"><i class="bi bi-chat-quote me-1"></i>${t('col_mentor_comment', 'ความเห็นพี่เลี้ยง')}: ${l.mentor_comment}</div>` : ''}
                     </div>
                 `;
                 }).join('');
@@ -1869,18 +1947,18 @@
                 <!-- ข้อมูลส่วนตัวนักศึกษา -->
                 <div class="col-lg-6">
                     <div class="inspect-info-card">
-                        <div class="inspect-section-title"><i class="bi bi-person-badge text-primary"></i> ข้อมูลส่วนตัวนักศึกษา</div>
+                        <div class="inspect-section-title"><i class="bi bi-person-badge text-primary"></i> ${t('inspector_personal_info', 'ข้อมูลส่วนตัวนักศึกษา')}</div>
                         <div class="d-flex align-items-center gap-3 mb-3">
                             <div class="user-avatar-bubble" style="width: 52px; height: 52px; font-size: 22px;">${initial}</div>
                             <div>
                                 <h5 class="fw-bold text-dark mb-0">${std.name}</h5>
-                                <span class="badge bg-light text-dark border">รหัสนักศึกษา: ${std.student_code}</span>
+                                <span class="badge bg-light text-dark border">${t('form_student_code', 'รหัสนักศึกษา')}: ${std.student_code}</span>
                             </div>
                         </div>
                         <ul class="list-unstyled mb-0" style="font-size: 14px;">
-                            <li class="mb-2"><strong class="text-muted">มหาวิทยาลัย:</strong> ${std.university || '-'}</li>
-                            <li class="mb-2"><strong class="text-muted">คณะ / สาขา:</strong> ${std.faculty || '-'} / ${std.major || '-'}</li>
-                            <li class="mb-0"><strong class="text-muted">เบอร์โทรศัพท์:</strong> <i class="bi bi-telephone text-primary me-1"></i>${std.phone || '-'}</li>
+                            <li class="mb-2"><strong class="text-muted">${t('form_university', 'มหาวิทยาลัย')}:</strong> ${std.university || '-'}</li>
+                            <li class="mb-2"><strong class="text-muted">${t('form_faculty', 'คณะ')} / ${t('form_major', 'สาขา')}:</strong> ${std.faculty || '-'} / ${std.major || '-'}</li>
+                            <li class="mb-0"><strong class="text-muted">${t('col_phone', 'เบอร์โทรศัพท์')}:</strong> <i class="bi bi-telephone text-primary me-1"></i>${std.phone || '-'}</li>
                         </ul>
                     </div>
                 </div>
@@ -1888,55 +1966,55 @@
                 <!-- ข้อมูลพี่เลี้ยงควบคุม & การประเมิน -->
                 <div class="col-lg-6">
                     <div class="inspect-info-card">
-                        <div class="inspect-section-title"><i class="bi bi-person-check text-info"></i> พี่เลี้ยงควบคุม & การประเมิน</div>
+                        <div class="inspect-section-title"><i class="bi bi-person-check text-info"></i> ${t('inspector_mentor_info', 'พี่เลี้ยงควบคุม & การประเมิน')}</div>
                         <div class="mb-3">
-                            <strong>พี่เลี้ยง:</strong> ${std.mentor_name ? `${std.mentor_name} <span class="badge bg-info-subtle text-info border ms-1">${std.mentor_department || 'แผนกงาน'}</span>` : '<span class="text-muted">ยังไม่ระบุ</span>'}
+                            <strong>${t('col_mentor', 'พี่เลี้ยง')}:</strong> ${std.mentor_name ? `${std.mentor_name} <span class="badge bg-info-subtle text-info border ms-1">${std.mentor_department || t('col_department', 'แผนกงาน')}</span>` : `<span class="text-muted">${t('text_unassigned', 'ยังไม่ระบุ')}</span>`}
                             ${std.mentor_email ? `<div class="small text-muted"><i class="bi bi-envelope me-1"></i>${std.mentor_email}</div>` : ''}
                         </div>
                         <hr class="my-2 text-muted">
-                        <div class="inspect-section-title mt-2 mb-2"><i class="bi bi-award text-warning"></i> ผลการประเมินจากพี่เลี้ยง</div>
+                        <div class="inspect-section-title mt-2 mb-2"><i class="bi bi-award text-warning"></i> ${t('inspector_eval_results', 'ผลการประเมินจากพี่เลี้ยง')}</div>
                         ${evalData ? `
                             <div class="row g-2 text-center mb-2">
                                 <div class="col-4">
                                     <div class="p-2 border rounded bg-light">
                                         <div class="fw-bold fs-6 text-primary">${evalData.score_work}/10</div>
-                                        <small class="text-muted" style="font-size: 11px;">ทักษะงาน</small>
+                                        <small class="text-muted" style="font-size: 11px;">${t('eval_score_work_short', 'ทักษะงาน')}</small>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="p-2 border rounded bg-light">
                                         <div class="fw-bold fs-6 text-success">${evalData.score_time}/10</div>
-                                        <small class="text-muted" style="font-size: 11px;">ตรงต่อเวลา</small>
+                                        <small class="text-muted" style="font-size: 11px;">${t('eval_score_time_short', 'ตรงต่อเวลา')}</small>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="p-2 border rounded bg-light">
                                         <div class="fw-bold fs-6 text-info">${evalData.score_behavior}/10</div>
-                                        <small class="text-muted" style="font-size: 11px;">พฤติกรรม</small>
+                                        <small class="text-muted" style="font-size: 11px;">${t('eval_score_behavior_short', 'พฤติกรรม')}</small>
                                     </div>
                                 </div>
                             </div>
-                            <div class="small text-muted"><strong>ความเห็นสรุป:</strong> ${evalData.final_feedback || '-'}</div>
-                        ` : `<div class="small text-muted py-2"><i class="bi bi-info-circle me-1"></i>ยังไม่มีการประเมินผลจากพี่เลี้ยง</div>`}
+                            <div class="small text-muted"><strong>${t('eval_summary_feedback', 'ความเห็นสรุป')}:</strong> ${evalData.final_feedback || '-'}</div>
+                        ` : `<div class="small text-muted py-2"><i class="bi bi-info-circle me-1"></i>${t('eval_not_evaluated', 'ยังไม่มีการประเมินผลจากพี่เลี้ยง')}</div>`}
                     </div>
                 </div>
 
                 <!-- แถบระยะเวลาและความก้าวหน้า -->
                 <div class="col-12">
                     <div class="inspect-info-card">
-                        <div class="inspect-section-title"><i class="bi bi-calendar-range text-success"></i> ระยะเวลาการฝึกงานและความก้าวหน้า</div>
+                        <div class="inspect-section-title"><i class="bi bi-calendar-range text-success"></i> ${t('inspector_internship_progress', 'ระยะเวลาการฝึกงานและความก้าวหน้า')}</div>
                         <div class="row align-items-center g-3">
                             <div class="col-md-5">
                                 <div class="d-flex justify-content-between mb-1">
-                                    <span><strong>เริ่ม:</strong> ${std.start_date || 'N/A'}</span>
-                                    <span><strong>สิ้นสุด:</strong> ${stats.expireDateStr}</span>
+                                    <span><strong>${t('text_start', 'เริ่ม')}:</strong> ${std.start_date || 'N/A'}</span>
+                                    <span><strong>${t('text_end', 'สิ้นสุด')}:</strong> ${stats.expireDateStr}</span>
                                 </div>
                                 <div class="progress" style="height: 14px; border-radius: 8px;">
                                     <div class="progress-bar ${stats.daysRemaining <= 0 ? 'bg-success' : 'bg-primary'}" style="width: ${stats.percentage}%; font-size: 10px; font-weight: 700;">${stats.percentage}%</div>
                                 </div>
                                 <div class="d-flex justify-content-between mt-1 text-muted small">
-                                    <span>ฝึกแล้ว ${stats.daysTrained} / ${std.duration_days || 90} วัน</span>
-                                    <span class="fw-bold ${stats.daysRemaining <= 7 ? 'text-danger' : 'text-primary'}">${stats.daysRemaining <= 0 ? 'จบฝึกงานแล้ว' : `เหลืออีก ${stats.daysRemaining} วัน`}</span>
+                                    <span>${t('text_trained_days', `ฝึกแล้ว ${stats.daysTrained} / ${std.duration_days || 90} วัน`, { trained: stats.daysTrained, total: std.duration_days || 90, percent: stats.percentage })}</span>
+                                    <span class="fw-bold ${stats.daysRemaining <= 7 ? 'text-danger' : 'text-primary'}">${stats.daysRemaining <= 0 ? t('progress_status_completed', 'จบฝึกงานแล้ว') : t('text_remaining_days', `เหลืออีก ${stats.daysRemaining} วัน`, { days: stats.daysRemaining })}</span>
                                 </div>
                             </div>
                             <div class="col-md-7">
@@ -1944,25 +2022,25 @@
                                     <div class="col-3">
                                         <div class="p-2 border rounded bg-light">
                                             <div class="fw-bold text-dark fs-6">${logs.length}</div>
-                                            <small class="text-muted" style="font-size: 11px;">บันทึกทั้งหมด</small>
+                                            <small class="text-muted" style="font-size: 11px;">${t('kpi_total_logs', 'บันทึกทั้งหมด')}</small>
                                         </div>
                                     </div>
                                     <div class="col-3">
                                         <div class="p-2 border rounded bg-success-subtle border-success">
                                             <div class="fw-bold text-success fs-6">${approvedLogs}</div>
-                                            <small class="text-success" style="font-size: 11px;">อนุมัติแล้ว</small>
+                                            <small class="text-success" style="font-size: 11px;">${t('filter_status_approved', 'อนุมัติแล้ว')}</small>
                                         </div>
                                     </div>
                                     <div class="col-3">
                                         <div class="p-2 border rounded bg-warning-subtle border-warning">
                                             <div class="fw-bold text-warning fs-6">${pendingLogs}</div>
-                                            <small class="text-warning" style="font-size: 11px;">รออนุมัติ</small>
+                                            <small class="text-warning" style="font-size: 11px;">${t('filter_status_pending', 'รออนุมัติ')}</small>
                                         </div>
                                     </div>
                                     <div class="col-3">
                                         <div class="p-2 border rounded bg-danger-subtle border-danger">
                                             <div class="fw-bold text-danger fs-6">${revisionLogs}</div>
-                                            <small class="text-danger" style="font-size: 11px;">แก้ไข/ปฏิเสธ</small>
+                                            <small class="text-danger" style="font-size: 11px;">${t('badge_revision_review', 'แก้ไข/ปฏิเสธ')}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -1974,7 +2052,7 @@
                 <!-- ประวัติบันทึกการทำงานประจำวันทั้งหมด -->
                 <div class="col-12">
                     <div class="inspect-info-card">
-                        <div class="inspect-section-title"><i class="bi bi-journal-text text-primary"></i> รายการบันทึกการปฏิบัติงานทั้งหมด (${logs.length} รายการ)</div>
+                        <div class="inspect-section-title"><i class="bi bi-journal-text text-primary"></i> ${t('inspector_all_logs_title', `รายการบันทึกการปฏิบัติงานทั้งหมด (${logs.length} รายการ)`, { count: logs.length })}</div>
                         <div style="max-height: 260px; overflow-y: auto; padding-right: 4px;">
                             ${logsHtml}
                         </div>
@@ -1988,6 +2066,7 @@
         // ฟังก์ชันเลือกหมวดหมู่จาก Sidebar และสลับหน้าการใช้งาน
         // =========================================================
         function navigateToCategory(category) {
+            window.currentActiveCategory = category;
             document.querySelectorAll('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
 
             // เคลียร์ Auto-refresh timer เมื่อออกจากหน้า Dashboard
@@ -1998,7 +2077,7 @@
 
             if (category === 'dashboard') {
                 if (!currentUser || currentUser.role !== 'admin') {
-                    alert('เฉพาะผู้ดูแลระบบ (Admin) เท่านั้นที่สามารถเข้าถึงแดชบอร์ดได้');
+                    alert(t('user_role_admin', 'เฉพาะผู้ดูแลระบบ (Admin) เท่านั้นที่สามารถเข้าถึงแดชบอร์ดได้'));
                     return;
                 }
                 const navDash = document.getElementById('nav-dashboard');
@@ -2007,8 +2086,8 @@
                 document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
                 document.getElementById('tab-dashboard').style.display = 'block';
 
-                document.getElementById('mainHeaderTitle').innerText = 'แดชบอร์ด & สถิติภาพรวม';
-                document.getElementById('mainHeaderSubtitle').innerText = 'รายงานสถิตินักศึกษา แผนกงาน และการวิเคราะห์ข้อมูลแบบ Real-time';
+                document.getElementById('mainHeaderTitle').innerText = t('dashboard_header_title', 'แดชบอร์ด & สถิติภาพรวม');
+                document.getElementById('mainHeaderSubtitle').innerText = t('dashboard_header_subtitle', 'รายงานสถิตินักศึกษา แผนกงาน และการวิเคราะห์ข้อมูลแบบ Real-time');
 
                 loadDashboardAnalytics();
                 startDashboardRealtimeTimer();
@@ -2021,13 +2100,13 @@
                 document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
                 document.getElementById('tab-students').style.display = 'block';
 
-                document.getElementById('mainHeaderTitle').innerText = 'นักศึกษาที่ฝึกงานอยู่';
-                document.getElementById('mainHeaderSubtitle').innerText = 'แสดงข้อมูลระยะเวลาและจำนวนวันที่เหลือฝึกงานตามตาราง';
+                document.getElementById('mainHeaderTitle').innerText = t('nav_active_students', 'นักศึกษาที่ฝึกงานอยู่');
+                document.getElementById('mainHeaderSubtitle').innerText = t('progress_status_active', 'แสดงข้อมูลระยะเวลาและจำนวนวันที่เหลือฝึกงานตามตาราง');
 
                 const secTitle = document.getElementById('studentsSectionTitle');
-                if (secTitle) secTitle.innerHTML = '<i class="bi bi-person-workspace me-2 text-primary"></i>นักศึกษาที่ฝึกงานอยู่';
+                if (secTitle) secTitle.innerHTML = `<i class="bi bi-person-workspace me-2 text-primary"></i>${t('nav_active_students', 'นักศึกษาที่ฝึกงานอยู่')}`;
                 const secSub = document.getElementById('studentsSectionSubtitle');
-                if (secSub) secSub.innerText = 'แสดงข้อมูลและระยะเวลาวันคงเหลือฝึกงาน';
+                if (secSub) secSub.innerText = t('progress_days_remaining', 'แสดงข้อมูลและระยะเวลาวันคงเหลือฝึกงาน');
 
                 loadStudents();
             } else if (category === 'completed_students') {
@@ -2039,13 +2118,13 @@
                 document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
                 document.getElementById('tab-students').style.display = 'block';
 
-                document.getElementById('mainHeaderTitle').innerText = 'นักศึกษาที่จบแล้ว';
-                document.getElementById('mainHeaderSubtitle').innerText = 'ประวัติและข้อมูลนักศึกษาที่จบการฝึกงานครบตามกำหนด';
+                document.getElementById('mainHeaderTitle').innerText = t('nav_completed_students', 'นักศึกษาที่จบแล้ว');
+                document.getElementById('mainHeaderSubtitle').innerText = t('progress_status_completed', 'ประวัติและข้อมูลนักศึกษาที่จบการฝึกงานครบตามกำหนด');
 
                 const secTitle = document.getElementById('studentsSectionTitle');
-                if (secTitle) secTitle.innerHTML = '<i class="bi bi-mortarboard-fill me-2 text-success"></i>นักศึกษาที่จบแล้ว';
+                if (secTitle) secTitle.innerHTML = `<i class="bi bi-mortarboard-fill me-2 text-success"></i>${t('nav_completed_students', 'นักศึกษาที่จบแล้ว')}`;
                 const secSub = document.getElementById('studentsSectionSubtitle');
-                if (secSub) secSub.innerText = 'รายชื่อนักศึกษาที่ผ่านการฝึกงานเสร็จสมบูรณ์';
+                if (secSub) secSub.innerText = t('progress_status_completed', 'รายชื่อนักศึกษาที่ผ่านการฝึกงานเสร็จสมบูรณ์');
 
                 loadStudents();
             } else if (category === 'all_students') {
@@ -2061,13 +2140,13 @@
                 document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
                 document.getElementById('tab-students').style.display = 'block';
 
-                document.getElementById('mainHeaderTitle').innerText = 'นักศึกษาทั้งหมดในระบบ';
-                document.getElementById('mainHeaderSubtitle').innerText = 'ข้อมูลนักศึกษาฝึกงานทั้งหมดในระบบ พร้อมการตรวจสอบและจัดการครบวงจร';
+                document.getElementById('mainHeaderTitle').innerText = t('nav_all_students', 'นักศึกษาทั้งหมดในระบบ');
+                document.getElementById('mainHeaderSubtitle').innerText = t('dashboard_header_subtitle', 'ข้อมูลนักศึกษาฝึกงานทั้งหมดในระบบ พร้อมการตรวจสอบและจัดการครบวงจร');
 
                 const secTitle = document.getElementById('studentsSectionTitle');
-                if (secTitle) secTitle.innerHTML = '<i class="bi bi-people-fill me-2 text-primary"></i>รายชื่อนักศึกษาทั้งหมดในระบบ';
+                if (secTitle) secTitle.innerHTML = `<i class="bi bi-people-fill me-2 text-primary"></i>${t('nav_all_students', 'รายชื่อนักศึกษาทั้งหมดในระบบ')}`;
                 const secSub = document.getElementById('studentsSectionSubtitle');
-                if (secSub) secSub.innerText = 'ดูข้อมูลนักศึกษาทุกอย่าง ตรวจสอบผลฝึกงาน และจัดการข้อมูล';
+                if (secSub) secSub.innerText = t('main_system_subtitle', 'ดูข้อมูลนักศึกษาทุกอย่าง ตรวจสอบผลฝึกงาน และจัดการข้อมูล');
 
                 loadStudents();
             } else if (category === 'mentors') {
@@ -2081,8 +2160,8 @@
                 document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
                 document.getElementById('tab-mentors').style.display = 'block';
 
-                document.getElementById('mainHeaderTitle').innerText = 'พี่เลี้ยง';
-                document.getElementById('mainHeaderSubtitle').innerText = 'ข้อมูลพี่เลี้ยงควบคุมและแผนกงานที่สังกัด';
+                document.getElementById('mainHeaderTitle').innerText = t('nav_mentors', 'พี่เลี้ยง');
+                document.getElementById('mainHeaderSubtitle').innerText = t('table_mentors_performance_title', 'ข้อมูลพี่เลี้ยงควบคุมและแผนกงานที่สังกัด');
 
                 loadMentors();
             } else if (category === 'logs') {
@@ -2092,8 +2171,8 @@
                 document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
                 document.getElementById('tab-logs').style.display = 'block';
 
-                document.getElementById('mainHeaderTitle').innerText = 'การบันทึกงานของนักศึกษา';
-                document.getElementById('mainHeaderSubtitle').innerText = 'รายการบันทึกการปฏิบัติงานประจำวัน';
+                document.getElementById('mainHeaderTitle').innerText = t('nav_logs', 'การบันทึกงานของนักศึกษา');
+                document.getElementById('mainHeaderSubtitle').innerText = t('main_system_subtitle', 'รายการบันทึกการปฏิบัติงานประจำวัน');
 
                 loadLogs();
             }
@@ -2110,8 +2189,10 @@
             const deptTbody = document.getElementById('dashDeptTableBody');
             deptTbody.innerHTML = '';
 
+            const unitStudent = t('unit_students', 'คน');
+
             if (depts.length === 0) {
-                deptTbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-3">ยังไม่มีข้อมูลแผนก</td></tr>';
+                deptTbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-3">${t('empty_dept', 'ยังไม่มีข้อมูลแผนก')}</td></tr>`;
             } else {
                 depts.forEach(d => {
                     const totalLogs = d.total_logs || 0;
@@ -2122,9 +2203,9 @@
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                     <td><strong><i class="bi bi-folder-fill text-primary me-2"></i>${d.department}</strong></td>
-                    <td class="text-center"><span class="badge bg-light text-dark border px-3">${d.total_students} คน</span></td>
-                    <td class="text-center"><span class="badge bg-primary-subtle text-primary border">${d.active + d.ending} คน</span></td>
-                    <td class="text-center"><span class="badge bg-success-subtle text-success border">${d.completed} คน</span></td>
+                    <td class="text-center"><span class="badge bg-light text-dark border px-3">${d.total_students} ${unitStudent}</span></td>
+                    <td class="text-center"><span class="badge bg-primary-subtle text-primary border">${d.active + d.ending} ${unitStudent}</span></td>
+                    <td class="text-center"><span class="badge bg-success-subtle text-success border">${d.completed} ${unitStudent}</span></td>
                     <td style="font-size: 13px;">${mentorsStr}</td>
                     <td class="text-center">${totalLogs}</td>
                     <td class="text-center text-success fw-bold">${approvedLogs}</td>
@@ -2145,7 +2226,7 @@
             mentorTbody.innerHTML = '';
 
             if (mentors.length === 0) {
-                mentorTbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-3">ยังไม่มีข้อมูลพี่เลี้ยง</td></tr>';
+                mentorTbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-3">${t('empty_mentors', 'ยังไม่มีข้อมูลพี่เลี้ยง')}</td></tr>`;
             } else {
                 mentors.forEach(m => {
                     const pendingLogs = m.pending_logs || 0;
@@ -2158,10 +2239,10 @@
                         </div>
                     </td>
                     <td><span class="badge bg-light text-dark border">${m.department}</span></td>
-                    <td class="text-center"><span class="badge bg-primary-subtle text-primary border px-3">${m.student_count} คน</span></td>
+                    <td class="text-center"><span class="badge bg-primary-subtle text-primary border px-3">${m.student_count} ${unitStudent}</span></td>
                     <td class="text-center text-success fw-bold">${m.approved_logs}</td>
                     <td class="text-center"><span class="badge ${pendingLogs > 0 ? 'bg-warning-subtle text-warning border-warning' : 'bg-light text-muted border'}">${pendingLogs}</span></td>
-                    <td class="text-center fw-bold text-primary">${m.avg_score !== null ? `${m.avg_score} / 10` : '<small class="text-muted">ยังไม่ประเมิน</small>'}</td>
+                    <td class="text-center fw-bold text-primary">${m.avg_score !== null ? `${m.avg_score} / 10` : `<small class="text-muted">${t('eval_not_evaluated', 'ยังไม่ประเมิน')}</small>`}</td>
                 `;
                     mentorTbody.appendChild(tr);
                 });
@@ -2173,18 +2254,24 @@
             stdTbody.innerHTML = '';
 
             if (stds.length === 0) {
-                stdTbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-3">ยังไม่มีข้อมูลนักศึกษา</td></tr>';
+                stdTbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-3">${t('empty_students', 'ยังไม่มีข้อมูลนักศึกษา')}</td></tr>`;
             } else {
                 stds.forEach(s => {
                     const initial = s.name.charAt(0);
                     let badgeStatus = 'badge-status-active';
-                    if (s.status_key === 'completed') badgeStatus = 'badge-status-completed';
-                    else if (s.status_key === 'ending') badgeStatus = 'badge-status-ending';
+                    let statusLabel = t('badge_active_trained', '🔷 ฝึกอยู่');
+                    if (s.status_key === 'completed') {
+                        badgeStatus = 'badge-status-completed';
+                        statusLabel = t('badge_completed_trained', '✅ จบฝึกงาน');
+                    } else if (s.status_key === 'ending') {
+                        badgeStatus = 'badge-status-ending';
+                        statusLabel = t('badge_ending_trained', '⚠️ ใกล้จบ');
+                    }
 
-                    let evalBadge = '<small class="text-muted">ยังไม่ประเมิน</small>';
+                    let evalBadge = `<small class="text-muted">${t('eval_not_evaluated', 'ยังไม่ประเมิน')}</small>`;
                     if (s.score_work !== null) {
                         const avg = ((s.score_work + s.score_time + s.score_behavior) / 3.0).toFixed(1);
-                        evalBadge = `<span class="badge bg-success-subtle text-success border">เฉลี่ย ${avg}/10 (${s.score_work}/${s.score_time}/${s.score_behavior})</span>`;
+                        evalBadge = `<span class="badge bg-success-subtle text-success border">${t('eval_avg_score', `เฉลี่ย ${avg}/10 (${s.score_work}/${s.score_time}/${s.score_behavior})`, { avg, work: s.score_work, time: s.score_time, behavior: s.score_behavior })}</span>`;
                     }
 
                     const tr = document.createElement('tr');
@@ -2199,18 +2286,18 @@
                     <td><strong>${s.mentor_dept}</strong><br><small class="text-muted">${s.mentor_name}</small></td>
                     <td>
                         <div class="d-flex justify-content-between text-muted small mb-1">
-                            <span>ฝึกแล้ว ${s.days_trained}/${s.duration_days} วัน</span>
+                            <span>${t('text_trained_days_short', `ฝึกแล้ว ${s.days_trained}/${s.duration_days} วัน`, { trained: s.days_trained, duration: s.duration_days })}</span>
                             <span>${s.percentage}%</span>
                         </div>
                         <div class="progress" style="height: 6px; width: 100px;">
                             <div class="progress-bar ${s.status_key === 'completed' ? 'bg-success' : 'bg-primary'}" style="width: ${s.percentage}%;"></div>
                         </div>
                     </td>
-                    <td class="text-center"><span class="badge-status ${badgeStatus}">${s.status_label}</span></td>
-                    <td class="text-center"><strong>${s.total_logs}</strong> <small class="text-success">(${s.approved_logs} ผ่าน)</small></td>
+                    <td class="text-center"><span class="badge-status ${badgeStatus}">${statusLabel}</span></td>
+                    <td class="text-center"><strong>${s.total_logs}</strong> <small class="text-success">(${s.approved_logs} ${t('badge_passed', 'ผ่าน')})</small></td>
                     <td class="text-center">${evalBadge}</td>
                     <td class="text-center">
-                        <button onclick="openStudentInspectModal(${s.id})" class="btn btn-outline-primary btn-sm rounded-pill" title="ตรวจสอบเชิงลึก"><i class="bi bi-person-bounding-box me-1"></i>ดูข้อมูล</button>
+                        <button onclick="openStudentInspectModal(${s.id})" class="btn btn-outline-primary btn-sm rounded-pill" title="${t('btn_inspect_badge', 'ตรวจสอบ')}"><i class="bi bi-person-bounding-box me-1"></i>${t('btn_inspect_badge', 'ดูข้อมูล')}</button>
                     </td>
                 `;
                     stdTbody.appendChild(tr);
@@ -2620,23 +2707,23 @@
             if (role === 'admin') {
                 roleBadge.className = 'badge bg-danger ms-1';
                 roleBadge.innerText = 'Admin';
-                sidebarRole.innerText = '👑 ผู้ดูแลระบบ (Administrator)';
+                sidebarRole.innerText = `👑 ${t('user_role_admin', 'ผู้ดูแลระบบ (Admin)')}`;
                 sidebarRole.className = 'text-danger fw-semibold';
 
                 document.querySelectorAll('.admin-only:not(.tab-content)').forEach(el => el.style.display = '');
                 document.querySelectorAll('.student-only:not(.tab-content), .mentor-only:not(.tab-content)').forEach(el => el.style.display = 'none');
             } else if (role === 'mentor') {
                 roleBadge.className = 'badge bg-info text-dark ms-1';
-                roleBadge.innerText = 'พี่เลี้ยง';
-                sidebarRole.innerText = '🧑‍🏫 พี่เลี้ยงควบคุม (Mentor)';
+                roleBadge.innerText = t('nav_mentors', 'พี่เลี้ยง');
+                sidebarRole.innerText = `🧑‍🏫 ${t('user_role_mentor', 'พี่เลี้ยง (Mentor)')}`;
                 sidebarRole.className = 'text-info fw-semibold';
 
                 document.querySelectorAll('.admin-only, .student-only:not(.tab-content)').forEach(el => el.style.display = 'none');
                 document.querySelectorAll('.mentor-only:not(.tab-content)').forEach(el => el.style.display = '');
             } else {
                 roleBadge.className = 'badge bg-success ms-1';
-                roleBadge.innerText = 'นักศึกษา';
-                sidebarRole.innerText = '🎓 นักศึกษาฝึกงาน (Student)';
+                roleBadge.innerText = t('user_role_student', 'นักศึกษา');
+                sidebarRole.innerText = `🎓 ${t('user_role_student', 'นักศึกษาฝึกงาน (Student)')}`;
                 sidebarRole.className = 'text-success fw-semibold';
 
                 document.querySelectorAll('.admin-only, .mentor-only:not(.tab-content)').forEach(el => el.style.display = 'none');
@@ -2645,6 +2732,35 @@
 
             initTooltips();
         }
+
+        // ฟัง Event การเปลี่ยนภาษาเพื่ออัปเดตข้อมูลบนหน้า Real-time
+        window.addEventListener('languageChanged', (e) => {
+            if (currentUser) {
+                const nameToShow = currentUser.display_name || currentUser.username;
+                const role = currentUser.role;
+                const roleBadge = document.getElementById('topBarUserRoleBadge');
+                const sidebarRole = document.getElementById('sidebarUserRole');
+
+                if (role === 'admin') {
+                    if (roleBadge) roleBadge.innerText = 'Admin';
+                    if (sidebarRole) sidebarRole.innerText = `👑 ${t('user_role_admin', 'ผู้ดูแลระบบ (Admin)')}`;
+                } else if (role === 'mentor') {
+                    if (roleBadge) roleBadge.innerText = t('nav_mentors', 'พี่เลี้ยง');
+                    if (sidebarRole) sidebarRole.innerText = `🧑‍🏫 ${t('user_role_mentor', 'พี่เลี้ยง (Mentor)')}`;
+                } else {
+                    if (roleBadge) roleBadge.innerText = t('user_role_student', 'นักศึกษา');
+                    if (sidebarRole) sidebarRole.innerText = `🎓 ${t('user_role_student', 'นักศึกษาฝึกงาน (Student)')}`;
+                }
+
+                if (window.currentActiveCategory) {
+                    navigateToCategory(window.currentActiveCategory);
+                }
+
+                if (currentUser.role === 'student' && typeof loadStudentProgressBar === 'function') {
+                    loadStudentProgressBar();
+                }
+            }
+        });
 
         function showSuccessModal(message, title = 'สำเร็จ') {
             document.getElementById('actionSuccessTitle').innerText = title;
@@ -2896,10 +3012,34 @@
                 <td><i class="bi bi-person-check me-1 text-primary"></i>${mentorMap[std.mentor_id] || std.mentor_name || '<span class="text-muted">ไม่ระบุ</span>'}</td>
                 <td style="text-align: center;">
                     ${currentUser.role === 'admin' ? `
-                        <button onclick="openStudentInspectModal(${std.id})" class="btn btn-outline-primary btn-sm rounded-pill me-1" data-bs-toggle="tooltip" title="ตรวจสอบข้อมูลเชิงลึกนักศึกษา"><i class="bi bi-person-bounding-box me-1"></i>ตรวจสอบ</button>
-                        <button onclick='editStudentModal(${JSON.stringify(std)})' class="btn btn-warning btn-sm btn-icon-only" data-bs-toggle="tooltip" title="แก้ไขข้อมูลนักศึกษา"><i class="bi bi-pencil-square"></i></button> 
-                        <button onclick="openAdminResetModal('student', ${std.id})" class="btn btn-secondary btn-sm btn-icon-only" data-bs-toggle="tooltip" title="ตั้งรหัสผ่านใหม่ให้นักศึกษา"><i class="bi bi-key"></i></button> 
-                        <button onclick="askDelete('students', ${std.id})" class="btn btn-danger btn-sm btn-icon-only" data-bs-toggle="tooltip" title="ลบข้อมูลนักศึกษา"><i class="bi bi-trash"></i></button>
+                        <div class="dropdown">
+                            <button class="btn btn-manage-none dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i> จัดการ
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="border-radius:12px; font-size:14px; min-width:180px;">
+                                <li>
+                                    <button class="dropdown-item d-flex align-items-center gap-2 py-2" onclick="openStudentInspectModal(${std.id})">
+                                        <i class="bi bi-person-bounding-box text-primary"></i> ตรวจสอบเชิงลึก
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="dropdown-item d-flex align-items-center gap-2 py-2" onclick='editStudentModal(${JSON.stringify(std)})'>
+                                        <i class="bi bi-pencil-square text-warning"></i> แก้ไขข้อมูล
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="dropdown-item d-flex align-items-center gap-2 py-2" onclick="openAdminResetModal('student', ${std.id})">
+                                        <i class="bi bi-key text-secondary"></i> ตั้งรหัสผ่านใหม่
+                                    </button>
+                                </li>
+                                <li><hr class="dropdown-divider my-1"></li>
+                                <li>
+                                    <button class="dropdown-item d-flex align-items-center gap-2 py-2 text-danger" onclick="askDelete('students', ${std.id})">
+                                        <i class="bi bi-trash"></i> ลบข้อมูล
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
                     ` : ''}
                     ${currentUser.role === 'mentor' ? `
                         <button onclick="openEvalModal(${std.id})" class="btn btn-info btn-sm text-white rounded-pill" data-bs-toggle="tooltip" title="ประเมินผลการฝึกงานนักศึกษา"><i class="bi bi-clipboard-check me-1"></i>ประเมินผล</button>
@@ -3143,21 +3283,59 @@
         async function openEvalModal(studentId) {
             document.getElementById('eval_student_id').value = studentId;
 
-            document.getElementById('score_work').value = 0;
-            document.getElementById('score_time').value = 0;
-            document.getElementById('score_behavior').value = 0;
+            // Reset all stars
+            ['score_work', 'score_time', 'score_behavior'].forEach(field => {
+                document.getElementById(field).value = 0;
+                document.getElementById('label_' + field).textContent = '— ยังไม่ได้เลือก —';
+                const row = document.getElementById('stars_' + field);
+                row.querySelectorAll('.star-btn').forEach(b => b.classList.remove('active'));
+            });
             document.getElementById('final_feedback').value = '';
 
             const evalData = await fetchJson(`api.php?action=get_evaluation&student_id=${studentId}`);
             if (evalData) {
-                document.getElementById('score_work').value = evalData.score_work ?? 0;
-                document.getElementById('score_time').value = evalData.score_time ?? 0;
-                document.getElementById('score_behavior').value = evalData.score_behavior ?? 0;
+                // Convert 0-10 back to 1-5 stars (stored as star count * 2)
+                const workStars = Math.round((evalData.score_work ?? 0) / 2);
+                const timeStars = Math.round((evalData.score_time ?? 0) / 2);
+                const behaviorStars = Math.round((evalData.score_behavior ?? 0) / 2);
+                setStarRating('score_work', workStars);
+                setStarRating('score_time', timeStars);
+                setStarRating('score_behavior', behaviorStars);
                 document.getElementById('final_feedback').value = evalData.final_feedback || '';
             }
 
             evalModalObj.show();
         }
+
+        const STAR_LABELS = ['', 'ไม่ชอบ ★', 'เฉยๆ ★★', 'ปานกลาง ★★★', 'ชอบ ★★★★', 'ชอบมาก ★★★★★'];
+
+        function setStarRating(field, val) {
+            if (val < 1 || val > 5) return;
+            document.getElementById(field).value = val * 2; // map 1-5 -> 2-10
+            document.getElementById('label_' + field).textContent = STAR_LABELS[val];
+            const row = document.getElementById('stars_' + field);
+            row.querySelectorAll('.star-btn').forEach(b => {
+                const bVal = parseInt(b.dataset.val);
+                b.classList.toggle('active', bVal <= val);
+            });
+        }
+
+        // Wire star buttons
+        document.querySelectorAll('.star-rating-row').forEach(row => {
+            const field = row.dataset.target;
+            const btns = row.querySelectorAll('.star-btn');
+
+            // hover effect
+            btns.forEach(btn => {
+                btn.addEventListener('mouseover', () => {
+                    const hv = parseInt(btn.dataset.val);
+                    btns.forEach(b => b.classList.toggle('hover', parseInt(b.dataset.val) <= hv));
+                });
+                btn.addEventListener('mouseleave', () => btns.forEach(b => b.classList.remove('hover')));
+                btn.addEventListener('click', () => setStarRating(field, parseInt(btn.dataset.val)));
+            });
+            row.addEventListener('mouseleave', () => btns.forEach(b => b.classList.remove('hover')));
+        });
 
         async function saveEvaluation(e) {
             e.preventDefault();
@@ -3168,6 +3346,10 @@
                 score_behavior: Number(document.getElementById('score_behavior').value),
                 final_feedback: document.getElementById('final_feedback').value.trim()
             };
+            if (!payload.score_work || !payload.score_time || !payload.score_behavior) {
+                alert('กรุณาให้คะแนนทุกด้านก่อนบันทึก');
+                return;
+            }
             const res = await fetchJson('api.php?action=save_evaluation', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
             if (res && res.success) {
                 evalModalObj.hide();
@@ -3176,6 +3358,7 @@
                 alert('เกิดข้อผิดพลาด: ' + res.error);
             }
         }
+
 
         async function loadMentors() {
             const mentors = await fetchJson('api.php?action=get_mentors');
@@ -3236,7 +3419,37 @@
             initTooltips();
         }
 
-        function openStudentModal() { document.getElementById('studentModalForm').reset(); document.getElementById('modal_student_id').value = ''; studentModalObj.show(); }
+        function openStudentModal() {
+            document.getElementById('studentModalForm').reset();
+            document.getElementById('modal_student_id').value = '';
+            document.getElementById('modal_student_duration').value = '';
+            document.getElementById('duration_preview').textContent = '';
+            studentModalObj.show();
+        }
+
+        function calcStudentDuration() {
+            const startVal = document.getElementById('modal_student_start_date').value;
+            const endVal = document.getElementById('modal_student_end_date').value;
+            const preview = document.getElementById('duration_preview');
+            if (startVal && endVal) {
+                const start = new Date(startVal);
+                const end = new Date(endVal);
+                const diff = Math.round((end - start) / (1000 * 60 * 60 * 24));
+                if (diff > 0) {
+                    document.getElementById('modal_student_duration').value = diff;
+                    preview.textContent = `⏱ ระยะเวลา ${diff} วัน`;
+                    preview.style.color = '#2563eb';
+                } else {
+                    document.getElementById('modal_student_duration').value = '';
+                    preview.textContent = '⚠ วันสิ้นสุดต้องมากกว่าวันเริ่มต้น';
+                    preview.style.color = '#ef4444';
+                }
+            } else {
+                document.getElementById('modal_student_duration').value = '';
+                preview.textContent = '';
+            }
+        }
+
         function editStudentModal(std) {
             document.getElementById('modal_student_id').value = std.id;
             document.getElementById('modal_student_code').value = std.student_code;
@@ -3245,15 +3458,49 @@
             document.getElementById('modal_student_faculty').value = std.faculty || '';
             document.getElementById('modal_student_major').value = std.major || '';
             document.getElementById('modal_student_start_date').value = std.start_date || '';
-            document.getElementById('modal_student_duration').value = std.duration_days || 90;
             document.getElementById('modal_student_phone').value = std.phone || '';
             document.getElementById('modal_student_mentor_id').value = std.mentor_id || '';
+
+            // Calculate end_date from start_date + duration_days
+            const duration = parseInt(std.duration_days) || 90;
+            let endDateStr = '';
+            if (std.start_date) {
+                const end = new Date(std.start_date);
+                end.setDate(end.getDate() + duration);
+                endDateStr = end.toISOString().split('T')[0];
+            }
+            document.getElementById('modal_student_end_date').value = endDateStr;
+            document.getElementById('modal_student_duration').value = duration;
+            document.getElementById('duration_preview').textContent = endDateStr ? `⏱ ระยะเวลา ${duration} วัน` : '';
+            document.getElementById('duration_preview').style.color = '#2563eb';
+
             studentModalObj.show();
         }
 
         async function saveStudentFromModal(e) {
             e.preventDefault();
             const id = document.getElementById('modal_student_id').value;
+            const startDate = document.getElementById('modal_student_start_date').value;
+            const endDate = document.getElementById('modal_student_end_date').value;
+            const phone = document.getElementById('modal_student_phone').value;
+
+            // Validate phone
+            if (phone && !/^[0-9]{10}$/.test(phone)) {
+                alert('กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก (ตัวเลขเท่านั้น)');
+                return;
+            }
+
+            // Compute duration_days from end_date - start_date
+            let durationDays = parseInt(document.getElementById('modal_student_duration').value) || 0;
+            if (startDate && endDate) {
+                const diff = Math.round((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24));
+                if (diff > 0) durationDays = diff;
+            }
+            if (!durationDays || durationDays <= 0) {
+                alert('กรุณาเลือกวันที่สิ้นสุดการฝึกงานที่ถูกต้อง');
+                return;
+            }
+
             const payload = {
                 id: id ? Number(id) : null,
                 student_code: document.getElementById('modal_student_code').value,
@@ -3261,9 +3508,9 @@
                 university: document.getElementById('modal_student_university').value,
                 faculty: document.getElementById('modal_student_faculty').value,
                 major: document.getElementById('modal_student_major').value,
-                start_date: document.getElementById('modal_student_start_date').value,
-                duration_days: document.getElementById('modal_student_duration').value,
-                phone: document.getElementById('modal_student_phone').value,
+                start_date: startDate,
+                duration_days: durationDays,
+                phone: phone,
                 mentor_id: document.getElementById('modal_student_mentor_id').value ? Number(document.getElementById('modal_student_mentor_id').value) : null
             };
             const res = await fetchJson(`api.php?action=${id ? 'update_student' : 'add_student'}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });

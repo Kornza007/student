@@ -7,15 +7,19 @@
     <title>📊 ตรวจสอบข้อมูลระบบ | ระบบจัดการนักศึกษาฝึกงาน</title>
     <link rel="stylesheet" href="audit_style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- i18n Multi-Language Scripts -->
+    <script src="lang/th.js"></script>
+    <script src="lang/en.js"></script>
+    <script src="lang/i18n.js"></script>
 </head>
-<body class="audit-page">
+<body class="audit-page" data-i18n-page-title="audit_page_title">
 
     <!-- TOP NAVIGATION -->
     <nav class="audit-topbar">
         <a href="index.html" class="audit-topbar-brand">
             <div class="brand-icon">🛡️</div>
             <div class="brand-text">
-                ระบบตรวจสอบ
+                <span data-i18n="app_title">ระบบตรวจสอบ</span>
                 <small>Audit & Monitoring</small>
             </div>
         </a>
@@ -23,19 +27,26 @@
         <div class="audit-nav-tabs">
             <a href="admin_audit_logs.php" class="audit-nav-tab active">
                 <span class="tab-icon">📊</span>
-                ตรวจสอบข้อมูลระบบ
+                <span data-i18n="tab_audit_logs">ตรวจสอบข้อมูลระบบ</span>
             </a>
             <a href="admin_recycle_bin.php" class="audit-nav-tab" id="recycleBinTab">
                 <span class="tab-icon">🗑️</span>
-                ถังขยะระบบ
+                <span data-i18n="tab_recycle_bin">ถังขยะระบบ</span>
                 <span class="tab-badge" id="recycleBinBadge" style="display:none">0</span>
             </a>
         </div>
 
         <div class="audit-topbar-actions">
+            <!-- Language Switcher (Single Switch Toggle TH | EN) -->
+            <div class="lang-switch-toggle audit-lang-switcher" onclick="toggleLanguage()" role="button" tabindex="0" title="สลับภาษา / Switch Language (TH | EN)" aria-label="Switch Language">
+                <span class="lang-globe-icon"><i class="bi bi-globe2"></i></span>
+                <span class="lang-opt th-opt active" onclick="event.stopPropagation(); setLanguage('th');" data-lang="th" title="ภาษาไทย">TH</span>
+                <span class="lang-divider">|</span>
+                <span class="lang-opt en-opt" onclick="event.stopPropagation(); setLanguage('en');" data-lang="en" title="English">EN</span>
+            </div>
             <a href="index.html" class="audit-back-btn">
                 <i class="bi bi-arrow-left"></i>
-                กลับหน้าหลัก
+                <span data-i18n="btn_back_to_home">กลับหน้าหลัก</span>
             </a>
         </div>
     </nav>

@@ -186,6 +186,85 @@ body.audit-page {
 }
 
 /* =========================================================
+   AUDIT PAGE LANGUAGE SWITCHER
+   ========================================================= */
+.audit-lang-switcher,
+.audit-topbar-actions .lang-switch-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 9999px;
+    padding: 3px 5px;
+    user-select: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.audit-lang-switcher:hover,
+.audit-topbar-actions .lang-switch-toggle:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+}
+
+.audit-lang-switcher .lang-globe-icon,
+.audit-topbar-actions .lang-switch-toggle .lang-globe-icon {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0 3px;
+}
+
+.audit-lang-switcher .lang-opt,
+.audit-lang-switcher .lang-switch-btn,
+.audit-topbar-actions .lang-switch-toggle .lang-opt {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+    letter-spacing: 0.4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 22px;
+}
+
+.audit-lang-switcher .lang-opt:hover,
+.audit-lang-switcher .lang-switch-btn:hover,
+.audit-topbar-actions .lang-switch-toggle .lang-opt:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.audit-lang-switcher .lang-opt.active,
+.audit-lang-switcher .lang-switch-btn.active,
+.audit-topbar-actions .lang-switch-toggle .lang-opt.active {
+    background: #ffffff !important;
+    color: #1e3a8a !important;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+.audit-lang-switcher .lang-divider,
+.audit-lang-switcher .lang-switch-divider,
+.audit-topbar-actions .lang-switch-toggle .lang-divider {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 10px;
+    margin: 0 1px;
+    user-select: none;
+}
+
+/* =========================================================
    MAIN CONTENT
    ========================================================= */
 .audit-container {
