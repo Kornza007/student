@@ -15,6 +15,10 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <!-- html2canvas (Image & PDF Snapshot) -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <!-- Flatpickr (Multi-Language Datepicker) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
     <!-- Custom Style -->
     <link rel="stylesheet" href="style.css">
     <!-- i18n Multi-Language Scripts -->
@@ -56,29 +60,21 @@
                 </div>
             </div>
             <!-- จุดที่ 2: ปุ่มเปลี่ยนภาษา (Language Switcher) ส่วนบนหัวแถบเมนู Sidebar -->
-            <div class="lang-switch-toggle sidebar-lang-switcher" onclick="toggleLanguage()" role="button" tabindex="0" title="สลับภาษา / Switch Language (TH | EN)" aria-label="Switch Language">
+            <div class="lang-switch-toggle sidebar-lang-switcher" onclick="toggleLanguage()" role="button" tabindex="0"
+                title="สลับภาษา / Switch Language (TH | EN)" aria-label="Switch Language">
                 <span class="lang-globe-icon"><i class="bi bi-globe2"></i></span>
-                <span class="lang-opt th-opt active" onclick="event.stopPropagation(); setLanguage('th');" data-lang="th" title="ภาษาไทย">TH</span>
+                <span class="lang-opt th-opt active" onclick="event.stopPropagation(); setLanguage('th');"
+                    data-lang="th" title="ภาษาไทย">TH</span>
                 <span class="lang-divider">|</span>
-                <span class="lang-opt en-opt" onclick="event.stopPropagation(); setLanguage('en');" data-lang="en" title="English">EN</span>
+                <span class="lang-opt en-opt" onclick="event.stopPropagation(); setLanguage('en');" data-lang="en"
+                    title="English">EN</span>
             </div>
         </div>
 
-        <!-- ปุ่ม Quick Action สำหรับเพิ่มข้อมูลด่วน -->
-        <button type="button" class="gemini-new-btn admin-only" onclick="openStudentModal()" style="display: none;">
-            <i class="bi bi-plus-circle-fill"></i>
-            <span data-i18n="btn_add_new_student">เพิ่มนักศึกษาใหม่</span>
-        </button>
-
-        <button type="button" class="gemini-new-btn admin-only" onclick="openBatchImportModal()"
-            style="display: none; margin-top: -8px;">
+        <!-- ปุ่ม Quick Action: เหลือเฉพาะปุ่ม Batch Import (นำเข้าข้อมูล) สำหรับ Admin -->
+        <button type="button" class="gemini-new-btn admin-only" onclick="openBatchImportModal()" style="display: none;">
             <i class="bi bi-file-earmark-spreadsheet-fill text-success"></i>
             <span data-i18n="btn_batch_import">นำเข้าข้อมูล (Excel/CSV)</span>
-        </button>
-
-        <button type="button" class="gemini-new-btn student-only" onclick="focusAddLog()" style="display: none;">
-            <i class="bi bi-pencil-square"></i>
-            <span data-i18n="btn_write_daily_log">เขียนบันทึกประจำวัน</span>
         </button>
 
         <div class="sidebar-heading">
@@ -198,12 +194,14 @@
                 </button>
                 <ul class="dropdown-menu profile-dropdown-menu">
                     <li><button onclick="openChangePasswordModal()" class="dropdown-item"><i
-                                class="bi bi-key-fill me-2 text-warning"></i><span data-i18n="menu_change_password">เปลี่ยนรหัสผ่าน</span></button></li>
+                                class="bi bi-key-fill me-2 text-warning"></i><span
+                                data-i18n="menu_change_password">เปลี่ยนรหัสผ่าน</span></button></li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
                     <li><button onclick="promptLogout()" class="dropdown-item text-danger"><i
-                                class="bi bi-box-arrow-right me-2"></i><span data-i18n="menu_logout">ออกจากระบบ</span></button></li>
+                                class="bi bi-box-arrow-right me-2"></i><span
+                                data-i18n="menu_logout">ออกจากระบบ</span></button></li>
                 </ul>
             </div>
         </div>
@@ -273,7 +271,8 @@
                 <div class="progress-header">
                     <div>
                         <h5 class="fw-bold mb-1 text-success d-flex align-items-center">
-                            <i class="bi bi-graph-up-arrow me-2"></i><span data-i18n="student_progress_title">ความก้าวหน้าการฝึกงานของคุณ</span>
+                            <i class="bi bi-graph-up-arrow me-2"></i><span
+                                data-i18n="student_progress_title">ความก้าวหน้าการฝึกงานของคุณ</span>
                         </h5>
                         <small class="text-muted" id="progressDateRange">ช่วงเวลาฝึกงาน</small>
                     </div>
@@ -323,7 +322,8 @@
 
                         <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill"
                             onclick="refreshDashboardNow()" title="รีเฟรชข้อมูล">
-                            <i class="bi bi-arrow-clockwise" id="refreshIcon"></i> <span data-i18n="btn_refresh_data">รีเฟรช</span>
+                            <i class="bi bi-arrow-clockwise" id="refreshIcon"></i> <span
+                                data-i18n="btn_refresh_data">รีเฟรช</span>
                         </button>
                     </div>
 
@@ -339,9 +339,12 @@
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                                 <li><a class="dropdown-item" href="api.php?action=export_students_csv"><i
-                                            class="bi bi-person-lines-fill me-2 text-success"></i><span data-i18n="btn_export_roster_csv">รายชื่อนักศึกษาทั้งหมด (.csv)</span></a></li>
+                                            class="bi bi-person-lines-fill me-2 text-success"></i><span
+                                            data-i18n="btn_export_roster_csv">รายชื่อนักศึกษาทั้งหมด (.csv)</span></a>
+                                </li>
                                 <li><a class="dropdown-item" href="api.php?action=export_summary_csv"><i
-                                            class="bi bi-diagram-3-fill me-2 text-primary"></i><span data-i18n="btn_export_dept_csv">สรุปสถิติรายแผนก (.csv)</span></a></li>
+                                            class="bi bi-diagram-3-fill me-2 text-primary"></i><span
+                                            data-i18n="btn_export_dept_csv">สรุปสถิติรายแผนก (.csv)</span></a></li>
                             </ul>
                         </div>
 
@@ -352,12 +355,14 @@
 
                         <button type="button" class="export-btn export-btn-pdf" onclick="exportReportPDF()"
                             title="Export PDF">
-                            <i class="bi bi-file-earmark-pdf-fill"></i> <span data-i18n="btn_export_pdf">Export PDF</span>
+                            <i class="bi bi-file-earmark-pdf-fill"></i> <span data-i18n="btn_export_pdf">Export
+                                PDF</span>
                         </button>
 
                         <button type="button" class="export-btn export-btn-jpg" onclick="exportDashboardJPG()"
                             title="Export JPG">
-                            <i class="bi bi-file-earmark-image-fill"></i> <span data-i18n="btn_export_jpg">Export JPG</span>
+                            <i class="bi bi-file-earmark-image-fill"></i> <span data-i18n="btn_export_jpg">Export
+                                JPG</span>
                         </button>
                     </div>
                 </div>
@@ -443,8 +448,8 @@
                                     <i class="bi bi-pie-chart-fill text-success"></i>
                                     <span data-i18n="chart_status_title">สัดส่วนสถานะการฝึกงาน</span>
                                 </h3>
-                                <span
-                                    class="badge bg-success-subtle text-success border rounded-pill" data-i18n="chart_current_status">สถานะปัจจุบัน</span>
+                                <span class="badge bg-success-subtle text-success border rounded-pill"
+                                    data-i18n="chart_current_status">สถานะปัจจุบัน</span>
                             </div>
                             <div class="chart-wrapper">
                                 <canvas id="canvasStatusChart"></canvas>
@@ -474,7 +479,8 @@
                                     <i class="bi bi-building-fill text-info"></i>
                                     <span data-i18n="chart_uni_title">สถิตินักศึกษาตามสถาบันการศึกษา</span>
                                 </h3>
-                                <span class="badge bg-info-subtle text-info border rounded-pill" data-i18n="chart_top_uni">Top Universities</span>
+                                <span class="badge bg-info-subtle text-info border rounded-pill"
+                                    data-i18n="chart_top_uni">Top Universities</span>
                             </div>
                             <div class="chart-wrapper">
                                 <canvas id="canvasUniChart"></canvas>
@@ -489,9 +495,10 @@
                     <div class="card mb-4 p-4 shadow-sm" id="tableCardDeptSummary">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
-                                <h4 class="fw-bold mb-0 text-primary"><i
-                                        class="bi bi-diagram-3-fill me-2"></i><span data-i18n="table_dept_summary_title">ตารางสรุปภาพรวมแยกตามแผนกงาน</span></h4>
-                                <small class="text-muted" data-i18n="table_dept_summary_subtitle">จำนวนนักศึกษา สถานะการฝึกงาน
+                                <h4 class="fw-bold mb-0 text-primary"><i class="bi bi-diagram-3-fill me-2"></i><span
+                                        data-i18n="table_dept_summary_title">ตารางสรุปภาพรวมแยกตามแผนกงาน</span></h4>
+                                <small class="text-muted" data-i18n="table_dept_summary_subtitle">จำนวนนักศึกษา
+                                    สถานะการฝึกงาน
                                     และประสิทธิภาพการส่งบันทึกงาน</small>
                             </div>
                             <button class="btn btn-outline-success btn-sm rounded-pill"
@@ -522,10 +529,11 @@
                     <div class="card mb-4 p-4 shadow-sm" id="tableCardMentorSummary">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
-                                <h4 class="fw-bold mb-0 text-info"><i
-                                        class="bi bi-person-check-fill me-2"></i><span data-i18n="table_mentors_performance_title">ตารางสรุปภาระงานและคะแนนประเมินของพี่เลี้ยง</span>
+                                <h4 class="fw-bold mb-0 text-info"><i class="bi bi-person-check-fill me-2"></i><span
+                                        data-i18n="table_mentors_performance_title">ตารางสรุปภาระงานและคะแนนประเมินของพี่เลี้ยง</span>
                                 </h4>
-                                <small class="text-muted" data-i18n="table_mentors_performance_subtitle">การดูแลนักศึกษา การตรวจบันทึกงาน และคะแนนประเมินเฉลี่ย</small>
+                                <small class="text-muted" data-i18n="table_mentors_performance_subtitle">การดูแลนักศึกษา
+                                    การตรวจบันทึกงาน และคะแนนประเมินเฉลี่ย</small>
                             </div>
                         </div>
                         <div class="table-scroll-container">
@@ -534,7 +542,8 @@
                                     <tr>
                                         <th data-i18n="col_mentor_name">ชื่อพี่เลี้ยง</th>
                                         <th data-i18n="col_mentor_dept">แผนก</th>
-                                        <th class="text-center" data-i18n="col_mentor_students_count">นักศึกษาในดูแล</th>
+                                        <th class="text-center" data-i18n="col_mentor_students_count">นักศึกษาในดูแล
+                                        </th>
                                         <th class="text-center" data-i18n="col_mentor_reviewed">บันทึกที่ตรวจแล้ว</th>
                                         <th class="text-center" data-i18n="col_mentor_pending">บันทึกค้างตรวจ</th>
                                         <th class="text-center" data-i18n="col_mentor_avg_score">คะแนนประเมินเฉลี่ย</th>
@@ -549,10 +558,12 @@
                     <div class="card mb-4 p-4 shadow-sm" id="tableCardStudentSummary">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
-                                <h4 class="fw-bold mb-0 text-success"><i
-                                        class="bi bi-mortarboard-fill me-2"></i><span data-i18n="table_student_summary_title">ตารางสรุปผลงานและความก้าวหน้านักศึกษาทั้งหมด</span>
+                                <h4 class="fw-bold mb-0 text-success"><i class="bi bi-mortarboard-fill me-2"></i><span
+                                        data-i18n="table_student_summary_title">ตารางสรุปผลงานและความก้าวหน้านักศึกษาทั้งหมด</span>
                                 </h4>
-                                <small class="text-muted" data-i18n="table_student_summary_subtitle">ความก้าวหน้าการฝึกงาน บันทึกประจำวัน และคะแนนประเมิน</small>
+                                <small class="text-muted"
+                                    data-i18n="table_student_summary_subtitle">ความก้าวหน้าการฝึกงาน บันทึกประจำวัน
+                                    และคะแนนประเมิน</small>
                             </div>
                             <button class="btn btn-outline-success btn-sm rounded-pill"
                                 onclick="window.location.href='api.php?action=export_students_csv'">
@@ -569,7 +580,8 @@
                                         <th data-i18n="col_student_progress">ความก้าวหน้าวันฝึก</th>
                                         <th class="text-center" data-i18n="col_student_status">สถานะฝึกงาน</th>
                                         <th class="text-center" data-i18n="col_dept_logs">บันทึกที่ส่ง</th>
-                                        <th class="text-center" data-i18n="col_student_eval_scores">คะแนนประเมิน (งาน/เวลา/พฤติกรรม)</th>
+                                        <th class="text-center" data-i18n="col_student_eval_scores">คะแนนประเมิน
+                                            (งาน/เวลา/พฤติกรรม)</th>
                                         <th class="text-center" data-i18n="col_manage">จัดการ</th>
                                     </tr>
                                 </thead>
@@ -635,8 +647,10 @@
                             <select id="statusFilter" class="form-select" onchange="loadLogs()">
                                 <option value="" data-i18n="filter_all_status">-- แสดงทุกสถานะ --</option>
                                 <option value="pending" data-i18n="filter_status_pending">⏳ รออนุมัติ (Pending)</option>
-                                <option value="approved" data-i18n="filter_status_approved">✅ อนุมัติแล้ว (Approved)</option>
-                                <option value="revision" data-i18n="filter_status_revision">✏️ ส่งกลับแก้ไข (Revision)</option>
+                                <option value="approved" data-i18n="filter_status_approved">✅ อนุมัติแล้ว (Approved)
+                                </option>
+                                <option value="revision" data-i18n="filter_status_revision">✏️ ส่งกลับแก้ไข (Revision)
+                                </option>
                                 <option value="rejected" data-i18n="filter_status_rejected">❌ ปฏิเสธ (Rejected)</option>
                             </select>
                         </div>
@@ -644,7 +658,8 @@
                             <button type="submit" class="btn btn-primary flex-grow-1"><i
                                     class="bi bi-search me-1"></i><span data-i18n="btn_search">ค้นหา</span></button>
                             <button type="button" class="btn btn-outline-secondary" onclick="resetLogFilter()"
-                                data-i18n-title="btn_clear_filter" title="ล้างตัวกรอง"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                data-i18n-title="btn_clear_filter" title="ล้างตัวกรอง"><i
+                                    class="bi bi-arrow-counterclockwise"></i></button>
                         </div>
                     </form>
                 </div>
@@ -652,25 +667,28 @@
                 <!-- ฟอร์มเพิ่มบันทึกประจำวัน (เฉพาะ นักศึกษา) -->
                 <div id="addLogSection" class="card student-only mb-4 p-4" style="display: none;">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="fw-bold mb-0 text-primary"><i
-                                class="bi bi-plus-circle-fill me-2"></i><span data-i18n="add_log_title">บันทึกการปฏิบัติงานประจำวัน</span></h4>
-                        <span class="text-muted" style="font-size: 13px;"><i
-                                class="bi bi-info-circle me-1"></i><span data-i18n="add_log_subtitle">บันทึกสรุปงานที่ทำในแต่ละวัน</span></span>
+                        <h4 class="fw-bold mb-0 text-primary"><i class="bi bi-plus-circle-fill me-2"></i><span
+                                data-i18n="add_log_title">บันทึกการปฏิบัติงานประจำวัน</span></h4>
+                        <span class="text-muted" style="font-size: 13px;"><i class="bi bi-info-circle me-1"></i><span
+                                data-i18n="add_log_subtitle">บันทึกสรุปงานที่ทำในแต่ละวัน</span></span>
                     </div>
                     <form id="logForm" onsubmit="saveLog(event)">
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <label class="form-label" for="log_work_date" data-i18n="label_log_work_date">วันที่ปฏิบัติงาน:</label>
-                                <input type="date" id="log_work_date" class="form-control" required>
+                                <label class="form-label" for="log_work_date"
+                                    data-i18n="label_log_work_date">วันที่ปฏิบัติงาน:</label>
+                                <input type="text" id="log_work_date" class="form-control" required placeholder="YYYY-MM-DD" autocomplete="off">
                                 <div class="mt-2 d-flex gap-1">
-                                    <span class="quick-chip" onclick="setLogDate('today')" data-i18n="quick_chip_today">วันนี้</span>
-                                    <span class="quick-chip" onclick="setLogDate('yesterday')" data-i18n="quick_chip_yesterday">เมื่อวาน</span>
+                                    <span class="quick-chip" onclick="setLogDate('today')"
+                                        data-i18n="quick_chip_today">วันนี้</span>
+                                    <span class="quick-chip" onclick="setLogDate('yesterday')"
+                                        data-i18n="quick_chip_yesterday">เมื่อวาน</span>
                                 </div>
                             </div>
                             <div class="col-md-8">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <label class="form-label"
-                                        for="log_work_description" data-i18n="label_log_work_description">รายละเอียดงานที่ปฏิบัติ:</label>
+                                    <label class="form-label" for="log_work_description"
+                                        data-i18n="label_log_work_description">รายละเอียดงานที่ปฏิบัติ:</label>
                                     <small class="text-muted" id="descCharCount">0 ตัวอักษร</small>
                                 </div>
                                 <textarea id="log_work_description" class="form-control" rows="3" required
@@ -680,7 +698,8 @@
                             </div>
                             <div class="col-12 text-end">
                                 <button type="submit" class="btn btn-primary px-4"><i
-                                        class="bi bi-cloud-arrow-up-fill me-1"></i><span data-i18n="btn_submit_daily_log">บันทึกข้อมูลประจำวัน</span></button>
+                                        class="bi bi-cloud-arrow-up-fill me-1"></i><span
+                                        data-i18n="btn_submit_daily_log">บันทึกข้อมูลประจำวัน</span></button>
                             </div>
                         </div>
                     </form>
@@ -691,12 +710,18 @@
                     <table class="table table-hover align-middle">
                         <thead>
                             <tr>
-                                <th style="width: 130px;"><i class="bi bi-calendar-event me-1"></i><span data-i18n="col_date">วันที่</span></th>
-                                <th style="width: 200px;"><i class="bi bi-person me-1"></i><span data-i18n="col_student">นักศึกษา</span></th>
-                                <th><i class="bi bi-card-text me-1"></i><span data-i18n="col_work_desc">รายละเอียดงาน</span></th>
-                                <th style="width: 220px;"><i class="bi bi-chat-quote me-1"></i><span data-i18n="col_mentor_comment">ความเห็นพี่เลี้ยง</span></th>
-                                <th style="width: 140px;"><i class="bi bi-flag me-1"></i><span data-i18n="col_status">สถานะ</span></th>
-                                <th style="width: 150px; text-align: center;"><i class="bi bi-gear me-1"></i><span data-i18n="col_manage">จัดการ</span></th>
+                                <th style="width: 130px;"><i class="bi bi-calendar-event me-1"></i><span
+                                        data-i18n="col_date">วันที่</span></th>
+                                <th style="width: 200px;"><i class="bi bi-person me-1"></i><span
+                                        data-i18n="col_student">นักศึกษา</span></th>
+                                <th><i class="bi bi-card-text me-1"></i><span
+                                        data-i18n="col_work_desc">รายละเอียดงาน</span></th>
+                                <th style="width: 220px;"><i class="bi bi-chat-quote me-1"></i><span
+                                        data-i18n="col_mentor_comment">ความเห็นพี่เลี้ยง</span></th>
+                                <th style="width: 140px;"><i class="bi bi-flag me-1"></i><span
+                                        data-i18n="col_status">สถานะ</span></th>
+                                <th style="width: 150px; text-align: center;"><i class="bi bi-gear me-1"></i><span
+                                        data-i18n="col_manage">จัดการ</span></th>
                             </tr>
                         </thead>
                         <tbody id="logsTableBody"></tbody>
@@ -725,87 +750,97 @@
                         <div class="stat-info">
                             <div class="stat-value text-warning" id="kpi-students-ending">0</div>
                             <div class="stat-label" data-i18n="kpi_ending_students">⚠️ ใกล้จบ (<= 7 วัน)</div>
-                        </div>
-                    </div>
-                    <div class="stat-card" onclick="filterStudentsByStatus('completed')"
-                        title="คลิกเพื่อดูนักศึกษาที่จบฝึกงานแล้ว">
-                        <div class="stat-icon-wrapper stat-icon-success"><i class="bi bi-mortarboard-fill"></i>
-                        </div>
-                        <div class="stat-info">
-                            <div class="stat-value text-success" id="kpi-students-completed">0</div>
-                            <div class="stat-label" data-i18n="kpi_completed_students">✅ นักศึกษาที่จบแล้ว</div>
-                        </div>
-                    </div>
-                    <div class="stat-card" onclick="filterStudentsByStatus('ALL')"
-                        title="คลิกเพื่อดูนักศึกษาทั้งหมด">
-                        <div class="stat-icon-wrapper stat-icon-info"><i class="bi bi-people-fill"></i></div>
-                        <div class="stat-info">
-                            <div class="stat-value" id="kpi-students-total">0</div>
-                            <div class="stat-label" data-i18n="kpi_total_students">👥 นักศึกษาทั้งหมด</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
-                        <h2 class="mb-0" id="studentsSectionTitle"><i
-                                class="bi bi-person-workspace me-2 text-primary"></i><span data-i18n="section_title_active_students">นักศึกษาที่ฝึกงานอยู่</span></h2>
-                        <small class="text-muted"
-                            id="studentsSectionSubtitle" data-i18n="section_subtitle_active_students">แสดงข้อมูลระยะเวลาการฝึกงานและจำนวนวันที่คงเหลือ</small>
-                    </div>
-                    <button class="btn btn-success admin-only" onclick="openStudentModal()" data-bs-toggle="tooltip"
-                        title="เพิ่มข้อมูลนักศึกษาฝึกงานใหม่">
-                        <i class="bi bi-person-plus-fill me-1"></i><span data-i18n="btn_add_new_student">+ เพิ่มนักศึกษา</span>
-                    </button>
-                </div>
-
-                <div class="filter-card">
-                    <div class="row g-2">
-                        <div class="col-md-4">
-                            <div class="search-input-group">
-                                <i class="bi bi-search"></i>
-                                <input type="text" id="studentSearchInput" class="form-control"
-                                    data-i18n-placeholder="search_placeholder_students"
-                                    placeholder="ค้นหาชื่อ, รหัสนักศึกษา, มหาวิทยาลัย..."
-                                    onkeyup="filterAndRenderStudents()">
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <select id="studentStatusFilter" class="form-select"
-                                onchange="onStudentStatusFilterChange()">
-                                <option value="active" data-i18n="nav_active_students">🔷 แสดงเฉพาะ: นักศึกษาที่ฝึกงานอยู่</option>
-                                <option value="ending" data-i18n="kpi_ending_students">⚠️ แสดงเฉพาะ: ใกล้จบ (เหลือ <= 7 วัน)</option>
-                                <option value="completed" data-i18n="nav_completed_students">✅ แสดงเฉพาะ: นักศึกษาที่จบแล้ว</option>
-                                <option value="ALL" data-i18n="nav_all_students">-- แสดงนักศึกษาทั้งหมด --</option>
-                            </select>
+                        <div class="stat-card" onclick="filterStudentsByStatus('completed')"
+                            title="คลิกเพื่อดูนักศึกษาที่จบฝึกงานแล้ว">
+                            <div class="stat-icon-wrapper stat-icon-success"><i class="bi bi-mortarboard-fill"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-value text-success" id="kpi-students-completed">0</div>
+                                <div class="stat-label" data-i18n="kpi_completed_students">✅ นักศึกษาที่จบแล้ว</div>
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <select id="studentSortOrder" class="form-select" onchange="filterAndRenderStudents()">
-                                <option value="expiring" data-i18n="sort_expiring">เรียงตามวันหมดอายุฝึก (ใกล้หมดก่อน)</option>
-                                <option value="newest" data-i18n="sort_newest">เรียงตามวันที่เริ่มฝึก (ล่าสุดขึ้นก่อน)</option>
-                                <option value="name" data-i18n="sort_name">เรียงตามชื่อ-นามสกุล</option>
-                            </select>
+                        <div class="stat-card" onclick="filterStudentsByStatus('ALL')"
+                            title="คลิกเพื่อดูนักศึกษาทั้งหมด">
+                            <div class="stat-icon-wrapper stat-icon-info"><i class="bi bi-people-fill"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="kpi-students-total">0</div>
+                                <div class="stat-label" data-i18n="kpi_total_students">👥 นักศึกษาทั้งหมด</div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="table-scroll-container">
-                    <table class="table table-hover align-middle">
-                        <thead>
-                            <tr>
-                                <th><i class="bi bi-person-badge me-1"></i><span data-i18n="col_student_name_code">รหัส / ชื่อ-นามสกุล</span></th>
-                                <th><i class="bi bi-building me-1"></i><span data-i18n="col_student_uni_faculty">มหาวิทยาลัย / คณะ / สาขา</span></th>
-                                <th><i class="bi bi-telephone me-1"></i><span data-i18n="col_phone">เบอร์โทรศัพท์</span></th>
-                                <th><i class="bi bi-calendar-range me-1"></i><span data-i18n="col_internship_period">วันที่เริ่ม - วันสิ้นสุด</span></th>
-                                <th><i class="bi bi-hourglass-split me-1"></i><span data-i18n="col_progress">ความก้าวหน้า / วันคงเหลือ</span></th>
-                                <th><i class="bi bi-flag me-1"></i><span data-i18n="col_status">สถานะฝึกงาน</span></th>
-                                <th><i class="bi bi-person-workspace me-1"></i><span data-i18n="col_mentor">พี่เลี้ยง</span></th>
-                                <th style="text-align: center;"><i class="bi bi-gear me-1"></i><span data-i18n="col_manage">จัดการ</span></th>
-                            </tr>
-                        </thead>
-                        <tbody id="studentsTableBody"></tbody>
-                    </table>
-                </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h2 class="mb-0" id="studentsSectionTitle"><i
+                                    class="bi bi-person-workspace me-2 text-primary"></i><span
+                                    data-i18n="section_title_active_students">นักศึกษาที่ฝึกงานอยู่</span></h2>
+                            <small class="text-muted" id="studentsSectionSubtitle"
+                                data-i18n="section_subtitle_active_students">แสดงข้อมูลระยะเวลาการฝึกงานและจำนวนวันที่คงเหลือ</small>
+                        </div>
+                        <button class="btn btn-success admin-only" onclick="openStudentModal()" data-bs-toggle="tooltip"
+                            title="เพิ่มข้อมูลนักศึกษาฝึกงานใหม่">
+                            <i class="bi bi-person-plus-fill me-1"></i><span data-i18n="btn_add_new_student">+
+                                เพิ่มนักศึกษา</span>
+                        </button>
+                    </div>
+
+                    <div class="filter-card">
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <div class="search-input-group">
+                                    <i class="bi bi-search"></i>
+                                    <input type="text" id="studentSearchInput" class="form-control"
+                                        data-i18n-placeholder="search_placeholder_students"
+                                        placeholder="ค้นหาชื่อ, รหัสนักศึกษา, มหาวิทยาลัย..."
+                                        onkeyup="filterAndRenderStudents()">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <select id="studentStatusFilter" class="form-select"
+                                    onchange="onStudentStatusFilterChange()">
+                                    <option value="active" data-i18n-opt="filter_students_active">🔷 แสดงเฉพาะ: นักศึกษาที่ฝึกงานอยู่</option>
+                                    <option value="ending" data-i18n-opt="filter_students_ending">⚠️ แสดงเฉพาะ: ใกล้จบ (เหลือ <= 7 วัน)</option>
+                                    <option value="completed" data-i18n-opt="filter_students_completed">✅ แสดงเฉพาะ: นักศึกษาที่จบแล้ว</option>
+                                    <option value="ALL" data-i18n-opt="filter_students_all">-- แสดงนักศึกษาทั้งหมด --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <select id="studentSortOrder" class="form-select" onchange="filterAndRenderStudents()">
+                                    <option value="expiring" data-i18n-opt="sort_expiring">เรียงตาม: วันฝึกงานใกล้หมดก่อน</option>
+                                    <option value="newest" data-i18n-opt="sort_newest">เรียงตาม: วันที่เริ่มฝึกงานล่าสุด</option>
+                                    <option value="name" data-i18n-opt="sort_name">เรียงตาม: ชื่อ-นามสกุล (ก-ฮ)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-scroll-container">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th><i class="bi bi-person-badge me-1"></i><span
+                                            data-i18n="col_student_name_code">รหัส / ชื่อ-นามสกุล</span></th>
+                                    <th><i class="bi bi-building me-1"></i><span
+                                            data-i18n="col_student_uni_faculty">มหาวิทยาลัย / คณะ / สาขา</span></th>
+                                    <th><i class="bi bi-telephone me-1"></i><span
+                                            data-i18n="col_phone">เบอร์โทรศัพท์</span></th>
+                                    <th><i class="bi bi-calendar-range me-1"></i><span
+                                            data-i18n="col_internship_period">วันที่เริ่ม - วันสิ้นสุด</span></th>
+                                    <th><i class="bi bi-hourglass-split me-1"></i><span
+                                            data-i18n="col_progress">ความก้าวหน้า / วันคงเหลือ</span></th>
+                                    <th><i class="bi bi-flag me-1"></i><span data-i18n="col_status">สถานะฝึกงาน</span>
+                                    </th>
+                                    <th><i class="bi bi-person-workspace me-1"></i><span
+                                            data-i18n="col_mentor">พี่เลี้ยง</span></th>
+                                    <th style="text-align: center;"><i class="bi bi-gear me-1"></i><span
+                                            data-i18n="col_manage">จัดการ</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTableBody"></tbody>
+                        </table>
+                    </div>
             </section>
 
             <!-- =========================================================
@@ -833,12 +868,15 @@
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
-                        <h2 class="mb-0"><i class="bi bi-person-badge-fill me-2 text-info"></i><span data-i18n="section_title_mentors">ข้อมูลพี่เลี้ยง</span></h2>
-                        <small class="text-muted" data-i18n="section_subtitle_mentors">รายชื่อพี่เลี้ยงควบคุมและแผนกงานในระบบ</small>
+                        <h2 class="mb-0"><i class="bi bi-person-badge-fill me-2 text-info"></i><span
+                                data-i18n="section_title_mentors">ข้อมูลพี่เลี้ยง</span></h2>
+                        <small class="text-muted"
+                            data-i18n="section_subtitle_mentors">รายชื่อพี่เลี้ยงควบคุมและแผนกงานในระบบ</small>
                     </div>
                     <button class="btn btn-primary admin-only" onclick="openMentorModal()" data-bs-toggle="tooltip"
                         title="เพิ่มข้อมูลพี่เลี้ยงควบคุม">
-                        <i class="bi bi-person-plus-fill me-1"></i><span data-i18n="btn_add_new_student">+ เพิ่มพี่เลี้ยง</span>
+                        <i class="bi bi-person-plus-fill me-1"></i><span data-i18n="btn_add_new_student">+
+                            เพิ่มพี่เลี้ยง</span>
                     </button>
                 </div>
 
@@ -846,10 +884,14 @@
                     <table class="table table-hover align-middle">
                         <thead>
                             <tr>
-                                <th><i class="bi bi-person me-1"></i><span data-i18n="col_mentor_name">ชื่อ-นามสกุล</span></th>
-                                <th><i class="bi bi-diagram-3 me-1"></i><span data-i18n="col_mentor_dept">แผนก</span></th>
-                                <th><i class="bi bi-envelope me-1"></i><span data-i18n="col_email">อีเมล (ใช้เป็น Username)</span></th>
-                                <th class="admin-only" style="text-align: center;"><i class="bi bi-gear me-1"></i><span data-i18n="col_manage">จัดการ</span>
+                                <th><i class="bi bi-person me-1"></i><span
+                                        data-i18n="col_mentor_name">ชื่อ-นามสกุล</span></th>
+                                <th><i class="bi bi-diagram-3 me-1"></i><span data-i18n="col_mentor_dept">แผนก</span>
+                                </th>
+                                <th><i class="bi bi-envelope me-1"></i><span data-i18n="col_email">อีเมล (ใช้เป็น
+                                        Username)</span></th>
+                                <th class="admin-only" style="text-align: center;"><i class="bi bi-gear me-1"></i><span
+                                        data-i18n="col_manage">จัดการ</span>
                                 </th>
                             </tr>
                         </thead>
@@ -883,8 +925,8 @@
                     </div>
                 </div>
                 <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary px-4 rounded-pill"
-                        data-bs-dismiss="modal" data-i18n="btn_close">ปิดหน้าต่าง</button>
+                    <button type="button" class="btn btn-secondary px-4 rounded-pill" data-bs-dismiss="modal"
+                        data-i18n="btn_close">ปิดหน้าต่าง</button>
                 </div>
             </div>
         </div>
@@ -900,14 +942,16 @@
                     </div>
                 </div>
                 <div class="modal-body py-3">
-                    <h4 class="fw-bold text-dark mb-2" data-i18n="logout_confirm_title">ยืนยันที่จะออกจากระบบหรือไม่?</h4>
+                    <h4 class="fw-bold text-dark mb-2" data-i18n="logout_confirm_title">ยืนยันที่จะออกจากระบบหรือไม่?
+                    </h4>
                     <p class="text-muted mb-0" data-i18n="logout_confirm_desc">คุณต้องการออกจากระบบหรือไม่?</p>
                 </div>
                 <div class="modal-footer border-0 justify-content-center gap-2 pt-0">
-                    <button type="button" class="btn btn-light border px-4 rounded-pill"
-                        data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
+                    <button type="button" class="btn btn-light border px-4 rounded-pill" data-bs-dismiss="modal"
+                        data-i18n="btn_cancel">ยกเลิก</button>
                     <button type="button" class="btn btn-danger px-4 rounded-pill" onclick="confirmLogout()">
-                        <i class="bi bi-box-arrow-right me-1"></i><span data-i18n="btn_confirm_logout">ยืนยันออกจากระบบ</span>
+                        <i class="bi bi-box-arrow-right me-1"></i><span
+                            data-i18n="btn_confirm_logout">ยืนยันออกจากระบบ</span>
                     </button>
                 </div>
             </div>
@@ -920,47 +964,56 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold" id="studentModalTitle"><i
-                            class="bi bi-person-plus-fill me-2 text-primary"></i><span data-i18n="modal_student_add_title">เพิ่มข้อมูลนักศึกษา</span></h5>
+                            class="bi bi-person-plus-fill me-2 text-primary"></i><span
+                            data-i18n="modal_student_add_title">เพิ่มข้อมูลนักศึกษา</span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form id="studentModalForm" onsubmit="saveStudentFromModal(event)">
                     <div class="modal-body row g-3">
                         <input type="hidden" id="modal_student_id">
-                        <div class="col-md-6"><label class="form-label" data-i18n="form_student_code">Username (รหัสนักศึกษา):</label><input
-                                type="text" id="modal_student_code" class="form-control" required
-                                placeholder="STU001"></div>
-                        <div class="col-md-6"><label class="form-label" data-i18n="form_student_name">ชื่อ-นามสกุล:</label><input type="text"
-                                id="modal_student_name" class="form-control" required placeholder="Full Name">
+                        <div class="col-md-6"><label class="form-label" data-i18n="form_student_code">Username
+                                (รหัสนักศึกษา):</label><input type="text" id="modal_student_code" class="form-control"
+                                required data-i18n-placeholder="placeholder_student_code" placeholder="เช่น STU001 หรือ 65012345"></div>
+                        <div class="col-md-6"><label class="form-label"
+                                data-i18n="form_student_name">ชื่อ-นามสกุล:</label><input type="text"
+                                id="modal_student_name" class="form-control" required data-i18n-placeholder="placeholder_student_name" placeholder="ชื่อ-นามสกุล">
                         </div>
-                        <div class="col-md-6"><label class="form-label" data-i18n="form_university">มหาวิทยาลัย:</label><input type="text"
-                                id="modal_student_university" class="form-control" required
-                                placeholder="University"></div>
-                        <div class="col-md-6"><label class="form-label" data-i18n="form_faculty">คณะ / สาขา:</label><input type="text"
-                                id="modal_student_faculty" class="form-control mb-2" placeholder="Faculty"><input
-                                type="text" id="modal_student_major" class="form-control" placeholder="Major"></div>
-                        <div class="col-md-6"><label class="form-label" data-i18n="form_start_date">วันที่เริ่มฝึกงาน:</label><input type="date"
-                                id="modal_student_start_date" class="form-control" required
+                        <div class="col-md-6"><label class="form-label"
+                                data-i18n="form_university">มหาวิทยาลัย:</label><input type="text"
+                                id="modal_student_university" class="form-control" required data-i18n-placeholder="placeholder_university" placeholder="มหาวิทยาลัย / สถาบันการศึกษา">
+                        </div>
+                        <div class="col-md-6"><label class="form-label" data-i18n="form_faculty">คณะ /
+                                สาขา:</label><input type="text" id="modal_student_faculty" class="form-control mb-2"
+                                data-i18n-placeholder="placeholder_faculty" placeholder="คณะ"><input type="text" id="modal_student_major" class="form-control"
+                                data-i18n-placeholder="placeholder_major" placeholder="สาขาวิชา"></div>
+                        <div class="col-md-6"><label class="form-label"
+                                data-i18n="form_start_date">วันที่เริ่มฝึกงาน:</label><input type="text"
+                                id="modal_student_start_date" class="form-control" required data-i18n-placeholder="placeholder_start_date" placeholder="YYYY-MM-DD" autocomplete="off"
                                 onchange="calcStudentDuration()"></div>
                         <div class="col-md-6">
                             <label class="form-label" data-i18n="form_end_date">วันที่สิ้นสุดการฝึกงาน:</label>
-                            <input type="date" id="modal_student_end_date" class="form-control" required
+                            <input type="text" id="modal_student_end_date" class="form-control" required data-i18n-placeholder="placeholder_end_date" placeholder="YYYY-MM-DD" autocomplete="off"
                                 onchange="calcStudentDuration()">
-                            <div class="form-text text-primary fw-semibold mt-1" id="duration_preview" style="font-size:12px;"></div>
+                            <div class="form-text text-primary fw-semibold mt-1" id="duration_preview"
+                                style="font-size:12px;"></div>
                             <input type="hidden" id="modal_student_duration">
                         </div>
-                        <div class="col-md-6"><label class="form-label" data-i18n="form_phone">เบอร์โทรศัพท์:</label><input type="tel"
-                                id="modal_student_phone" class="form-control" placeholder="0812345678"
-                                maxlength="10" pattern="[0-9]{10}" title="กรุณากรอกเบอร์โทรศัพท์ 10 หลัก"></div>
-                        <div class="col-md-6"><label class="form-label" data-i18n="form_mentor_assign">พี่เลี้ยงควบคุม:</label><select
+                        <div class="col-md-6"><label class="form-label"
+                                data-i18n="form_phone">เบอร์โทรศัพท์:</label><input type="tel" id="modal_student_phone"
+                                class="form-control" data-i18n-placeholder="placeholder_phone" placeholder="0812345678" maxlength="10" pattern="[0-9]{10}"
+                                data-i18n-title="form_phone_title" title="กรุณากรอกเบอร์โทรศัพท์ 10 หลัก"></div>
+                        <div class="col-md-6"><label class="form-label"
+                                data-i18n="form_mentor_assign">พี่เลี้ยงควบคุม:</label><select
                                 id="modal_student_mentor_id" class="form-select">
-                                <option value="">-- ไม่ระบุ / Unassigned --</option>
+                                <option value="" data-i18n-opt="opt_unassigned">-- ไม่ระบุ / ยังไม่กำหนด --</option>
                             </select></div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light border rounded-pill"
-                            data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
+                        <button type="button" class="btn btn-light border rounded-pill" data-bs-dismiss="modal"
+                            data-i18n="btn_cancel">ยกเลิก</button>
                         <button type="submit" class="btn btn-primary px-4 rounded-pill"><i
-                                class="bi bi-save me-1"></i><span data-i18n="btn_save_changes">บันทึกข้อมูล</span></button>
+                                class="bi bi-save me-1"></i><span
+                                data-i18n="btn_save_changes">บันทึกข้อมูล</span></button>
                     </div>
                 </form>
             </div>
@@ -973,27 +1026,31 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold" id="mentorModalTitle"><i
-                            class="bi bi-person-badge-fill me-2 text-primary"></i><span data-i18n="modal_mentor_add_title">เพิ่มข้อมูลพี่เลี้ยง</span></h5>
+                            class="bi bi-person-badge-fill me-2 text-primary"></i><span
+                            data-i18n="modal_mentor_add_title">เพิ่มข้อมูลพี่เลี้ยง</span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form id="mentorModalForm" onsubmit="saveMentorFromModal(event)">
                     <div class="modal-body">
                         <input type="hidden" id="modal_mentor_id">
-                        <div class="mb-3"><label class="form-label" data-i18n="form_mentor_name">ชื่อ-นามสกุล:</label><input type="text"
-                                id="modal_mentor_name" class="form-control" required placeholder="Mentor Name">
+                        <div class="mb-3"><label class="form-label"
+                                data-i18n="form_mentor_name">ชื่อ-นามสกุล:</label><input type="text"
+                                id="modal_mentor_name" class="form-control" required data-i18n-placeholder="placeholder_mentor_name" placeholder="ชื่อ-นามสกุลพี่เลี้ยง">
                         </div>
-                        <div class="mb-3"><label class="form-label" data-i18n="form_mentor_department">แผนก:</label><input type="text"
-                                id="modal_mentor_department" class="form-control" required
-                                placeholder="Department"></div>
-                        <div class="mb-3"><label class="form-label" data-i18n="form_mentor_email">อีเมล (ใช้เป็น Username ในการล็อกอิน):</label><input
-                                type="email" id="modal_mentor_email" class="form-control" required
-                                placeholder="email@company.com"></div>
+                        <div class="mb-3"><label class="form-label"
+                                data-i18n="form_mentor_department">แผนก:</label><input type="text"
+                                id="modal_mentor_department" class="form-control" required data-i18n-placeholder="placeholder_mentor_dept" placeholder="แผนก / ฝ่ายงาน">
+                        </div>
+                        <div class="mb-3"><label class="form-label" data-i18n="form_mentor_email">อีเมล (ใช้เป็น
+                                Username ในการล็อกอิน):</label><input type="email" id="modal_mentor_email"
+                                class="form-control" required data-i18n-placeholder="placeholder_mentor_email" placeholder="mentor@company.com"></div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light border rounded-pill"
-                            data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
+                        <button type="button" class="btn btn-light border rounded-pill" data-bs-dismiss="modal"
+                            data-i18n="btn_cancel">ยกเลิก</button>
                         <button type="submit" class="btn btn-primary px-4 rounded-pill"><i
-                                class="bi bi-save me-1"></i><span data-i18n="btn_save_changes">บันทึกข้อมูล</span></button>
+                                class="bi bi-save me-1"></i><span
+                                data-i18n="btn_save_changes">บันทึกข้อมูล</span></button>
                     </div>
                 </form>
             </div>
@@ -1005,15 +1062,16 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title fw-bold"><i
-                            class="bi bi-exclamation-triangle-fill me-2"></i><span data-i18n="modal_delete_confirm_title">ยืนยันการลบข้อมูล</span></h5>
+                    <h5 class="modal-title fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i><span
+                            data-i18n="modal_delete_confirm_title">ยืนยันการลบข้อมูล</span></h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body text-center py-4 fs-5 text-dark" id="deleteModalText" data-i18n="modal_delete_confirm_text">
+                <div class="modal-body text-center py-4 fs-5 text-dark" id="deleteModalText"
+                    data-i18n="modal_delete_confirm_text">
                     คุณแน่ใจหรือไม่ที่จะลบข้อมูลนี้?</div>
                 <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-light border rounded-pill"
-                        data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
+                    <button type="button" class="btn btn-light border rounded-pill" data-bs-dismiss="modal"
+                        data-i18n="btn_cancel">ยกเลิก</button>
                     <button type="button" id="confirmDeleteBtn" class="btn btn-danger px-4 rounded-pill"><i
                             class="bi bi-trash me-1"></i><span data-i18n="tooltip_delete">ยืนยันลบข้อมูล</span></button>
                 </div>
@@ -1026,7 +1084,8 @@
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content" style="border-radius: 20px; overflow: hidden;">
                 <div class="modal-header text-white" style="background: linear-gradient(135deg,#6366f1,#8b5cf6);">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-clipboard-check me-2"></i><span data-i18n="modal_eval_title">ประเมินผลนักศึกษาฝึกงาน</span></h5>
+                    <h5 class="modal-title fw-bold"><i class="bi bi-clipboard-check me-2"></i><span
+                            data-i18n="modal_eval_title">ประเมินผลนักศึกษาฝึกงาน</span></h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form onsubmit="saveEvaluation(event)">
@@ -1036,79 +1095,122 @@
                         <input type="hidden" id="score_time" value="0">
                         <input type="hidden" id="score_behavior" value="0">
 
-                        <p class="text-muted small mb-4"><i class="bi bi-info-circle me-1 text-primary"></i><span data-i18n="eval_instruction">กรุณาให้คะแนนนักศึกษาในแต่ละด้านโดยเลือกระดับดาว</span></p>
+                        <p class="text-muted small mb-4"><i class="bi bi-info-circle me-1 text-primary"></i><span
+                                data-i18n="eval_instruction">กรุณาให้คะแนนนักศึกษาในแต่ละด้านโดยเลือกระดับดาว</span></p>
 
                         <!-- ด้านที่ 1: คุณภาพงาน -->
                         <div class="eval-category-card mb-4">
                             <div class="d-flex align-items-center gap-2 mb-2">
-                                <div class="eval-cat-icon" style="background: #ede9fe;"><i class="bi bi-briefcase-fill text-primary"></i></div>
+                                <div class="eval-cat-icon" style="background: #ede9fe;"><i
+                                        class="bi bi-briefcase-fill text-primary"></i></div>
                                 <div>
-                                    <div class="fw-bold" data-i18n="form_score_work">1. ด้านคุณภาพงานและความรู้ความสามารถ</div>
-                                    <small class="text-muted eval-score-label" id="label_score_work">— ยังไม่ได้เลือก —</small>
+                                    <div class="fw-bold" data-i18n="form_score_work">1.
+                                        ด้านคุณภาพงานและความรู้ความสามารถ</div>
+                                    <small class="text-muted eval-score-label" id="label_score_work">— ยังไม่ได้เลือก
+                                        —</small>
                                 </div>
                             </div>
                             <div class="star-rating-row" id="stars_score_work" data-target="score_work">
-                                <button type="button" class="star-btn" data-val="1" title="ไม่ชอบ"><i class="bi bi-star-fill"></i></button>
-                                <button type="button" class="star-btn" data-val="2" title="เฉยๆ"><i class="bi bi-star-fill"></i></button>
-                                <button type="button" class="star-btn" data-val="3" title="ปานกลาง"><i class="bi bi-star-fill"></i></button>
-                                <button type="button" class="star-btn" data-val="4" title="ชอบ"><i class="bi bi-star-fill"></i></button>
-                                <button type="button" class="star-btn" data-val="5" title="ชอบมาก"><i class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="1" title="ไม่ชอบ"><i
+                                        class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="2" title="เฉยๆ"><i
+                                        class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="3" title="ปานกลาง"><i
+                                        class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="4" title="ชอบ"><i
+                                        class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="5" title="ชอบมาก"><i
+                                        class="bi bi-star-fill"></i></button>
                             </div>
                             <div class="star-labels-row">
-                                <span>ไม่ชอบ</span><span>เฉยๆ</span><span>ปานกลาง</span><span>ชอบ</span><span>ชอบมาก</span>
+                                <span data-i18n="star_label_1">ไม่ชอบ</span>
+                                <span data-i18n="star_label_2">เฉยๆ</span>
+                                <span data-i18n="star_label_3">ปานกลาง</span>
+                                <span data-i18n="star_label_4">ชอบ</span>
+                                <span data-i18n="star_label_5">ชอบมาก</span>
                             </div>
                         </div>
 
                         <!-- ด้านที่ 2: ความตรงต่อเวลา -->
                         <div class="eval-category-card mb-4">
                             <div class="d-flex align-items-center gap-2 mb-2">
-                                <div class="eval-cat-icon" style="background: #dcfce7;"><i class="bi bi-clock-fill text-success"></i></div>
+                                <div class="eval-cat-icon" style="background: #dcfce7;"><i
+                                        class="bi bi-clock-fill text-success"></i></div>
                                 <div>
-                                    <div class="fw-bold" data-i18n="form_score_time">2. ด้านความตรงต่อเวลาและการเข้างาน</div>
-                                    <small class="text-muted eval-score-label" id="label_score_time">— ยังไม่ได้เลือก —</small>
+                                    <div class="fw-bold" data-i18n="form_score_time">2. ด้านความตรงต่อเวลาและการเข้างาน
+                                    </div>
+                                    <small class="text-muted eval-score-label" id="label_score_time">— ยังไม่ได้เลือก
+                                        —</small>
                                 </div>
                             </div>
                             <div class="star-rating-row" id="stars_score_time" data-target="score_time">
-                                <button type="button" class="star-btn" data-val="1" title="ไม่ชอบ"><i class="bi bi-star-fill"></i></button>
-                                <button type="button" class="star-btn" data-val="2" title="เฉยๆ"><i class="bi bi-star-fill"></i></button>
-                                <button type="button" class="star-btn" data-val="3" title="ปานกลาง"><i class="bi bi-star-fill"></i></button>
-                                <button type="button" class="star-btn" data-val="4" title="ชอบ"><i class="bi bi-star-fill"></i></button>
-                                <button type="button" class="star-btn" data-val="5" title="ชอบมาก"><i class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="1" title="ไม่ชอบ"><i
+                                        class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="2" title="เฉยๆ"><i
+                                        class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="3" title="ปานกลาง"><i
+                                        class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="4" title="ชอบ"><i
+                                        class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="5" title="ชอบมาก"><i
+                                        class="bi bi-star-fill"></i></button>
                             </div>
                             <div class="star-labels-row">
-                                <span>ไม่ชอบ</span><span>เฉยๆ</span><span>ปานกลาง</span><span>ชอบ</span><span>ชอบมาก</span>
+                                <span data-i18n="star_label_1">ไม่ชอบ</span>
+                                <span data-i18n="star_label_2">เฉยๆ</span>
+                                <span data-i18n="star_label_3">ปานกลาง</span>
+                                <span data-i18n="star_label_4">ชอบ</span>
+                                <span data-i18n="star_label_5">ชอบมาก</span>
                             </div>
                         </div>
 
                         <!-- ด้านที่ 3: พฤติกรรม -->
                         <div class="eval-category-card mb-3">
                             <div class="d-flex align-items-center gap-2 mb-2">
-                                <div class="eval-cat-icon" style="background: #fef3c7;"><i class="bi bi-emoji-smile-fill text-warning"></i></div>
+                                <div class="eval-cat-icon" style="background: #fef3c7;"><i
+                                        class="bi bi-emoji-smile-fill text-warning"></i></div>
                                 <div>
-                                    <div class="fw-bold" data-i18n="form_score_behavior">3. ด้านพฤติกรรม มนุษยสัมพันธ์ และวินัย</div>
-                                    <small class="text-muted eval-score-label" id="label_score_behavior">— ยังไม่ได้เลือก —</small>
+                                    <div class="fw-bold" data-i18n="form_score_behavior">3. ด้านพฤติกรรม มนุษยสัมพันธ์
+                                        และวินัย</div>
+                                    <small class="text-muted eval-score-label" id="label_score_behavior">—
+                                        ยังไม่ได้เลือก —</small>
                                 </div>
                             </div>
                             <div class="star-rating-row" id="stars_score_behavior" data-target="score_behavior">
-                                <button type="button" class="star-btn" data-val="1" title="ไม่ชอบ"><i class="bi bi-star-fill"></i></button>
-                                <button type="button" class="star-btn" data-val="2" title="เฉยๆ"><i class="bi bi-star-fill"></i></button>
-                                <button type="button" class="star-btn" data-val="3" title="ปานกลาง"><i class="bi bi-star-fill"></i></button>
-                                <button type="button" class="star-btn" data-val="4" title="ชอบ"><i class="bi bi-star-fill"></i></button>
-                                <button type="button" class="star-btn" data-val="5" title="ชอบมาก"><i class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="1" title="ไม่ชอบ"><i
+                                        class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="2" title="เฉยๆ"><i
+                                        class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="3" title="ปานกลาง"><i
+                                        class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="4" title="ชอบ"><i
+                                        class="bi bi-star-fill"></i></button>
+                                <button type="button" class="star-btn" data-val="5" title="ชอบมาก"><i
+                                        class="bi bi-star-fill"></i></button>
                             </div>
                             <div class="star-labels-row">
-                                <span>ไม่ชอบ</span><span>เฉยๆ</span><span>ปานกลาง</span><span>ชอบ</span><span>ชอบมาก</span>
+                                <span data-i18n="star_label_1">ไม่ชอบ</span>
+                                <span data-i18n="star_label_2">เฉยๆ</span>
+                                <span data-i18n="star_label_3">ปานกลาง</span>
+                                <span data-i18n="star_label_4">ชอบ</span>
+                                <span data-i18n="star_label_5">ชอบมาก</span>
                             </div>
                         </div>
 
                         <div class="mb-1">
-                            <label class="form-label fw-semibold" data-i18n="form_final_feedback"><i class="bi bi-chat-left-text me-1 text-primary"></i>ความคิดเห็นและข้อเสนอแนะภาพรวม:</label>
-                            <textarea id="final_feedback" class="form-control" rows="3" placeholder="Feedback..."></textarea>
+                            <label class="form-label fw-semibold" data-i18n="form_final_feedback"><i
+                                    class="bi bi-chat-left-text me-1 text-primary"></i>ความคิดเห็นและข้อเสนอแนะภาพรวม:</label>
+                            <textarea id="final_feedback" class="form-control" rows="3"
+                                placeholder="Feedback..."></textarea>
                         </div>
                     </div>
                     <div class="modal-footer" style="background: #f8fafc;">
-                        <button type="button" class="btn btn-light border rounded-pill" data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
-                        <button type="submit" class="btn px-4 rounded-pill text-white fw-bold" style="background: linear-gradient(135deg,#6366f1,#8b5cf6);"><i class="bi bi-check2-circle me-1"></i><span data-i18n="btn_save_changes">บันทึกการประเมิน</span></button>
+                        <button type="button" class="btn btn-light border rounded-pill" data-bs-dismiss="modal"
+                            data-i18n="btn_cancel">ยกเลิก</button>
+                        <button type="submit" class="btn px-4 rounded-pill text-white fw-bold"
+                            style="background: linear-gradient(135deg,#6366f1,#8b5cf6);"><i
+                                class="bi bi-check2-circle me-1"></i><span
+                                data-i18n="btn_save_changes">บันทึกการประเมิน</span></button>
                     </div>
                 </form>
             </div>
@@ -1121,8 +1223,8 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-warning">
-                    <h5 class="modal-title fw-bold text-dark"><i
-                            class="bi bi-pencil-square me-2"></i><span data-i18n="modal_log_edit_title">นักศึกษาแก้ไขบันทึกงาน</span></h5>
+                    <h5 class="modal-title fw-bold text-dark"><i class="bi bi-pencil-square me-2"></i><span
+                            data-i18n="modal_log_edit_title">นักศึกษาแก้ไขบันทึกงาน</span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form onsubmit="submitStudentEditLog(event)">
@@ -1135,10 +1237,11 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light border rounded-pill"
-                            data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
+                        <button type="button" class="btn btn-light border rounded-pill" data-bs-dismiss="modal"
+                            data-i18n="btn_cancel">ยกเลิก</button>
                         <button type="submit" class="btn btn-primary px-4 rounded-pill"><i
-                                class="bi bi-save me-1"></i><span data-i18n="btn_save_changes">บันทึกการแก้ไข</span></button>
+                                class="bi bi-save me-1"></i><span
+                                data-i18n="btn_save_changes">บันทึกการแก้ไข</span></button>
                     </div>
                 </form>
             </div>
@@ -1150,23 +1253,26 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-info text-white">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-chat-dots-fill me-2"></i><span data-i18n="modal_comment_edit_title">พี่เลี้ยงแก้ไขความคิดเห็น / ข้อเสนอแนะ</span></h5>
+                    <h5 class="modal-title fw-bold"><i class="bi bi-chat-dots-fill me-2"></i><span
+                            data-i18n="modal_comment_edit_title">พี่เลี้ยงแก้ไขความคิดเห็น / ข้อเสนอแนะ</span></h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form onsubmit="submitMentorEditComment(event)">
                     <div class="modal-body">
                         <input type="hidden" id="mentor_edit_log_id">
                         <div class="mb-3">
-                            <label class="form-label" data-i18n="col_mentor_comment">ความคิดเห็น / ข้อเสนอแนะพี่เลี้ยง:</label>
+                            <label class="form-label" data-i18n="col_mentor_comment">ความคิดเห็น /
+                                ข้อเสนอแนะพี่เลี้ยง:</label>
                             <textarea id="mentor_edit_comment" class="form-control" rows="4"
                                 placeholder="Feedback..."></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light border rounded-pill"
-                            data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
+                        <button type="button" class="btn btn-light border rounded-pill" data-bs-dismiss="modal"
+                            data-i18n="btn_cancel">ยกเลิก</button>
                         <button type="submit" class="btn btn-primary px-4 rounded-pill"><i
-                                class="bi bi-save me-1"></i><span data-i18n="btn_save_changes">บันทึกความเห็น</span></button>
+                                class="bi bi-save me-1"></i><span
+                                data-i18n="btn_save_changes">บันทึกความเห็น</span></button>
                     </div>
                 </form>
             </div>
@@ -1178,7 +1284,8 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header" id="statusCommentHeader">
-                    <h5 class="modal-title fw-bold" id="statusCommentTitle" data-i18n="modal_status_comment_title">ระบุเหตุผล</h5>
+                    <h5 class="modal-title fw-bold" id="statusCommentTitle" data-i18n="modal_status_comment_title">
+                        ระบุเหตุผล</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form onsubmit="submitStatusWithComment(event)">
@@ -1186,16 +1293,17 @@
                         <input type="hidden" id="status_comment_log_id">
                         <input type="hidden" id="status_comment_action">
                         <div class="mb-3">
-                            <label class="form-label" id="statusCommentLabel" data-i18n="modal_status_comment_title">กรุณาใส่ข้อความหรือเหตุผล:</label>
+                            <label class="form-label" id="statusCommentLabel"
+                                data-i18n="modal_status_comment_title">กรุณาใส่ข้อความหรือเหตุผล:</label>
                             <textarea id="status_comment_text" class="form-control" rows="3" required
                                 placeholder="Reason..."></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light border rounded-pill"
-                            data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
-                        <button type="submit" class="btn btn-primary px-4 rounded-pill"
-                            id="statusCommentSubmitBtn" data-i18n="btn_save_changes">บันทึก</button>
+                        <button type="button" class="btn btn-light border rounded-pill" data-bs-dismiss="modal"
+                            data-i18n="btn_cancel">ยกเลิก</button>
+                        <button type="submit" class="btn btn-primary px-4 rounded-pill" id="statusCommentSubmitBtn"
+                            data-i18n="btn_save_changes">บันทึก</button>
                     </div>
                 </form>
             </div>
@@ -1209,12 +1317,13 @@
                 <div class="modal-body">
                     <div class="text-success mb-3" style="font-size: 56px;"><i class="bi bi-check-circle-fill"></i>
                     </div>
-                    <h4 class="fw-bold text-success mb-2" id="actionSuccessTitle" data-i18n="toast_success">ดำเนินการสำเร็จ!</h4>
+                    <h4 class="fw-bold text-success mb-2" id="actionSuccessTitle" data-i18n="toast_success">
+                        ดำเนินการสำเร็จ!</h4>
                     <p class="fs-5 text-dark mb-0" id="actionSuccessMessage">แก้ไขข้อความเสร็จสิ้น</p>
                 </div>
                 <div class="modal-footer justify-content-center border-0 pt-0">
-                    <button type="button" class="btn btn-success px-4 rounded-pill"
-                        data-bs-dismiss="modal" data-i18n="btn_close">ตกลง</button>
+                    <button type="button" class="btn btn-success px-4 rounded-pill" data-bs-dismiss="modal"
+                        data-i18n="btn_close">ตกลง</button>
                 </div>
             </div>
         </div>
@@ -1225,7 +1334,8 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-key-fill me-2"></i><span data-i18n="modal_change_pwd_title">เปลี่ยนรหัสผ่าน</span></h5>
+                    <h5 class="modal-title fw-bold"><i class="bi bi-key-fill me-2"></i><span
+                            data-i18n="modal_change_pwd_title">เปลี่ยนรหัสผ่าน</span></h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form onsubmit="submitChangePassword(event)">
@@ -1236,7 +1346,8 @@
                                 autocomplete="current-password" placeholder="Old Password">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label" data-i18n="form_new_pwd">รหัสผ่านใหม่ (อย่างน้อย 6 ตัวอักษร):</label>
+                            <label class="form-label" data-i18n="form_new_pwd">รหัสผ่านใหม่ (อย่างน้อย 6
+                                ตัวอักษร):</label>
                             <input type="password" id="new_password" class="form-control" minlength="6" required
                                 autocomplete="new-password" placeholder="New Password">
                         </div>
@@ -1247,10 +1358,11 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light border rounded-pill"
-                            data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
+                        <button type="button" class="btn btn-light border rounded-pill" data-bs-dismiss="modal"
+                            data-i18n="btn_cancel">ยกเลิก</button>
                         <button type="submit" class="btn btn-primary px-4 rounded-pill"><i
-                                class="bi bi-shield-check me-1"></i><span data-i18n="btn_save_changes">บันทึกรหัสผ่านใหม่</span></button>
+                                class="bi bi-shield-check me-1"></i><span
+                                data-i18n="btn_save_changes">บันทึกรหัสผ่านใหม่</span></button>
                     </div>
                 </form>
             </div>
@@ -1262,8 +1374,8 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-warning text-dark">
-                    <h5 class="modal-title fw-bold"><i
-                            class="bi bi-shield-lock-fill me-2"></i><span data-i18n="modal_admin_reset_pwd_title">ตั้งรหัสผ่านใหม่ให้ผู้ใช้งาน</span></h5>
+                    <h5 class="modal-title fw-bold"><i class="bi bi-shield-lock-fill me-2"></i><span
+                            data-i18n="modal_admin_reset_pwd_title">ตั้งรหัสผ่านใหม่ให้ผู้ใช้งาน</span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form onsubmit="submitAdminResetPassword(event)">
@@ -1271,16 +1383,18 @@
                         <input type="hidden" id="admin_reset_role">
                         <input type="hidden" id="admin_reset_ref_id">
                         <div class="mb-3">
-                            <label class="form-label" data-i18n="form_new_pwd_member">กำหนดรหัสผ่านใหม่ให้สมาชิก (อย่างน้อย 6 ตัวอักษร):</label>
+                            <label class="form-label" data-i18n="form_new_pwd_member">กำหนดรหัสผ่านใหม่ให้สมาชิก
+                                (อย่างน้อย 6 ตัวอักษร):</label>
                             <input type="password" id="admin_new_password" class="form-control" minlength="6" required
                                 autocomplete="new-password" placeholder="New Password">
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light border rounded-pill"
-                            data-bs-dismiss="modal" data-i18n="btn_cancel">ยกเลิก</button>
+                        <button type="button" class="btn btn-light border rounded-pill" data-bs-dismiss="modal"
+                            data-i18n="btn_cancel">ยกเลิก</button>
                         <button type="submit" class="btn btn-warning px-4 rounded-pill"><i
-                                class="bi bi-key-fill me-1"></i><span data-i18n="btn_save_changes">บันทึกรหัสผ่าน</span></button>
+                                class="bi bi-key-fill me-1"></i><span
+                                data-i18n="btn_save_changes">บันทึกรหัสผ่าน</span></button>
                     </div>
                 </form>
             </div>
@@ -1566,6 +1680,15 @@
             // Setup Dropzone Drag & Drop
             setupDropzone();
 
+            // Setup Multi-Language Datepickers
+            initDatePickers();
+
+            // Listener เมื่อเปลี่ยนภาษาให้รีเซ็ต Datepickers และการคำนวณระยะเวลา
+            window.addEventListener('languageChanged', () => {
+                initDatePickers();
+                calcStudentDuration();
+            });
+
             // กดปุ่ม ESC เพื่อปิด Sidebar
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
@@ -1576,7 +1699,15 @@
             await checkAuth();
             if (!currentUser) return;
 
-            document.getElementById('log_work_date').valueAsDate = new Date();
+            const logDateEl = document.getElementById('log_work_date');
+            if (logDateEl) {
+                const todayStr = new Date().toISOString().split('T')[0];
+                if (fpLogDate) {
+                    fpLogDate.setDate(new Date(), true);
+                } else {
+                    logDateEl.value = todayStr;
+                }
+            }
 
             if (currentUser.role === 'admin' || currentUser.role === 'mentor') {
                 await loadMentors();
@@ -2756,6 +2887,11 @@
                     navigateToCategory(window.currentActiveCategory);
                 }
 
+                // Re-render dashboard tables so dynamic content uses new language
+                if (typeof renderDashboardTables === 'function' && dashboardAnalyticsData) {
+                    renderDashboardTables(dashboardAnalyticsData);
+                }
+
                 if (currentUser.role === 'student' && typeof loadStudentProgressBar === 'function') {
                     loadStudentProgressBar();
                 }
@@ -2774,7 +2910,12 @@
             if (type === 'yesterday') {
                 d.setDate(d.getDate() - 1);
             }
-            dateInput.valueAsDate = d;
+            if (fpLogDate) {
+                fpLogDate.setDate(d, true);
+            } else if (dateInput) {
+                const dateStr = d.toISOString().split('T')[0];
+                dateInput.value = dateStr;
+            }
         }
 
         function updateCharCount(textarea) {
@@ -3099,8 +3240,8 @@
                     <td colspan="6">
                         <div class="empty-state">
                             <div class="empty-state-icon"><i class="bi bi-journal-x"></i></div>
-                            <div class="empty-state-title">ไม่พบบันทึกการฝึกงาน</div>
-                            <div class="empty-state-desc">ยังไม่มีข้อมูลที่ตรงกับเงื่อนไข หรือยังไม่มีการเพิ่มบันทึก</div>
+                            <div class="empty-state-title">${t('empty_logs_title', 'ไม่พบบันทึกการฝึกงาน')}</div>
+                            <div class="empty-state-desc">${t('empty_logs_desc', 'ยังไม่มีข้อมูลที่ตรงกับเงื่อนไข หรือยังไม่มีการเพิ่มบันทึก')}</div>
                         </div>
                     </td>
                 </tr>
@@ -3111,32 +3252,36 @@
             logs.forEach(log => {
                 let actionBtn = '';
 
-                if (currentUser.role === 'mentor' || currentUser.role === 'admin') {
+                // เฉพาะ Mentor เท่านั้นที่มีสิทธิ์อนุมัติ ส่งกลับ ปฏิเสธ และแก้ไขความเห็น
+                if (currentUser.role === 'mentor') {
                     const statusBtns = [];
-                    if (log.status !== 'approved') statusBtns.push(`<button onclick="approveLog(${log.id}, 'approved')" class="btn btn-success btn-sm btn-icon-only me-1" data-bs-toggle="tooltip" title="อนุมัติบันทึกงานนี้"><i class="bi bi-check-lg"></i></button>`);
-                    if (log.status !== 'revision') statusBtns.push(`<button onclick="openStatusCommentModal(${log.id}, 'revision')" class="btn btn-warning btn-sm btn-icon-only me-1" data-bs-toggle="tooltip" title="ส่งกลับให้นักศึกษาแก้ไข"><i class="bi bi-pencil"></i></button>`);
-                    if (log.status !== 'rejected') statusBtns.push(`<button onclick="openStatusCommentModal(${log.id}, 'rejected')" class="btn btn-danger btn-sm btn-icon-only me-1" data-bs-toggle="tooltip" title="ปฏิเสธบันทึกงานนี้"><i class="bi bi-x-lg"></i></button>`);
+                    if (log.status !== 'approved') statusBtns.push(`<button onclick="approveLog(${log.id}, 'approved')" class="btn btn-success btn-sm btn-icon-only me-1" data-bs-toggle="tooltip" title="${t('tooltip_approve_log', 'อนุมัติบันทึกงานนี้')}"><i class="bi bi-check-lg"></i></button>`);
+                    if (log.status !== 'revision') statusBtns.push(`<button onclick="openStatusCommentModal(${log.id}, 'revision')" class="btn btn-warning btn-sm btn-icon-only me-1" data-bs-toggle="tooltip" title="${t('tooltip_revision_log', 'ส่งกลับให้นักศึกษาแก้ไข')}"><i class="bi bi-pencil"></i></button>`);
+                    if (log.status !== 'rejected') statusBtns.push(`<button onclick="openStatusCommentModal(${log.id}, 'rejected')" class="btn btn-danger btn-sm btn-icon-only me-1" data-bs-toggle="tooltip" title="${t('tooltip_reject_log', 'ปฏิเสธบันทึกงานนี้')}"><i class="bi bi-x-lg"></i></button>`);
 
                     actionBtn += `<div class="btn-group btn-group-sm mb-1">${statusBtns.join('')}</div><br>`;
 
                     const safeComment = (log.mentor_comment || '').replace(/`/g, '\\`').replace(/'/g, "\\'");
-                    actionBtn += `<button onclick="openMentorEditCommentModal(${log.id}, \`${safeComment}\`)" class="btn btn-outline-info btn-sm btn-icon-only" data-bs-toggle="tooltip" title="แก้ไขความคิดเห็นพี่เลี้ยง"><i class="bi bi-chat-text"></i></button> `;
+                    actionBtn += `<button onclick="openMentorEditCommentModal(${log.id}, \`${safeComment}\`)" class="btn btn-outline-info btn-sm btn-icon-only" data-bs-toggle="tooltip" title="${t('tooltip_edit_comment', 'แก้ไขความคิดเห็นพี่เลี้ยง')}"><i class="bi bi-chat-text"></i></button> `;
                 }
 
+                // Admin ดูได้อย่างเดียว — แสดง badge แทนปุ่ม
+                if (currentUser.role === 'admin' && !actionBtn) {
+                    actionBtn = `<span class="badge bg-light text-secondary border" style="font-size:11px; font-weight:500;"><i class="bi bi-eye me-1"></i>${t('admin_viewonly_log_badge', '👁️ ดูได้อย่างเดียว')}</span>`;
+                }
+
+                // นักศึกษาแก้ไข/ลบบันทึกของตัวเอง
                 if (currentUser.role === 'student' && log.student_id == currentUser.ref_id) {
                     const safeDesc = log.work_description.replace(/`/g, '\\`').replace(/'/g, "\\'");
-                    actionBtn += `<button onclick="openStudentEditLogModal(${log.id}, \`${safeDesc}\`)" class="btn btn-warning btn-sm btn-icon-only" data-bs-toggle="tooltip" title="นักศึกษาแก้ไขคำผิดในบันทึก"><i class="bi bi-pencil-square"></i></button> `;
-                }
-
-                if (currentUser.role === 'admin' || (currentUser.role === 'student' && log.student_id == currentUser.ref_id)) {
-                    actionBtn += `<button onclick="askDelete('logs', ${log.id})" class="btn btn-danger btn-sm btn-icon-only" data-bs-toggle="tooltip" title="ลบบันทึกงานนี้"><i class="bi bi-trash"></i></button>`;
+                    actionBtn += `<button onclick="openStudentEditLogModal(${log.id}, \`${safeDesc}\`)" class="btn btn-warning btn-sm btn-icon-only" data-bs-toggle="tooltip" title="${t('tooltip_student_edit_log', 'นักศึกษาแก้ไขคำผิดในบันทึก')}"><i class="bi bi-pencil-square"></i></button> `;
+                    actionBtn += `<button onclick="askDelete('logs', ${log.id})" class="btn btn-danger btn-sm btn-icon-only" data-bs-toggle="tooltip" title="${t('tooltip_delete', 'ลบบันทึกงานนี้')}"><i class="bi bi-trash"></i></button>`;
                 }
 
                 let badgeHtml = '';
-                if (log.status === 'approved') badgeHtml = '<span class="badge-status badge-status-approved"><i class="bi bi-check-circle-fill"></i> อนุมัติแล้ว</span>';
-                else if (log.status === 'revision') badgeHtml = '<span class="badge-status badge-status-revision"><i class="bi bi-pencil-fill"></i> ส่งกลับแก้ไข</span>';
-                else if (log.status === 'rejected') badgeHtml = '<span class="badge-status badge-status-rejected"><i class="bi bi-x-circle-fill"></i> ปฏิเสธ</span>';
-                else badgeHtml = '<span class="badge-status badge-status-pending"><i class="bi bi-clock-fill"></i> รออนุมัติ</span>';
+                if (log.status === 'approved') badgeHtml = `<span class="badge-status badge-status-approved"><i class="bi bi-check-circle-fill"></i> ${t('filter_status_approved', 'อนุมัติแล้ว')}</span>`;
+                else if (log.status === 'revision') badgeHtml = `<span class="badge-status badge-status-revision"><i class="bi bi-pencil-fill"></i> ${t('filter_status_revision', 'ส่งกลับแก้ไข')}</span>`;
+                else if (log.status === 'rejected') badgeHtml = `<span class="badge-status badge-status-rejected"><i class="bi bi-x-circle-fill"></i> ${t('filter_status_rejected', 'ปฏิเสธ')}</span>`;
+                else badgeHtml = `<span class="badge-status badge-status-pending"><i class="bi bi-clock-fill"></i> ${t('filter_status_pending', 'รออนุมัติ')}</span>`;
 
                 const initial = (log.student_name || 'S').trim().charAt(0);
 
@@ -3307,12 +3452,17 @@
             evalModalObj.show();
         }
 
-        const STAR_LABELS = ['', 'ไม่ชอบ ★', 'เฉยๆ ★★', 'ปานกลาง ★★★', 'ชอบ ★★★★', 'ชอบมาก ★★★★★'];
+        function getStarDisplayText(val) {
+            if (val < 1 || val > 5) return '— ' + t('eval_not_selected', 'ยังไม่ได้เลือก') + ' —';
+            const stars = '★'.repeat(val);
+            const labelKey = 'star_label_' + val;
+            return `${t(labelKey, '')} ${stars}`;
+        }
 
         function setStarRating(field, val) {
             if (val < 1 || val > 5) return;
             document.getElementById(field).value = val * 2; // map 1-5 -> 2-10
-            document.getElementById('label_' + field).textContent = STAR_LABELS[val];
+            document.getElementById('label_' + field).textContent = getStarDisplayText(val);
             const row = document.getElementById('stars_' + field);
             row.querySelectorAll('.star-btn').forEach(b => {
                 const bVal = parseInt(b.dataset.val);
@@ -3374,7 +3524,9 @@
 
             const tbody = document.getElementById('mentorsTableBody');
             const select = document.getElementById('modal_student_mentor_id');
-            tbody.innerHTML = ''; select.innerHTML = '<option value="">-- ไม่ระบุ --</option>'; mentorMap = {};
+            tbody.innerHTML = '';
+            select.innerHTML = `<option value="" data-i18n-opt="opt_unassigned">${t('opt_unassigned', '-- ไม่ระบุ / ยังไม่กำหนด --')}</option>`;
+            mentorMap = {};
 
             if (mentors.length === 0) {
                 tbody.innerHTML = `
@@ -3382,8 +3534,8 @@
                     <td colspan="4">
                         <div class="empty-state">
                             <div class="empty-state-icon"><i class="bi bi-person-workspace"></i></div>
-                            <div class="empty-state-title">ไม่พบข้อมูลพี่เลี้ยง</div>
-                            <div class="empty-state-desc">ยังไม่มีข้อมูลพี่เลี้ยงในระบบ</div>
+                            <div class="empty-state-title">${t('empty_mentors_title', 'ไม่พบข้อมูลพี่เลี้ยง')}</div>
+                            <div class="empty-state-desc">${t('empty_mentors_desc', 'ยังไม่มีข้อมูลพี่เลี้ยงในระบบ')}</div>
                         </div>
                     </td>
                 </tr>
@@ -3419,11 +3571,85 @@
             initTooltips();
         }
 
+        // =========================================================
+        // FLATPICKR MULTI-LANGUAGE DATEPICKERS
+        // =========================================================
+        let fpStartDate = null;
+        let fpEndDate = null;
+        let fpLogDate = null;
+
+        function initDatePickers() {
+            if (typeof flatpickr === 'undefined') return;
+            const currentLang = (window.i18n && window.i18n.getCurrentLanguage()) || 'th';
+            const isTh = (currentLang === 'th');
+            const flatpickrLocale = (isTh && flatpickr.l10ns && flatpickr.l10ns.th) ? flatpickr.l10ns.th : 'default';
+
+            const startEl = document.getElementById('modal_student_start_date');
+            const endEl = document.getElementById('modal_student_end_date');
+            const logEl = document.getElementById('log_work_date');
+
+            const prevStartVal = startEl ? startEl.value : '';
+            const prevEndVal = endEl ? endEl.value : '';
+            const prevLogVal = logEl ? logEl.value : '';
+
+            if (fpStartDate) { try { fpStartDate.destroy(); } catch(e){} fpStartDate = null; }
+            if (fpEndDate) { try { fpEndDate.destroy(); } catch(e){} fpEndDate = null; }
+            if (fpLogDate) { try { fpLogDate.destroy(); } catch(e){} fpLogDate = null; }
+
+            const startPlaceholder = t('placeholder_start_date', isTh ? "วว/ดด/ปปปป (คลิกเพื่อเลือกวัน)" : "YYYY-MM-DD (Click to select date)");
+            const endPlaceholder = t('placeholder_end_date', isTh ? "วว/ดด/ปปปป (คลิกเพื่อเลือกวัน)" : "YYYY-MM-DD (Click to select date)");
+
+            if (startEl) {
+                fpStartDate = flatpickr(startEl, {
+                    locale: flatpickrLocale,
+                    dateFormat: "Y-m-d",
+                    altInput: true,
+                    altFormat: isTh ? "j F Y" : "F j, Y",
+                    defaultDate: prevStartVal || null,
+                    onChange: function() { calcStudentDuration(); }
+                });
+                if (fpStartDate && fpStartDate.altInput) {
+                    fpStartDate.altInput.placeholder = startPlaceholder;
+                }
+            }
+
+            if (endEl) {
+                fpEndDate = flatpickr(endEl, {
+                    locale: flatpickrLocale,
+                    dateFormat: "Y-m-d",
+                    altInput: true,
+                    altFormat: isTh ? "j F Y" : "F j, Y",
+                    defaultDate: prevEndVal || null,
+                    onChange: function() { calcStudentDuration(); }
+                });
+                if (fpEndDate && fpEndDate.altInput) {
+                    fpEndDate.altInput.placeholder = endPlaceholder;
+                }
+            }
+
+            if (logEl) {
+                fpLogDate = flatpickr(logEl, {
+                    locale: flatpickrLocale,
+                    dateFormat: "Y-m-d",
+                    altInput: true,
+                    altFormat: isTh ? "j F Y" : "F j, Y",
+                    defaultDate: prevLogVal || new Date()
+                });
+            }
+        }
+
         function openStudentModal() {
             document.getElementById('studentModalForm').reset();
             document.getElementById('modal_student_id').value = '';
             document.getElementById('modal_student_duration').value = '';
             document.getElementById('duration_preview').textContent = '';
+            const titleSpan = document.querySelector('#studentModalTitle span');
+            if (titleSpan) {
+                titleSpan.setAttribute('data-i18n', 'modal_student_add_title');
+                titleSpan.textContent = t('modal_student_add_title', 'เพิ่มข้อมูลนักศึกษาใหม่');
+            }
+            if (fpStartDate) fpStartDate.clear();
+            if (fpEndDate) fpEndDate.clear();
             studentModalObj.show();
         }
 
@@ -3437,11 +3663,11 @@
                 const diff = Math.round((end - start) / (1000 * 60 * 60 * 24));
                 if (diff > 0) {
                     document.getElementById('modal_student_duration').value = diff;
-                    preview.textContent = `⏱ ระยะเวลา ${diff} วัน`;
+                    preview.textContent = `⏱ ${t('duration_preview_text', 'ระยะเวลา {days} วัน', { days: diff })}`;
                     preview.style.color = '#2563eb';
                 } else {
                     document.getElementById('modal_student_duration').value = '';
-                    preview.textContent = '⚠ วันสิ้นสุดต้องมากกว่าวันเริ่มต้น';
+                    preview.textContent = `⚠️ ${t('duration_error_invalid', 'วันสิ้นสุดต้องมากกว่าวันเริ่มต้น')}`;
                     preview.style.color = '#ef4444';
                 }
             } else {
@@ -3451,15 +3677,22 @@
         }
 
         function editStudentModal(std) {
+            const titleSpan = document.querySelector('#studentModalTitle span');
+            if (titleSpan) {
+                titleSpan.setAttribute('data-i18n', 'modal_student_edit_title');
+                titleSpan.textContent = t('modal_student_edit_title', 'แก้ไขข้อมูลนักศึกษา');
+            }
             document.getElementById('modal_student_id').value = std.id;
             document.getElementById('modal_student_code').value = std.student_code;
             document.getElementById('modal_student_name').value = std.name;
             document.getElementById('modal_student_university').value = std.university || '';
             document.getElementById('modal_student_faculty').value = std.faculty || '';
             document.getElementById('modal_student_major').value = std.major || '';
-            document.getElementById('modal_student_start_date').value = std.start_date || '';
             document.getElementById('modal_student_phone').value = std.phone || '';
             document.getElementById('modal_student_mentor_id').value = std.mentor_id || '';
+
+            if (fpStartDate) fpStartDate.setDate(std.start_date || '', true);
+            else document.getElementById('modal_student_start_date').value = std.start_date || '';
 
             // Calculate end_date from start_date + duration_days
             const duration = parseInt(std.duration_days) || 90;
@@ -3469,9 +3702,11 @@
                 end.setDate(end.getDate() + duration);
                 endDateStr = end.toISOString().split('T')[0];
             }
-            document.getElementById('modal_student_end_date').value = endDateStr;
+            if (fpEndDate) fpEndDate.setDate(endDateStr, true);
+            else document.getElementById('modal_student_end_date').value = endDateStr;
+
             document.getElementById('modal_student_duration').value = duration;
-            document.getElementById('duration_preview').textContent = endDateStr ? `⏱ ระยะเวลา ${duration} วัน` : '';
+            document.getElementById('duration_preview').textContent = endDateStr ? `⏱ ${t('duration_preview_text', 'ระยะเวลา {days} วัน', { days: duration })}` : '';
             document.getElementById('duration_preview').style.color = '#2563eb';
 
             studentModalObj.show();
@@ -3549,9 +3784,12 @@
         }
 
         function askDelete(table, id) {
-            if (table === 'mentors' && currentUser.role !== 'admin') return alert('เฉพาะ Admin เท่านั้นที่ลบได้');
+            if (table === 'mentors' && currentUser.role !== 'admin') return alert(t('alert_admin_only', 'เฉพาะ Admin เท่านั้นที่ลบได้'));
+            if (table === 'students' && currentUser.role !== 'admin') return alert(t('alert_admin_only', 'เฉพาะ Admin เท่านั้นที่ลบได้'));
+            if (table === 'logs' && currentUser.role !== 'student') return alert(t('alert_student_delete_only', 'เฉพาะนักศึกษาเจ้าของบันทึกเท่านั้นที่ลบได้'));
+
             deleteTarget = { table, id };
-            document.getElementById('deleteModalText').innerText = `คุณแน่ใจหรือไม่ที่จะลบข้อมูลนี้?`;
+            document.getElementById('deleteModalText').innerText = t('confirm_delete_msg', 'คุณแน่ใจหรือไม่ที่จะลบข้อมูลนี้?');
             deleteConfirmModalObj.show();
         }
 
@@ -3560,7 +3798,7 @@
             const res = await fetchJson(`api.php?action=delete&type=${encodeURIComponent(deleteTarget.table)}&id=${Number(deleteTarget.id)}`);
             deleteConfirmModalObj.hide();
             if (res && res.success) {
-                showToast('ลบข้อมูลเรียบร้อยแล้ว (ย้ายไปถังขยะ)');
+                showToast(t('toast_deleted_recycle', 'ลบข้อมูลเรียบร้อยแล้ว (ย้ายไปถังขยะ)'));
                 if (deleteTarget.table === 'students') loadStudents();
                 if (deleteTarget.table === 'mentors') { await loadMentors(); loadStudents(); }
                 if (deleteTarget.table === 'logs') loadLogs();
@@ -3569,7 +3807,7 @@
                     if (typeof loadDashboardAnalytics === 'function') loadDashboardAnalytics();
                 }
             } else if (res) {
-                alert('เกิดข้อผิดพลาด: ' + res.error);
+                alert(t('error_prefix', 'เกิดข้อผิดพลาด: ') + res.error);
             }
         }
     </script>
