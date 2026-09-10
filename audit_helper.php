@@ -261,7 +261,31 @@ function permanentDelete($table, $id, $userId, $username, $userRole) {
 }
 
 /**
- * ดึงรายการถังขยะ
+ * ลบรายการที่เกิน 30 วันออกจากถังขยะโดยอัตโนมัติ
+ * เรียกใช้เมื่อโหลดหน้าถังขยะ
+ */
+function autoPurgeExpiredItems($userId = 0, $username = 'SYSTEM', $userRole = 'system') {
+    global $conn;
+    
+    $tables = ['students', 'mentors', 'internship_logs', 'evaluations'];
+    $purgedCount = 0;
+    
+    foreach ($tables as $table) {
+        // ดึง ID รายการที่ is_deleted = 1 และ deleted_at เกิน 30 วัน
+        $result = $conn->query("SELECT id FROM `$table` WHERE is_deleted = 1 AND deleted_at IS NOT NULL AND deleted_at < DATE_SUB(NOW(), INTERVAL 30 DAY)");
+        if ($result && $result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                permanentDelete($table, $row['id'], $userId, $username, $userRole);
+                $purgedCount++;
+            }
+        }
+    }
+    
+    return $purgedCount;
+}
+
+/**
+ * ดึงรายการถังขยะ (เฉพาะที่ยังไม่เกิน 30 วัน) พร้อม expiry info
  */
 function getRecycleBinItems($table) {
     global $conn;
@@ -277,36 +301,59 @@ function getRecycleBinItems($table) {
                   FROM students s 
                   LEFT JOIN mentors m ON s.mentor_id = m.id 
                   LEFT JOIN users u ON s.deleted_by = u.id
-                  WHERE s.is_deleted = 1 
+                  WHERE s.is_deleted = 1 AND s.deleted_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
                   ORDER BY s.deleted_at DESC";
     } else if ($table === 'mentors') {
         $query = "SELECT m.*, u.username AS deleted_by_username 
                   FROM mentors m 
                   LEFT JOIN users u ON m.deleted_by = u.id
-                  WHERE m.is_deleted = 1 
+                  WHERE m.is_deleted = 1 AND m.deleted_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
                   ORDER BY m.deleted_at DESC";
     } else if ($table === 'internship_logs') {
         $query = "SELECT il.*, s.name AS student_name, s.student_code, u.username AS deleted_by_username 
                   FROM internship_logs il 
                   LEFT JOIN students s ON il.student_id = s.id
                   LEFT JOIN users u ON il.deleted_by = u.id
-                  WHERE il.is_deleted = 1 
+                  WHERE il.is_deleted = 1 AND il.deleted_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
                   ORDER BY il.deleted_at DESC";
     } else if ($table === 'evaluations') {
         $query = "SELECT e.*, s.name AS student_name, s.student_code, u.username AS deleted_by_username 
                   FROM evaluations e 
                   LEFT JOIN students s ON e.student_id = s.id
                   LEFT JOIN users u ON e.deleted_by = u.id
-                  WHERE e.is_deleted = 1 
+                  WHERE e.is_deleted = 1 AND e.deleted_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
                   ORDER BY e.deleted_at DESC";
     }
     
     $result = $conn->query($query);
-    return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    $items = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    
+    // เพิ่มข้อมูล expiry สำหรับแต่ละรายการ
+    foreach ($items as &$item) {
+        if (!empty($item['deleted_at'])) {
+            $deletedAt = new DateTime($item['deleted_at']);
+            $expiryDate = clone $deletedAt;
+            $expiryDate->modify('+30 days');
+            $now = new DateTime();
+            
+            $daysLeft = (int)$now->diff($expiryDate)->days;
+            if ($now > $expiryDate) $daysLeft = 0;
+            
+            $item['expiry_date'] = $expiryDate->format('Y-m-d H:i:s');
+            $item['days_left'] = $daysLeft;
+            $item['expiry_urgency'] = ($daysLeft <= 5) ? 'urgent' : (($daysLeft <= 15) ? 'warning' : 'safe');
+        } else {
+            $item['expiry_date'] = null;
+            $item['days_left'] = 30;
+            $item['expiry_urgency'] = 'safe';
+        }
+    }
+    
+    return $items;
 }
 
 /**
- * นับจำนวนรายการในถังขยะ
+ * นับจำนวนรายการในถังขยะ (เฉพาะที่ยังไม่เกิน 30 วัน)
  */
 function getRecycleBinCounts() {
     global $conn;
@@ -315,7 +362,7 @@ function getRecycleBinCounts() {
     $tables = ['students', 'mentors', 'internship_logs', 'evaluations'];
     
     foreach ($tables as $table) {
-        $result = $conn->query("SELECT COUNT(*) AS cnt FROM `$table` WHERE is_deleted = 1");
+        $result = $conn->query("SELECT COUNT(*) AS cnt FROM `$table` WHERE is_deleted = 1 AND deleted_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
         $row = $result ? $result->fetch_assoc() : ['cnt' => 0];
         $counts[$table] = (int)$row['cnt'];
     }
@@ -323,4 +370,3 @@ function getRecycleBinCounts() {
     $counts['total'] = array_sum($counts);
     return $counts;
 }
-?>
