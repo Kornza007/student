@@ -1,0 +1,3 @@
+ _check_system.php (ไฟล์เช็กโครงสร้างฐานข้อมูล)
+_describe_tables.php (ไฟล์ดูรายละเอียดคอลัมน์)
+_test_permanent_delete.php (ไฟล์ทดสอบการลบถาวร)
