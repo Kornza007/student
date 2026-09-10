@@ -43,12 +43,14 @@
      * Get dictionary object for current language
      */
     function getDictionary(lang) {
-        if (lang === 'en' && typeof LANG_EN !== 'undefined') {
-            return LANG_EN;
+        if (lang === 'en') {
+            if (typeof LANG_EN !== 'undefined') return LANG_EN;
+            if (typeof window !== 'undefined' && window.LANG_EN) return window.LANG_EN;
+            if (typeof global !== 'undefined' && global.LANG_EN) return global.LANG_EN;
         }
-        if (typeof LANG_TH !== 'undefined') {
-            return LANG_TH;
-        }
+        if (typeof LANG_TH !== 'undefined') return LANG_TH;
+        if (typeof window !== 'undefined' && window.LANG_TH) return window.LANG_TH;
+        if (typeof global !== 'undefined' && global.LANG_TH) return global.LANG_TH;
         return {};
     }
 
@@ -124,7 +126,11 @@
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             if (key) {
-                el.innerText = t(key, el.innerText);
+                if (el.tagName === 'OPTION') {
+                    el.text = t(key, el.text);
+                } else {
+                    el.innerText = t(key, el.innerText);
+                }
             }
         });
 
@@ -136,11 +142,15 @@
             }
         });
 
-        // Placeholders
+        // Placeholders (including Flatpickr altInput)
         document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
             const key = el.getAttribute('data-i18n-placeholder');
             if (key) {
-                el.setAttribute('placeholder', t(key, el.getAttribute('placeholder')));
+                const translatedPlaceholder = t(key, el.getAttribute('placeholder'));
+                el.setAttribute('placeholder', translatedPlaceholder);
+                if (el._flatpickr && el._flatpickr.altInput) {
+                    el._flatpickr.altInput.setAttribute('placeholder', translatedPlaceholder);
+                }
             }
         });
 
@@ -149,6 +159,25 @@
             const key = el.getAttribute('data-i18n-title');
             if (key) {
                 el.setAttribute('title', t(key, el.getAttribute('title')));
+            }
+        });
+
+        // Select Options (data-i18n-opt)
+        document.querySelectorAll('option[data-i18n-opt]').forEach(opt => {
+            const key = opt.getAttribute('data-i18n-opt');
+            if (key) {
+                if (!opt.hasAttribute('data-opt-prefix')) {
+                    const match = opt.text.match(/^([^\p{L}\p{N}\s\-–—/()]+\s*)/u);
+                    opt.setAttribute('data-opt-prefix', match ? match[1] : '');
+                }
+                const prefix = opt.getAttribute('data-opt-prefix') || '';
+                const baseText = prefix ? opt.text.replace(prefix, '').trim() : opt.text.trim();
+                const translated = t(key, baseText);
+                if (prefix && !translated.startsWith(prefix.trim())) {
+                    opt.text = `${prefix}${translated}`;
+                } else {
+                    opt.text = translated;
+                }
             }
         });
     }
