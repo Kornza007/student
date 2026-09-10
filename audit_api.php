@@ -124,17 +124,56 @@ try {
         $logs = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         $stmt->close();
         
-        // Enrich with display names
+        // Build user map for fast lookup of real name
+        $userMap = [];
+        $uRes = $conn->query("
+            SELECT u.id, u.username, u.role,
+                   CASE 
+                       WHEN u.role = 'student' AND s.name IS NOT NULL THEN s.name
+                       WHEN u.role = 'mentor' AND m.name IS NOT NULL THEN m.name
+                       WHEN u.role = 'admin' THEN 'ผู้ดูแลระบบ (Admin)'
+                       ELSE u.username
+                   END AS real_name
+            FROM users u
+            LEFT JOIN students s ON (u.role = 'student' AND u.ref_id = s.id)
+            LEFT JOIN mentors m ON (u.role = 'mentor' AND u.ref_id = m.id)
+        ");
+        if ($uRes) {
+            while ($uRow = $uRes->fetch_assoc()) {
+                $userMap[$uRow['id']] = $uRow['real_name'];
+                $userMap['name_'.$uRow['username']] = $uRow['real_name'];
+            }
+        }
+
+        // Enrich with display names & real user names
         foreach ($logs as &$log) {
+            $realName = $userMap[$log['user_id']] ?? $userMap['name_'.$log['username']] ?? $log['username'];
+            $log['real_name'] = $realName;
+            $log['display_name'] = $realName;
             $log['action_display'] = getActionDisplayName($log['action_type']);
             $log['table_display'] = getTableDisplayName($log['table_name'] ?? '');
             $log['old_values'] = $log['old_values'] ? json_decode($log['old_values'], true) : null;
             $log['new_values'] = $log['new_values'] ? json_decode($log['new_values'], true) : null;
+
+            // แทนที่ Username ด้วยชื่อจริงในข้อความคำอธิบาย เช่น "ผู้ใช้ 9745" -> "ผู้ใช้ กิตติกรณ์"
+            if (!empty($log['username']) && !empty($realName) && $realName !== $log['username']) {
+                $uName = $log['username'];
+                $log['description'] = str_replace("ผู้ใช้ {$uName} ", "ผู้ใช้ {$realName} ", $log['description']);
+                $log['description'] = str_replace("ผู้ใช้ {$uName}(", "ผู้ใช้ {$realName} (", $log['description']);
+                $log['description'] = str_replace("({$uName})", "({$realName})", $log['description']);
+                $log['description'] = str_replace("พี่เลี้ยง ({$uName})", "พี่เลี้ยง {$realName}", $log['description']);
+            }
         }
         
         // Get distinct users for filter dropdown
         $usersResult = $conn->query("SELECT DISTINCT user_id, username, user_role FROM audit_logs WHERE user_id IS NOT NULL ORDER BY username");
-        $distinctUsers = $usersResult ? $usersResult->fetch_all(MYSQLI_ASSOC) : [];
+        $distinctUsers = [];
+        if ($usersResult) {
+            while ($u = $usersResult->fetch_assoc()) {
+                $u['real_name'] = $userMap[$u['user_id']] ?? $userMap['name_'.$u['username']] ?? $u['username'];
+                $distinctUsers[] = $u;
+            }
+        }
         
         auditRespond([
             "success" => true,
@@ -357,8 +396,16 @@ try {
     // =========================================================
     if ($action === 'get_recycle_bin') {
         requireAdmin();
+        $user = getCurrentUser();
         
         $table = $_GET['table'] ?? 'students';
+        
+        // ลบรายการที่เกิน 60 วันออกจากถังขยะโดยอัตโนมัติ
+        autoPurgeExpiredItems(
+            $user['id'] ?? 0,
+            $user['username'] ?? 'SYSTEM',
+            $user['role'] ?? 'admin'
+        );
         
         $items = getRecycleBinItems($table);
         $counts = getRecycleBinCounts();
@@ -367,9 +414,11 @@ try {
             "success" => true,
             "items" => $items,
             "counts" => $counts,
-            "current_table" => $table
+            "current_table" => $table,
+            "expiry_days" => 60
         ]);
     }
+
     
     // =========================================================
     // 9) GET STATS SUMMARY (Admin Only)
