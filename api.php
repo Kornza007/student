@@ -604,7 +604,7 @@ try {
     }
 
     if ($action === 'update_log') {
-        checkRole(['student', 'admin']);
+        checkRole(['student']);
         $data = getJsonBody();
         $user = $_SESSION['user'];
         $log_id = (int)($data['id'] ?? 0);
@@ -616,16 +616,14 @@ try {
 
         $oldLog = getRecordBeforeAction('internship_logs', $log_id);
 
-        if ($user['role'] === 'student') {
-            $checkStmt = $conn->prepare("SELECT student_id FROM internship_logs WHERE id = ?");
-            $checkStmt->bind_param("i", $log_id);
-            $checkStmt->execute();
-            $log = $checkStmt->get_result()->fetch_assoc();
-            $checkStmt->close();
+        $checkStmt = $conn->prepare("SELECT student_id FROM internship_logs WHERE id = ?");
+        $checkStmt->bind_param("i", $log_id);
+        $checkStmt->execute();
+        $log = $checkStmt->get_result()->fetch_assoc();
+        $checkStmt->close();
 
-            if (!$log || $log['student_id'] != $user['ref_id']) {
-                respond(["success" => false, "error" => "คุณไม่มีสิทธิ์แก้ไขบันทึกนี้"], 403);
-            }
+        if (!$log || $log['student_id'] != $user['ref_id']) {
+            respond(["success" => false, "error" => "คุณไม่มีสิทธิ์แก้ไขบันทึกนี้"], 403);
         }
 
         $stmt = $conn->prepare("UPDATE internship_logs SET work_description = ? WHERE id = ?");
@@ -649,7 +647,7 @@ try {
     }
 
     if ($action === 'mentor_edit_log') {
-        checkRole(['mentor', 'admin']);
+        checkRole(['mentor']);
         $data = getJsonBody();
         $user = $_SESSION['user'];
         $log_id = (int)($data['id'] ?? 0);
@@ -682,7 +680,7 @@ try {
     }
 
     if ($action === 'update_mentor_comment') {
-        checkRole(['admin', 'mentor']);
+        checkRole(['mentor']);
         $data = getJsonBody();
         $user = $_SESSION['user'];
         $log_id = (int)($data['id'] ?? $data['log_id'] ?? 0);
@@ -715,7 +713,7 @@ try {
     }
 
     if ($action === 'approve_log') {
-        checkRole(['admin', 'mentor']);
+        checkRole(['mentor']);
         $data = getJsonBody();
         $log_id = (int)($data['log_id'] ?? 0);
         $comment = $data['mentor_comment'] ?? null;
@@ -833,16 +831,14 @@ try {
         if ($type === 'mentors' || $type === 'students') {
             checkRole(['admin']);
         } else if ($type === 'internship_logs') {
-            checkRole(['admin', 'student']);
-            if ($user['role'] === 'student') {
-                $checkStmt = $conn->prepare("SELECT student_id FROM internship_logs WHERE id = ?");
-                $checkStmt->bind_param("i", $id);
-                $checkStmt->execute();
-                $logOwner = $checkStmt->get_result()->fetch_assoc();
-                $checkStmt->close();
-                if (!$logOwner || $logOwner['student_id'] != $user['ref_id']) {
-                    respond(["success" => false, "error" => "คุณไม่มีสิทธิ์ลบบันทึกนี้"], 403);
-                }
+            checkRole(['student']);
+            $checkStmt = $conn->prepare("SELECT student_id FROM internship_logs WHERE id = ?");
+            $checkStmt->bind_param("i", $id);
+            $checkStmt->execute();
+            $logOwner = $checkStmt->get_result()->fetch_assoc();
+            $checkStmt->close();
+            if (!$logOwner || $logOwner['student_id'] != $user['ref_id']) {
+                respond(["success" => false, "error" => "คุณไม่มีสิทธิ์ลบบันทึกนี้"], 403);
             }
         }
 
@@ -1303,6 +1299,11 @@ try {
         $result = $conn->query($sql);
         $rows = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 
+        // ล้าง buffer เก่าทั้งหมด เพื่อให้ UTF-8 BOM อยู่ที่ byte แรกสุดของไฟล์เสมอ
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+
         // UTF-8 BOM สำหรับ Excel ภาษาไทย
         header('Content-Type: text/csv; charset=UTF-8');
         header('Content-Disposition: attachment; filename="students_roster_'.date('Ymd_His').'.csv"');
@@ -1367,6 +1368,10 @@ try {
         $result = $conn->query($sql);
         $rows = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+
         header('Content-Type: text/csv; charset=UTF-8');
         header('Content-Disposition: attachment; filename="department_summary_'.date('Ymd_His').'.csv"');
         echo "\xEF\xBB\xBF";
@@ -1389,4 +1394,3 @@ try {
 } catch (Throwable $e) {
     respond(["success" => false, "error" => $e->getMessage()], 500);
 }
-?>
