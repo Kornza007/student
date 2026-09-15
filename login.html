@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,15 +13,19 @@
     <script src="lang/en.js"></script>
     <script src="lang/i18n.js"></script>
 </head>
+
 <body data-i18n-page-title="login_page_title">
 
     <!-- จุดที่ 1: ปุ่มเปลี่ยนภาษา (Language Switcher) ส่วนหัวมุมขวาบนของหน้า Login -->
     <div class="login-lang-wrapper">
-        <div class="lang-switch-toggle" onclick="toggleLanguage()" role="button" tabindex="0" title="สลับภาษา / Switch Language (TH | EN)" aria-label="Switch Language">
+        <div class="lang-switch-toggle" onclick="toggleLanguage()" role="button" tabindex="0"
+            title="สลับภาษา / Switch Language (TH | EN)" aria-label="Switch Language">
             <span class="lang-globe-icon"><i class="bi bi-globe2"></i></span>
-            <span class="lang-opt th-opt active" onclick="event.stopPropagation(); setLanguage('th');" data-lang="th" title="ภาษาไทย">TH</span>
+            <span class="lang-opt th-opt active" onclick="event.stopPropagation(); setLanguage('th');" data-lang="th"
+                title="ภาษาไทย">TH</span>
             <span class="lang-divider">|</span>
-            <span class="lang-opt en-opt" onclick="event.stopPropagation(); setLanguage('en');" data-lang="en" title="English">EN</span>
+            <span class="lang-opt en-opt" onclick="event.stopPropagation(); setLanguage('en');" data-lang="en"
+                title="English">EN</span>
         </div>
     </div>
 
@@ -33,16 +38,21 @@
             <p class="subtitle" data-i18n="login_card_subtitle">กรุณาลงชื่อเข้าใช้เพื่อเข้าสู่ระบบ</p>
         </div>
 
-        <div id="error-msg" style="color: #991b1b; background-color: #fef2f2; border: 1px solid #fecaca; padding: 12px; border-radius: 10px; margin-bottom: 18px; text-align: center; display: none; font-size: 13.5px; font-weight: 500;"></div>
-        
+        <div id="error-msg"
+            style="color: #991b1b; background-color: #fef2f2; border: 1px solid #fecaca; padding: 12px; border-radius: 10px; margin-bottom: 18px; text-align: center; display: none; font-size: 13.5px; font-weight: 500;">
+        </div>
+
         <form id="loginForm">
             <div style="margin-bottom: 18px;">
                 <label class="form-label" for="username">
-                    <i class="bi bi-person me-1"></i> <span data-i18n="login_username_label">ชื่อผู้ใช้งาน (Username):</span>
+                    <i class="bi bi-person me-1"></i> <span data-i18n="login_username_label">ชื่อผู้ใช้งาน
+                        (Username):</span>
                 </label>
                 <div class="input-wrapper">
                     <i class="bi bi-person-fill input-icon"></i>
-                    <input type="text" id="username" class="form-control-custom" required placeholder="กรอกชื่อผู้ใช้งาน หรือ รหัสนักศึกษา" data-i18n-placeholder="login_username_placeholder" autocomplete="username">
+                    <input type="text" id="username" class="form-control-custom" required
+                        placeholder="กรอกชื่อผู้ใช้งาน หรือ รหัสนักศึกษา"
+                        data-i18n-placeholder="login_username_placeholder" autocomplete="username">
                 </div>
             </div>
 
@@ -52,8 +62,10 @@
                 </label>
                 <div class="input-wrapper">
                     <i class="bi bi-lock-fill input-icon"></i>
-                    <input type="password" id="password" class="form-control-custom" required placeholder="กรอกรหัสผ่าน" data-i18n-placeholder="login_password_placeholder" autocomplete="current-password">
-                    <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility()" title="แสดง/ซ่อนรหัสผ่าน" data-i18n-title="login_toggle_password">
+                    <input type="password" id="password" class="form-control-custom" required placeholder="กรอกรหัสผ่าน"
+                        data-i18n-placeholder="login_password_placeholder" autocomplete="current-password">
+                    <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility()"
+                        title="แสดง/ซ่อนรหัสผ่าน" data-i18n-title="login_toggle_password">
                         <i class="bi bi-eye-slash" id="togglePasswordIcon"></i>
                     </button>
                 </div>
@@ -67,11 +79,15 @@
 
         <!-- บัญชีทดสอบสำหรับความสะดวก (Demo Helper) -->
         <div class="demo-box">
-            <div style="font-weight: 600; margin-bottom: 6px; color: #0f172a;" data-i18n="login_demo_title">💡 ทดสอบเข้าใช้งานด่วน (คลิกเพื่อกรอก):</div>
+            <div style="font-weight: 600; margin-bottom: 6px; color: #0f172a;" data-i18n="login_demo_title">💡
+                ทดสอบเข้าใช้งานด่วน (คลิกเพื่อกรอก):</div>
             <div>
-                <span class="demo-chip" onclick="fillDemo('admin', 'Admin01')" data-i18n="login_demo_admin">👑 Admin (admin)</span>
-                <span class="demo-chip" onclick="fillDemo('kan@jm.th', '020252')" data-i18n="login_demo_mentor">🧑‍🏫 Mentor (kan@jm.th)</span>
-                <span class="demo-chip" onclick="fillDemo('9745', '081207')" data-i18n="login_demo_student">🎓 Student (9745)</span>
+                <span class="demo-chip" onclick="fillDemo('admin', 'Admin01')" data-i18n="login_demo_admin">👑 Admin
+                    (admin)</span>
+                <span class="demo-chip" onclick="fillDemo('kan@jm.th', '020252')" data-i18n="login_demo_mentor">🧑‍🏫
+                    Mentor (kan@jm.th)</span>
+                <span class="demo-chip" onclick="fillDemo('9745', '081207')" data-i18n="login_demo_student">🎓 Student
+                    (9745)</span>
             </div>
         </div>
     </div>
@@ -138,4 +154,5 @@
         });
     </script>
 </body>
+
 </html>
