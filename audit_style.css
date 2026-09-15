@@ -311,11 +311,30 @@ body.audit-page {
     flex-shrink: 0;
 }
 
-.audit-stat-icon.blue { background: var(--audit-primary-light); color: var(--audit-primary); }
-.audit-stat-icon.green { background: var(--audit-success-light); color: var(--audit-success); }
-.audit-stat-icon.orange { background: var(--audit-warning-light); color: var(--audit-warning); }
-.audit-stat-icon.red { background: var(--audit-danger-light); color: var(--audit-danger); }
-.audit-stat-icon.cyan { background: var(--audit-info-light); color: var(--audit-info); }
+.audit-stat-icon.blue {
+    background: var(--audit-primary-light);
+    color: var(--audit-primary);
+}
+
+.audit-stat-icon.green {
+    background: var(--audit-success-light);
+    color: var(--audit-success);
+}
+
+.audit-stat-icon.orange {
+    background: var(--audit-warning-light);
+    color: var(--audit-warning);
+}
+
+.audit-stat-icon.red {
+    background: var(--audit-danger-light);
+    color: var(--audit-danger);
+}
+
+.audit-stat-icon.cyan {
+    background: var(--audit-info-light);
+    color: var(--audit-info);
+}
 
 .audit-stat-info h4 {
     font-size: 24px;
@@ -616,9 +635,20 @@ body.audit-page {
     font-weight: 600;
 }
 
-.role-badge.admin { background: #fef3c7; color: #92400e; }
-.role-badge.mentor { background: #dbeafe; color: #1e40af; }
-.role-badge.student { background: #d1fae5; color: #065f46; }
+.role-badge.admin {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.role-badge.mentor {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.role-badge.student {
+    background: #d1fae5;
+    color: #065f46;
+}
 
 /* =========================================================
    DETAIL BUTTON
@@ -1194,17 +1224,33 @@ body.audit-page {
     border-left: 4px solid;
 }
 
-.audit-toast.success { border-left-color: var(--audit-success); }
-.audit-toast.error { border-left-color: var(--audit-danger); }
-.audit-toast.info { border-left-color: var(--audit-primary); }
+.audit-toast.success {
+    border-left-color: var(--audit-success);
+}
+
+.audit-toast.error {
+    border-left-color: var(--audit-danger);
+}
+
+.audit-toast.info {
+    border-left-color: var(--audit-primary);
+}
 
 .audit-toast .toast-icon {
     font-size: 18px;
 }
 
-.audit-toast.success .toast-icon { color: var(--audit-success); }
-.audit-toast.error .toast-icon { color: var(--audit-danger); }
-.audit-toast.info .toast-icon { color: var(--audit-primary); }
+.audit-toast.success .toast-icon {
+    color: var(--audit-success);
+}
+
+.audit-toast.error .toast-icon {
+    color: var(--audit-danger);
+}
+
+.audit-toast.info .toast-icon {
+    color: var(--audit-primary);
+}
 
 /* =========================================================
    SECTION TITLE
@@ -1247,27 +1293,55 @@ body.audit-page {
    ANIMATIONS
    ========================================================= */
 @keyframes auditFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes auditSlideUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes auditSlideDown {
-    from { opacity: 0; transform: translateY(-8px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes auditSlideIn {
-    from { opacity: 0; transform: translateX(40px); }
-    to { opacity: 1; transform: translateX(0); }
+    from {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 @keyframes auditSpin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* =========================================================
