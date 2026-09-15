@@ -370,3 +370,4 @@ function getRecycleBinCounts() {
     $counts['total'] = array_sum($counts);
     return $counts;
 }
+
