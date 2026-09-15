@@ -50,3 +50,4 @@ ALTER TABLE internship_logs ADD COLUMN IF NOT EXISTS deleted_by  INT DEFAULT NUL
 ALTER TABLE evaluations ADD COLUMN IF NOT EXISTS is_deleted  TINYINT DEFAULT 0 COMMENT '0=ปกติ, 1=ลบแล้ว';
 ALTER TABLE evaluations ADD COLUMN IF NOT EXISTS deleted_at  DATETIME DEFAULT NULL COMMENT 'เวลาที่ลบ';
 ALTER TABLE evaluations ADD COLUMN IF NOT EXISTS deleted_by  INT DEFAULT NULL COMMENT 'ผู้ที่ทำการลบ (user_id)';
+
