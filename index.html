@@ -1483,7 +1483,8 @@
                                 <thead class="table-light sticky-top">
                                     <tr>
                                         <th style="width: 50px;">แถว</th>
-                                        <th>สถานะ</th>
+                                        <th style="width: 120px;">สถานะ</th>
+                                        <th style="min-width: 220px;">จุดที่ตรวจพบ / สาเหตุ</th>
                                         <th>รหัสนักศึกษา</th>
                                         <th>ชื่อ-นามสกุล</th>
                                         <th>มหาวิทยาลัย</th>
@@ -2579,6 +2580,8 @@
             document.getElementById('importFileName').innerText = fileName;
             document.getElementById('importFileDetails').innerText = `พบข้อมูลทั้งหมด ${rows.length} แถว`;
 
+            const seenCodesInFile = {}; // lowerCode => rowNum
+
             // Normalize keys (handle Thai and English headers)
             importParsedRows = rows.map((r, idx) => {
                 const getVal = (...keys) => {
@@ -2603,16 +2606,36 @@
                     startDate = new Date().toISOString().slice(0, 10);
                 }
 
-                const isExisting = rawStudentsData.some(s => s.student_code.toLowerCase() === code.toLowerCase());
+                const lowerCode = code.toLowerCase();
+                const existingStudent = rawStudentsData.find(s => s.student_code && s.student_code.toLowerCase() === lowerCode);
                 let status = 'valid';
                 let statusMsg = 'พร้อมนำเข้า';
+                let detailMsg = 'ข้อมูลใหม่ (ยังไม่เคยมีในระบบ)';
 
-                if (!code || !name) {
+                if (!code && !name) {
                     status = 'invalid';
                     statusMsg = 'ข้อมูลไม่ครบ';
-                } else if (isExisting) {
+                    detailMsg = 'ไม่มีทั้งรหัสนักศึกษาและชื่อ-นามสกุล';
+                } else if (!code) {
+                    status = 'invalid';
+                    statusMsg = 'ข้อมูลไม่ครบ';
+                    detailMsg = 'ขาดรหัสนักศึกษา';
+                } else if (!name) {
+                    status = 'invalid';
+                    statusMsg = 'ข้อมูลไม่ครบ';
+                    detailMsg = 'ขาดชื่อ-นามสกุล';
+                } else if (seenCodesInFile[lowerCode] !== undefined) {
                     status = 'update';
                     statusMsg = 'อัปเดตข้อมูลเดิม';
+                    detailMsg = `รหัส ${code} ซ้ำกับแถวที่ ${seenCodesInFile[lowerCode]} ในไฟล์นี้ (จะบันทึกข้อมูลล่าสุด)`;
+                } else if (existingStudent) {
+                    status = 'update';
+                    statusMsg = 'อัปเดตข้อมูลเดิม';
+                    const origName = existingStudent.name || 'ไม่มีชื่อเดิม';
+                    detailMsg = `รหัส ${code} ซ้ำกับนักศึกษาเดิมในระบบ: "${origName}"`;
+                    seenCodesInFile[lowerCode] = idx + 1;
+                } else {
+                    seenCodesInFile[lowerCode] = idx + 1;
                 }
 
                 return {
@@ -2627,7 +2650,8 @@
                     duration_days: Number(duration) || 90,
                     mentor: mentor,
                     status: status,
-                    statusMsg: statusMsg
+                    statusMsg: statusMsg,
+                    detailMsg: detailMsg
                 };
             });
 
@@ -2652,13 +2676,23 @@
 
             importParsedRows.slice(0, 150).forEach(r => {
                 let badgeClass = 'badge-valid';
-                if (r.status === 'update') badgeClass = 'badge-warning-custom';
-                else if (r.status === 'invalid') badgeClass = 'badge-error-custom';
+                let detailClass = 'text-muted';
+                let iconClass = 'bi-check-circle-fill text-success';
+                if (r.status === 'update') {
+                    badgeClass = 'badge-warning-custom';
+                    detailClass = 'text-warning-emphasis fw-semibold';
+                    iconClass = 'bi-exclamation-triangle-fill text-warning';
+                } else if (r.status === 'invalid') {
+                    badgeClass = 'badge-error-custom';
+                    detailClass = 'text-danger fw-semibold';
+                    iconClass = 'bi-x-circle-fill text-danger';
+                }
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                 <td>${r.rowNum}</td>
                 <td><span class="badge ${badgeClass}">${r.statusMsg}</span></td>
+                <td><small class="${detailClass} d-flex align-items-center gap-1"><i class="bi ${iconClass}"></i><span>${r.detailMsg}</span></small></td>
                 <td><strong>${r.student_code || '<span class="text-danger">ว่าง</span>'}</strong></td>
                 <td>${r.name || '<span class="text-danger">ว่าง</span>'}</td>
                 <td>${r.university || '-'}</td>
@@ -2673,7 +2707,7 @@
 
             if (importParsedRows.length > 150) {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td colspan="10" class="text-center text-muted py-2">... แสดงตัวอย่าง 150 รายการแรกจากทั้งหมด ${importParsedRows.length} รายการ ...</td>`;
+                tr.innerHTML = `<td colspan="11" class="text-center text-muted py-2">... แสดงตัวอย่าง 150 รายการแรกจากทั้งหมด ${importParsedRows.length} รายการ ...</td>`;
                 tbody.appendChild(tr);
             }
 
@@ -2701,6 +2735,8 @@
             const chunkSize = 200;
             const totalChunks = Math.ceil(validItems.length / chunkSize);
             let totalImported = 0, totalUpdated = 0, totalSkipped = 0;
+            let allUpdatedDetails = [];
+            let allErrors = [];
 
             for (let i = 0; i < totalChunks; i++) {
                 const chunk = validItems.slice(i * chunkSize, (i + 1) * chunkSize);
@@ -2720,16 +2756,56 @@
                     totalImported += res.imported || 0;
                     totalUpdated += res.updated || 0;
                     totalSkipped += res.skipped || 0;
+                    if (res.updated_details && res.updated_details.length) {
+                        allUpdatedDetails = allUpdatedDetails.concat(res.updated_details);
+                    }
+                    if (res.errors && res.errors.length) {
+                        allErrors = allErrors.concat(res.errors);
+                    }
                 }
             }
 
-            showToast(`นำเข้าเสร็จสิ้น: เพิ่มใหม่ ${totalImported} คน, อัปเดต ${totalUpdated} คน`);
             batchImportModalObj.hide();
-
             await loadStudents();
             if (currentUser.role === 'admin') {
                 loadDashboardAnalytics();
             }
+
+            // แสดงหน้าสรุปผลอย่างละเอียด
+            let summaryHtml = `
+                <div class="mb-2 text-start">
+                    <div class="d-flex justify-content-around p-3 bg-light rounded-3 mb-3 text-center">
+                        <div><strong class="text-success fs-5">${totalImported}</strong><div class="small text-muted">เพิ่มใหม่</div></div>
+                        <div><strong class="text-warning-emphasis fs-5">${totalUpdated}</strong><div class="small text-muted">อัปเดตข้อมูลเดิม</div></div>
+                        <div><strong class="text-danger fs-5">${totalSkipped}</strong><div class="small text-muted">ข้าม</div></div>
+                    </div>`;
+
+            if (allUpdatedDetails.length > 0) {
+                summaryHtml += `
+                    <h6 class="fw-bold text-dark mb-2"><i class="bi bi-info-circle-fill text-warning me-1"></i>รายการที่เกิดการอัปเดตข้อมูลเดิม (${allUpdatedDetails.length} รายการ):</h6>
+                    <div class="border rounded-2 p-2 mb-3 bg-white" style="max-height: 180px; overflow-y: auto; font-size: 13px;">
+                        <ul class="list-unstyled mb-0">
+                            ${allUpdatedDetails.map(u => `<li class="py-1 border-bottom text-secondary"><i class="bi bi-arrow-repeat text-warning me-1"></i><strong>${u.code}</strong> (${u.name}): ${u.reason}</li>`).join('')}
+                        </ul>
+                    </div>`;
+            }
+
+            if (allErrors.length > 0) {
+                summaryHtml += `
+                    <h6 class="fw-bold text-danger mb-2"><i class="bi bi-exclamation-octagon-fill text-danger me-1"></i>รายการที่ข้ามหรือไม่สมบูรณ์ (${allErrors.length} รายการ):</h6>
+                    <div class="border rounded-2 p-2 bg-white" style="max-height: 140px; overflow-y: auto; font-size: 13px;">
+                        <ul class="list-unstyled mb-0">
+                            ${allErrors.map(e => `<li class="py-1 border-bottom text-danger"><i class="bi bi-x-circle me-1"></i>${e}</li>`).join('')}
+                        </ul>
+                    </div>`;
+            }
+
+            summaryHtml += `</div>`;
+
+            document.getElementById('actionSuccessTitle').innerText = 'นำเข้าข้อมูลเสร็จสิ้น';
+            document.getElementById('actionSuccessMessage').innerHTML = summaryHtml;
+            actionSuccessModalObj.show();
+            showToast(`นำเข้าเสร็จสิ้น: เพิ่มใหม่ ${totalImported} คน, อัปเดต ${totalUpdated} คน`);
         }
 
         function downloadImportTemplate(format) {
