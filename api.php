@@ -1106,11 +1106,14 @@ try {
         }
 
         // ดึง Users และ Students เดิมมาตรวจสอบความซ้ำซ้อน
-        $existingCodes = [];
-        $eRes = $conn->query("SELECT student_code FROM students");
+        $existingStudents = [];
+        $eRes = $conn->query("SELECT id, student_code, name FROM students");
         if ($eRes) {
             while ($row = $eRes->fetch_assoc()) {
-                $existingCodes[strtolower(trim($row['student_code']))] = true;
+                $existingStudents[strtolower(trim($row['student_code']))] = [
+                    'id'   => (int)$row['id'],
+                    'name' => $row['name']
+                ];
             }
         }
 
@@ -1125,6 +1128,7 @@ try {
         $importedCount = 0;
         $updatedCount  = 0;
         $skippedCount  = 0;
+        $updatedDetails = [];
         $errors        = [];
 
         $defaultPassword = password_hash("123456", PASSWORD_BCRYPT);
@@ -1134,12 +1138,12 @@ try {
 
         $insertStudentStmt = $conn->prepare("
             INSERT INTO students (student_code, name, major, university, faculty, phone, start_date, duration_days, mentor_id) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, NULLIF(?, ''), NULLIF(?, ''))
         ");
 
         $updateStudentStmt = $conn->prepare("
             UPDATE students 
-            SET name = ?, major = ?, university = ?, faculty = ?, phone = ?, start_date = ?, duration_days = ?, mentor_id = ?, is_deleted = 0 
+            SET name = ?, major = ?, university = ?, faculty = ?, phone = ?, start_date = ?, duration_days = NULLIF(?, ''), mentor_id = NULLIF(?, ''), is_deleted = 0 
             WHERE student_code = ?
         ");
 
@@ -1189,9 +1193,14 @@ try {
 
             $lowerCode = strtolower($code);
 
-            if (isset($existingCodes[$lowerCode])) {
+            if (isset($existingStudents[$lowerCode])) {
+                $origStudent = $existingStudents[$lowerCode];
+
                 // อัปเดตข้อมูลนักศึกษาที่มีอยู่เดิม
-                $updateStudentStmt->bind_param("ssssssiis", $name, $major, $uni, $faculty, $phone, $startDate, $duration, $mentorId, $code);
+                // FIX: ใช้ type 's' สำหรับ duration_days และ mentor_id เพื่อรองรับค่า null ได้อย่างถูกต้อง
+                $mentorIdBind = ($mentorId !== null) ? (string)$mentorId : '';
+                $durationBind = (string)$duration;
+                $updateStudentStmt->bind_param("sssssssss", $name, $major, $uni, $faculty, $phone, $startDate, $durationBind, $mentorIdBind, $code);
                 $updateStudentStmt->execute();
 
                 // หา student id เพื่อ sync ref_id ใน users
@@ -1214,14 +1223,28 @@ try {
                 }
 
                 $updatedCount++;
+                $origName = !empty($origStudent['name']) ? $origStudent['name'] : '-';
+                $updatedDetails[] = [
+                    'row'           => $rowNum,
+                    'code'          => $code,
+                    'name'          => $name,
+                    'existing_name' => $origName,
+                    'reason'        => "รหัส {$code} ซ้ำกับนักศึกษาเดิมในระบบ ({$origName})"
+                ];
             } else {
                 // เพิ่มนักศึกษาใหม่
-                $insertStudentStmt->bind_param("sssssssii", $code, $name, $major, $uni, $faculty, $phone, $startDate, $duration, $mentorId);
+                // FIX: ใช้ type 's' สำหรับ duration_days และ mentor_id เพื่อรองรับค่า null ได้อย่างถูกต้อง
+                $mentorIdBind = ($mentorId !== null) ? (string)$mentorId : '';
+                $durationBind = (string)$duration;
+                $insertStudentStmt->bind_param("sssssssss", $code, $name, $major, $uni, $faculty, $phone, $startDate, $durationBind, $mentorIdBind);
                 $insertStudentStmt->execute();
                 $studentId = $insertStudentStmt->insert_id;
 
                 if ($studentId) {
-                    $existingCodes[$lowerCode] = true;
+                    $existingStudents[$lowerCode] = [
+                        'id'   => $studentId,
+                        'name' => $name
+                    ];
 
                     // สร้างหรือผูก User Account
                     if (isset($existingUsernames[$lowerCode])) {
@@ -1235,7 +1258,7 @@ try {
                     $importedCount++;
                 } else {
                     $skippedCount++;
-                    $errors[] = "แถวที่ {$rowNum}: ไม่สามารถบันทึกนักศึกษา {$code} ได้";
+                    $errors[] = "แถวที่ {$rowNum}: ไม่สามารถบันทึกนักศึกษา {$code} ได้ (code={$code}, mentor={$mentorRef})";
                 }
             }
         }
@@ -1255,17 +1278,18 @@ try {
             'students',
             0,
             null,
-            ['imported' => $importedCount, 'updated' => $updatedCount, 'skipped' => $skippedCount],
+            ['imported' => $importedCount, 'updated' => $updatedCount, 'skipped' => $skippedCount, 'updated_details' => $updatedDetails],
             "นำเข้าข้อมูลนักศึกษาผ่านไฟล์ CSV: เพิ่มใหม่ {$importedCount} คน, อัปเดต {$updatedCount} คน"
         );
 
         respond([
-            "success"  => true,
-            "message"  => "นำเข้าข้อมูลเสร็จสิ้น: เพิ่มใหม่ {$importedCount} คน, อัปเดต {$updatedCount} คน, ข้าม {$skippedCount} คน",
-            "imported" => $importedCount,
-            "updated"  => $updatedCount,
-            "skipped"  => $skippedCount,
-            "errors"   => $errors
+            "success"         => true,
+            "message"         => "นำเข้าข้อมูลเสร็จสิ้น: เพิ่มใหม่ {$importedCount} คน, อัปเดต {$updatedCount} คน, ข้าม {$skippedCount} คน",
+            "imported"        => $importedCount,
+            "updated"         => $updatedCount,
+            "skipped"         => $skippedCount,
+            "updated_details" => $updatedDetails,
+            "errors"          => $errors
         ]);
     }
 
