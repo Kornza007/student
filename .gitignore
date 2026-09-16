@@ -1,3 +1,25 @@
- _check_system.php (ไฟล์เช็กโครงสร้างฐานข้อมูล)
-_describe_tables.php (ไฟล์ดูรายละเอียดคอลัมน์)
-_test_permanent_delete.php (ไฟล์ทดสอบการลบถาวร)
+# ===================================================
+# .gitignore — โปรเจกต์ lab_month_korn
+# ===================================================
+
+# --- ไฟล์ทดสอบ / Debug (ไม่ควร push ขึ้น repo) ---
+_check_system.php
+_describe_tables.php
+_test_permanent_delete.php
+
+# --- โฟลเดอร์ AI Assistant (config ส่วนตัว) ---
+.agents/
+
+# --- ไฟล์ที่อาจมีข้อมูล sensitive ---
+# db.php        # เอา comment ออกถ้าต้องการซ่อน DB credentials
+
+# --- ไฟล์ระบบ OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Editor / IDE ---
+.vscode/
+.idea/
+*.suo
+*.user
