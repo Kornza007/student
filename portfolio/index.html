@@ -31,7 +31,7 @@
         <div class="accessibility-container">
             <div class="accessibility-label">
                 <i class="bi bi-eyeglasses"></i>
-                <span>เครื่องมือถนอมสายตา & ปรับขนาดตัวอักษร (Accessibility Text Size)</span>
+                <span>เครื่องมือถนอมสายตา & ปรับการแสดงผล (Accessibility Controls)</span>
             </div>
             <div class="accessibility-controls">
                 <div class="font-size-slider-wrap">
@@ -45,6 +45,19 @@
                     <button type="button" class="font-btn" id="btnFontSmall" title="ตัวหนังสือขนาดกะทัดรัด">A-</button>
                     <button type="button" class="font-btn active" id="btnFontDefault" title="ขนาดมาตรฐานสบายตา">ปกติ (50)</button>
                     <button type="button" class="font-btn" id="btnFontLarge" title="ขยายตัวหนังสือใหญ่พิเศษ">A+ (ใหญ่)</button>
+                </div>
+                <div class="theme-divider"></div>
+                <div class="theme-switch-group">
+                    <span class="theme-switch-label"><i class="bi bi-palette-fill"></i> โทนสี:</span>
+                    <button type="button" class="theme-btn active" id="btnThemeComfort" data-theme="comfort" title="สบายตา (แนะนำ)">
+                        <i class="bi bi-eye"></i> สบายตา
+                    </button>
+                    <button type="button" class="theme-btn" id="btnThemeLight" data-theme="light" title="สว่าง">
+                        <i class="bi bi-sun-fill"></i> สว่าง
+                    </button>
+                    <button type="button" class="theme-btn" id="btnThemeDark" data-theme="dark" title="มืด">
+                        <i class="bi bi-moon-stars-fill"></i> มืด
+                    </button>
                 </div>
             </div>
         </div>
@@ -84,7 +97,7 @@
     <!-- =========================================================
          1. ส่วนแนะนำตัว & ประวัติย่อ (Hero / Profile)
          ========================================================= -->
-    <section class="hero" id="profile">
+    <section class="hero animate-section" id="profile">
         <div class="container hero-grid">
             <div>
                 <div class="admission-badge">
@@ -140,7 +153,7 @@
     <!-- =========================================================
          2. ผลงานชิ้นเอก (Star Project - Internship Hub)
          ========================================================= -->
-    <section class="section" id="projects">
+    <section class="section animate-section" id="projects">
         <div class="container">
             <div class="section-header">
                 <div class="section-tag">
@@ -242,7 +255,7 @@
     <!-- =========================================================
          3. ทักษะและความสามารถทางคอมพิวเตอร์ (Skills)
          ========================================================= -->
-    <section class="section" id="skills" style="background: #ffffff; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <section class="section animate-section" id="skills" style="background: var(--bg-surface); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
         <div class="container">
             <div class="section-header">
                 <div class="section-tag">
@@ -338,7 +351,7 @@
     <!-- =========================================================
          4. ประสบการณ์ & ประวัติการศึกษา (Timeline)
          ========================================================= -->
-    <section class="section" id="experience">
+    <section class="section animate-section" id="experience">
         <div class="container">
             <div class="section-header">
                 <div class="section-tag">
@@ -382,7 +395,7 @@
     <!-- =========================================================
          5. แรงบันดาลใจในการเข้าศึกษาต่อ (Statement of Purpose)
          ========================================================= -->
-    <section class="section" id="statement" style="background:#ffffff; border-top:1px solid var(--border-color);">
+    <section class="section animate-section" id="statement" style="background:var(--bg-surface); border-top:1px solid var(--border-color);">
         <div class="container">
             <div class="section-header">
                 <div class="section-tag">
@@ -411,7 +424,7 @@
     <!-- =========================================================
          6. ข้อมูลติดต่อ (Contact Information)
          ========================================================= -->
-    <section class="contact-section" id="contact">
+    <section class="contact-section animate-section" id="contact">
         <div class="container">
             <div class="section-header" style="margin-bottom: 24px;">
                 <h2 class="section-title">ช่องทางการติดต่อสอบถาม</h2>

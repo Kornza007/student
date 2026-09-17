@@ -175,4 +175,81 @@ document.addEventListener('DOMContentLoaded', () => {
             toast.classList.remove('show');
         }, 3200);
     }
+
+    // =========================================================
+    // 5. THEME SWITCHER (ระบบสลับสี 3 โทน: สบายตา / สว่าง / มืด)
+    // =========================================================
+    const themeButtons = document.querySelectorAll('.theme-btn');
+
+    function setTheme(themeName) {
+        if (!themeName || themeName === 'comfort') {
+            document.documentElement.removeAttribute('data-theme');
+        } else {
+            document.documentElement.setAttribute('data-theme', themeName);
+        }
+
+        // อัปเดตปุ่ม active
+        themeButtons.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.getAttribute('data-theme') === themeName) {
+                btn.classList.add('active');
+            }
+        });
+
+        // บันทึกลง localStorage
+        try {
+            localStorage.setItem('admission_theme', themeName);
+        } catch (e) { /* ignore */ }
+
+        // แสดง Toast แจ้งเตือน
+        const labels = { comfort: 'สบายตา (แนะนำ)', light: 'สว่าง', dark: 'มืด (ถนอมสายตากลางคืน)' };
+        showToast(`เปลี่ยนโทนสีเป็น: ${labels[themeName] || 'สบายตา'}`);
+    }
+
+    // ผูก Event Listener ให้ปุ่ม Theme
+    themeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const theme = btn.getAttribute('data-theme');
+            setTheme(theme);
+        });
+    });
+
+    // โหลดค่าธีมที่เคยตั้งไว้
+    let savedTheme = 'comfort';
+    try {
+        const stored = localStorage.getItem('admission_theme');
+        if (stored) savedTheme = stored;
+    } catch (e) { /* ignore */ }
+
+    // ตั้งค่าธีมโดยไม่แสดง Toast ตอนโหลดหน้า
+    if (savedTheme && savedTheme !== 'comfort') {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+    themeButtons.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-theme') === savedTheme) {
+            btn.classList.add('active');
+        }
+    });
+
+    // =========================================================
+    // 6. SCROLL FADE-IN ANIMATION (IntersectionObserver)
+    // =========================================================
+    const animSections = document.querySelectorAll('.animate-section');
+
+    const animObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                animObserver.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -40px 0px'
+    });
+
+    animSections.forEach(sec => {
+        animObserver.observe(sec);
+    });
 });

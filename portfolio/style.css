@@ -936,4 +936,326 @@ body {
     .mobile-toggle {
         display: block;
     }
+
+    .theme-switch-group {
+        flex-wrap: wrap;
+    }
+}
+
+/* =========================================================
+   THEME SWITCHER CONTROLS (ปุ่มสลับสี 3 โทน)
+   ========================================================= */
+.theme-divider {
+    width: 1px;
+    height: 28px;
+    background: #475569;
+    margin: 0 8px;
+}
+
+.theme-switch-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.theme-switch-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #94a3b8;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.theme-btn {
+    background: #334155;
+    color: #cbd5e1;
+    border: 1px solid #475569;
+    border-radius: var(--radius-sm);
+    padding: 4px 12px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-weight: 500;
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.theme-btn:hover {
+    background: #475569;
+    color: #ffffff;
+}
+
+.theme-btn.active {
+    background: #38bdf8;
+    color: #0f172a;
+    font-weight: 700;
+    border-color: #38bdf8;
+}
+
+/* =========================================================
+   DARK THEME OVERRIDES (โหมดมืด ถนอมสายตาเวลากลางคืน)
+   ========================================================= */
+[data-theme="dark"] {
+    --bg-page: #0f172a;
+    --bg-surface: #1e293b;
+    --bg-surface-soft: #1e293b;
+    --bg-accent-soft: rgba(99, 102, 241, 0.12);
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+    --border-soft: #1e293b;
+    --academic-navy: #818cf8;
+    --academic-navy-hover: #a5b4fc;
+    --academic-emerald: #34d399;
+    --academic-amber: #fbbf24;
+    --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.3);
+    --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .navbar {
+    background-color: #1e293b;
+    border-bottom-color: #334155;
+}
+
+[data-theme="dark"] .nav-brand span,
+[data-theme="dark"] .nav-brand span span {
+    color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .nav-link {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .nav-link:hover,
+[data-theme="dark"] .nav-link.active {
+    color: #a5b4fc;
+}
+
+[data-theme="dark"] .nav-link.active::after {
+    background: #818cf8;
+}
+
+[data-theme="dark"] .hero {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    border-bottom-color: #334155;
+}
+
+[data-theme="dark"] .btn-primary {
+    background-color: #6366f1;
+    box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
+}
+
+[data-theme="dark"] .btn-primary:hover {
+    background-color: #818cf8;
+}
+
+[data-theme="dark"] .btn-secondary {
+    background-color: #334155;
+    border-color: #475569;
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+    background-color: #475569;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .hero-meta-box {
+    background: #1e293b;
+    border-color: #334155;
+    border-left-color: #818cf8;
+}
+
+[data-theme="dark"] .project-card,
+[data-theme="dark"] .skill-card,
+[data-theme="dark"] .timeline-card,
+[data-theme="dark"] .contact-box,
+[data-theme="dark"] .sop-box {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+[data-theme="dark"] .project-card-header {
+    background: #0f172a;
+    border-bottom-color: #334155;
+}
+
+[data-theme="dark"] .feature-item {
+    background: #0f172a;
+    border-color: #334155;
+}
+
+[data-theme="dark"] .tech-tag {
+    background: #334155;
+    color: #e2e8f0;
+    border-color: #475569;
+}
+
+[data-theme="dark"] .star-project-pill {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.3);
+}
+
+[data-theme="dark"] .section-tag {
+    background: rgba(99, 102, 241, 0.12);
+    color: #a5b4fc;
+    border-color: rgba(99, 102, 241, 0.3);
+}
+
+[data-theme="dark"] .admission-badge {
+    background: rgba(52, 211, 153, 0.1);
+    color: #34d399;
+    border-color: rgba(52, 211, 153, 0.3);
+}
+
+[data-theme="dark"] .sop-box {
+    border-top-color: #818cf8;
+}
+
+[data-theme="dark"] .footer {
+    background: #020617;
+}
+
+[data-theme="dark"] .timeline-dot {
+    background: #1e293b;
+    border-color: #818cf8;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+[data-theme="dark"] .timeline::before {
+    background: #334155;
+}
+
+[data-theme="dark"] .contact-section {
+    background: #0f172a;
+    border-top-color: #334155;
+}
+
+[data-theme="dark"] .nav-links {
+    background: #1e293b;
+}
+
+[data-theme="dark"] .profile-contact-list a {
+    color: #a5b4fc !important;
+}
+
+[data-theme="dark"] .skill-badge {
+    background: #334155;
+    color: #94a3b8;
+    border-color: #475569;
+}
+
+/* =========================================================
+   LIGHT THEME (โหมดสว่าง - สีขาวบริสุทธิ์)
+   ========================================================= */
+[data-theme="light"] {
+    --bg-page: #ffffff;
+    --bg-surface: #ffffff;
+    --bg-surface-soft: #f1f5f9;
+    --bg-accent-soft: #dbeafe;
+}
+
+[data-theme="light"] .hero {
+    background: linear-gradient(180deg, #f0f4ff 0%, #ffffff 100%);
+}
+
+/* =========================================================
+   SCROLL FADE-IN ANIMATION (แอนิเมชันเลื่อนเข้า)
+   ========================================================= */
+.animate-section {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.animate-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Stagger children animations */
+.animate-section.visible .feature-item,
+.animate-section.visible .skill-card,
+.animate-section.visible .timeline-item,
+.animate-section.visible .contact-box {
+    animation: fadeSlideUp 0.5s ease-out both;
+}
+
+.animate-section.visible .feature-item:nth-child(1),
+.animate-section.visible .skill-card:nth-child(1),
+.animate-section.visible .timeline-item:nth-child(1),
+.animate-section.visible .contact-box:nth-child(1) { animation-delay: 0.05s; }
+
+.animate-section.visible .feature-item:nth-child(2),
+.animate-section.visible .skill-card:nth-child(2),
+.animate-section.visible .timeline-item:nth-child(2),
+.animate-section.visible .contact-box:nth-child(2) { animation-delay: 0.15s; }
+
+.animate-section.visible .feature-item:nth-child(3),
+.animate-section.visible .skill-card:nth-child(3) { animation-delay: 0.25s; }
+
+.animate-section.visible .feature-item:nth-child(4) { animation-delay: 0.35s; }
+
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Subtle hover lift effect on cards */
+.project-card:hover,
+.skill-card:hover,
+.timeline-card:hover,
+.contact-box:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-item {
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-3px);
+    border-color: var(--academic-navy);
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.08);
+}
+
+/* Smooth theme transition */
+body,
+.navbar,
+.hero,
+.section,
+.contact-section,
+.footer,
+.project-card,
+.skill-card,
+.timeline-card,
+.sop-box,
+.contact-box,
+.feature-item,
+.tech-tag,
+.btn-primary,
+.btn-secondary,
+.star-project-pill,
+.section-tag,
+.admission-badge,
+.profile-card,
+.hero-meta-box,
+.profile-contact-list,
+.skill-badge {
+    transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
