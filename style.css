@@ -1453,10 +1453,12 @@ body.sidebar-open .sidebar-backdrop {
     padding: 16px 18px 10px;
     transition: border-color .2s, box-shadow .2s;
 }
+
 .eval-category-card:hover {
     border-color: #c4b5fd;
-    box-shadow: 0 4px 14px rgba(99,102,241,.08);
+    box-shadow: 0 4px 14px rgba(99, 102, 241, .08);
 }
+
 .eval-cat-icon {
     width: 40px;
     height: 40px;
@@ -1467,6 +1469,7 @@ body.sidebar-open .sidebar-backdrop {
     font-size: 18px;
     flex-shrink: 0;
 }
+
 .star-rating-row {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -1474,6 +1477,7 @@ body.sidebar-open .sidebar-backdrop {
     max-width: 420px;
     margin: 6px 0 2px;
 }
+
 .star-btn {
     background: none;
     border: none;
@@ -1488,13 +1492,25 @@ body.sidebar-open .sidebar-backdrop {
     justify-content: center;
     width: 100%;
 }
+
 .star-btn.active,
 .star-btn.hover {
     color: #f59e0b;
 }
-.star-btn.active { transform: scale(1.1); }
-.star-btn.hover { transform: scale(1.18); color: #fbbf24; }
-.star-btn:focus { outline: none; }
+
+.star-btn.active {
+    transform: scale(1.1);
+}
+
+.star-btn.hover {
+    transform: scale(1.18);
+    color: #fbbf24;
+}
+
+.star-btn:focus {
+    outline: none;
+}
+
 .star-labels-row {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -1505,11 +1521,13 @@ body.sidebar-open .sidebar-backdrop {
     max-width: 420px;
     margin-top: 3px;
 }
+
 .star-labels-row span {
     text-align: center;
     white-space: nowrap;
     display: block;
 }
+
 .eval-score-label {
     font-size: 12.5px;
     font-weight: 600;
@@ -1529,23 +1547,27 @@ body.sidebar-open .sidebar-backdrop {
     border-radius: 8px;
     transition: background .15s, color .15s;
 }
+
 .btn-manage-none:hover,
 .btn-manage-none:focus,
 .btn-manage-none:active,
 .btn-manage-none.show {
-    background: #ede9fe !important;
+    background: #030306 !important;
     color: #4f46e5 !important;
     border: none !important;
     box-shadow: none !important;
 }
+
 .btn-manage-none::after {
     /* Bootstrap dropdown caret – keep it */
     display: inline-block;
 }
+
 .dropdown-menu .dropdown-item:hover {
     background: #f1f5f9;
     border-radius: 8px;
 }
+
 .dropdown-menu .dropdown-item.text-danger:hover {
     background: #fef2f2;
 }
@@ -1557,14 +1579,16 @@ body.sidebar-open .sidebar-backdrop {
     font-family: inherit !important;
     border-radius: 16px !important;
     box-shadow: 0 12px 36px rgba(15, 23, 42, 0.15) !important;
-    border: 1px solid #e2e8f0 !important;
+    border: 1px solid #006dfb !important;
     overflow: hidden;
 }
+
 .flatpickr-months {
-    background: #4f46e5 !important;
-    color: #fff !important;
+    background: #0d00ff !important;
+    color: #000000 !important;
     border-radius: 16px 16px 0 0;
 }
+
 .flatpickr-months .flatpickr-month,
 .flatpickr-current-month,
 .flatpickr-current-month .cur-month,
@@ -1572,11 +1596,13 @@ body.sidebar-open .sidebar-backdrop {
     color: #fff !important;
     font-weight: 700 !important;
 }
+
 .flatpickr-months .flatpickr-prev-month,
 .flatpickr-months .flatpickr-next-month {
     color: #fff !important;
     fill: #fff !important;
 }
+
 .flatpickr-day.selected,
 .flatpickr-day.startRange,
 .flatpickr-day.endRange {
@@ -1585,14 +1611,17 @@ body.sidebar-open .sidebar-backdrop {
     color: #fff !important;
     font-weight: 600;
 }
+
 .flatpickr-day.today {
     border-color: #6366f1 !important;
 }
+
 .flatpickr-day:hover {
     background: #ede9fe !important;
     border-color: #ede9fe !important;
     color: #4f46e5 !important;
 }
+
 .flatpickr-day.selected:hover {
     background: #4338ca !important;
     color: #fff !important;
